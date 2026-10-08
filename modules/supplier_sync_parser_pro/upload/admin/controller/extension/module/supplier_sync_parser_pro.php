@@ -120,7 +120,7 @@ class ControllerExtensionModuleSupplierSyncParserPro extends Controller {
         foreach (array('spilna_meta'=>'Spilna Meta','sazagro'=>'Sazagro','rewolt'=>'Rewolt') as $code=>$name) {
             $data['preset_urls'][] = array('name'=>$name, 'url'=>$this->url->link($this->route, 'user_token=' . $this->session->data['user_token'] . '&supplier_id=0&preset=' . $code . '&active_tab=suppliers', true));
         }
-        foreach (array('entry_in_stock_quantity', 'help_in_stock_quantity', 'entry_unknown_stock_policy', 'text_stock_keep', 'text_stock_zero', 'entry_update_stock_status', 'help_update_stock_status', 'entry_new_category_name', 'help_new_category_name', 'entry_match_source', 'entry_match_target', 'help_match_mapping', 'text_match_auto', 'entry_jan_xpath', 'entry_isbn_xpath', 'entry_cron_enabled', 'entry_cron_interval_minutes', 'help_cron_profile') as $key) {
+        foreach (array('entry_in_stock_quantity', 'help_in_stock_quantity', 'entry_unknown_stock_policy', 'text_stock_keep', 'text_stock_zero', 'text_stock_available', 'text_stock_unavailable', 'entry_update_stock_status', 'help_update_stock_status', 'entry_new_category_name', 'help_new_category_name', 'entry_match_source', 'entry_match_target', 'help_match_mapping', 'text_match_auto', 'entry_jan_xpath', 'entry_isbn_xpath', 'entry_cron_enabled', 'entry_cron_interval_minutes', 'help_cron_profile') as $key) {
             $data[$key] = $this->language->get($key);
         }
         $data['supplier'] = $this->formatSupplierNumericFieldsForForm($data['supplier']);

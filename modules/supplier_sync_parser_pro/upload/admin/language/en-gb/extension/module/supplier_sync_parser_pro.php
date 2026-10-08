@@ -807,3 +807,6 @@ $_['entry_cron_enabled'] = 'Schedule this supplier';
 $_['entry_cron_interval_minutes'] = 'Check interval, minutes';
 
 $_['help_cron_profile'] = 'Cron checks linked products and applies allowed price/stock fields. New products and warnings remain for review. Minimum 5 minutes.';
+
+$_['text_stock_available'] = 'In stock';
+$_['text_stock_unavailable'] = 'Out of stock';

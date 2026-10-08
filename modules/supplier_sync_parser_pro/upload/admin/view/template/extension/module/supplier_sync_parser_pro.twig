@@ -470,7 +470,7 @@
                   <thead><tr><th>{{ column_supplier }}</th><th>{{ column_product }}</th><th>{{ column_sku }}</th><th>{{ column_price }}</th><th>{{ column_stock }}</th><th>{{ column_quantity }}</th><th>{{ column_checked }}</th><th>{{ column_error }}</th></tr></thead>
                   <tbody>
                     {% if links %}{% for row in links %}
-                    <tr><td>{{ row.provider_name }}</td><td>#{{ row.product_id }} {{ row.supplier_name }}</td><td>{{ row.supplier_sku }}</td><td>{{ row.last_sale_price }}</td><td>{{ row.last_stock_text }}</td><td>{{ row.last_quantity }}</td><td>{{ row.last_checked }}</td><td>{{ row.last_error }}</td></tr>
+                    <tr><td>{{ row.provider_name }}</td><td>#{{ row.product_id }} {{ row.supplier_name }}</td><td>{{ row.supplier_sku }}</td><td>{{ row.last_sale_price }}</td><td>{% if row.last_stock_text in ['https://schema.org/InStock','http://schema.org/InStock'] %}<span class="label label-success">{{ text_stock_available }}</span>{% elseif row.last_stock_text in ['https://schema.org/OutOfStock','http://schema.org/OutOfStock'] %}<span class="label label-default">{{ text_stock_unavailable }}</span>{% else %}{{ row.last_stock_text }}{% endif %}</td><td>{{ row.last_quantity }}</td><td>{{ row.last_checked }}</td><td>{{ row.last_error }}</td></tr>
                     {% endfor %}{% else %}<tr><td colspan="8" class="text-center">{{ text_none }}</td></tr>{% endif %}
                   </tbody>
                 </table>
@@ -733,6 +733,7 @@
 .ccp-ssp .ccp-match-hint{grid-column:1/-1;font-size:11px;color:#6b778c;line-height:1.25}.ccp-ssp .ccp-match-candidates{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.ccp-ssp .ccp-match-candidates b{width:100%;font-size:11px;color:#17365d}.ccp-ssp .ccp-candidate-pick{max-width:100%;white-space:normal;text-align:left}.ccp-ssp .ccp-selected-run-hint{display:inline-flex;align-items:center;max-width:360px;line-height:1.25}
 
 .ccp-ssp .ccp-url-wrap{display:inline-flex;align-items:center;gap:4px;max-width:310px;vertical-align:middle}.ccp-ssp .ccp-url-wrap .ccp-url{max-width:250px}.ccp-ssp .ccp-copy-url{padding:1px 5px;line-height:1.2;color:#0057b7}.ccp-ssp .ccp-copy-url.copied{background:#e8f7ee;border-color:#28a745;color:#1e7e34}.ccp-ssp .ccp-compact-table .btn-warning,.ccp-ssp .ccp-compact-table .btn-danger,.ccp-ssp .ccp-compact-table .btn-info,.ccp-ssp .ccp-compact-table .btn-success,.ccp-ssp .ccp-compact-table .btn-primary{font-weight:600}
+.ccp-ssp #table-mapping{min-width:1050px}.ccp-ssp #table-mapping th:nth-child(2),.ccp-ssp #table-mapping td:nth-child(2){min-width:260px;max-width:380px}.ccp-ssp #table-mapping th:nth-child(3),.ccp-ssp #table-mapping td:nth-child(3){min-width:130px}.ccp-ssp #table-mapping td:nth-child(4),.ccp-ssp #table-mapping td:nth-child(7){white-space:nowrap}
 </style>
 <script>
 (function($){

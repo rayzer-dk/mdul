@@ -101,11 +101,11 @@ $_['column_product'] = 'Товар';
 $_['column_supplier_product'] = 'Товар постачальника';
 $_['column_local_product'] = 'Мій товар';
 $_['column_sku'] = 'SKU';
-$_['column_price'] = 'Цена';
+$_['column_price'] = 'Ціна';
 $_['column_supplier_price'] = 'Ціна постачальника';
 $_['column_local_price'] = 'Моя ціна';
 $_['column_new_price'] = 'Нова ціна';
-$_['column_stock'] = 'Наличие';
+$_['column_stock'] = 'Наявність';
 $_['column_supplier_stock'] = 'Наявність постачальника';
 $_['column_local_stock'] = 'Моя наявність';
 $_['column_quantity'] = 'К-сть';
@@ -807,3 +807,6 @@ $_['entry_cron_enabled'] = 'Оновлювати профіль через cron'
 $_['entry_cron_interval_minutes'] = 'Інтервал перевірки, хвилин';
 
 $_['help_cron_profile'] = 'Cron перевіряє пов’язані товари та застосовує дозволені ціну/наявність. Нові товари й попередження залишаються на перевірку. Мінімум 5 хвилин.';
+
+$_['text_stock_available'] = 'В наявності';
+$_['text_stock_unavailable'] = 'Немає в наявності';
