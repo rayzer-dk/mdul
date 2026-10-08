@@ -1,0 +1,183 @@
+<style type="text/css">
+#nix-modal-supplier .modal-body { padding-bottom: 8px; }
+#nix-modal-supplier .nav-tabs { margin-bottom: 12px; }
+#nix-modal-supplier .tab-content { padding-top: 6px; }
+#nix-modal-supplier fieldset { border: 1px solid #e5e5e5; border-radius: 6px; padding: 12px 12px 2px; margin-bottom: 12px; }
+#nix-modal-supplier legend { width: auto; border: 0; margin: 0 0 8px; padding: 0 8px; font-size: 14px; font-weight: 700; color: #0057b7; }
+#nix-modal-supplier .nix-quick-tags .btn { margin: 0 3px 4px 0; }
+#nix-modal-supplier .help-block { overflow-wrap: anywhere; }
+@media (max-width: 767px) {
+  #nix-modal-supplier .form-horizontal .control-label { text-align: left; }
+  #nix-modal-supplier .nav-tabs > li { float: none; }
+  #nix-modal-supplier .nav-tabs > li > a { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 4px; }
+}
+</style>
+<div id="nix-modal-supplier--answer"></div>
+<form action="" method="post" enctype="multipart/form-data" id="nix-modal-supplier--form" class="form-horizontal">
+ {% if supplier_id %}
+ <input type="hidden" name="supplier_id" id="input-supplier-id" value="{{ supplier_id }}">
+ {% endif %}
+
+ <ul class="nav nav-tabs">
+  <li class="active"><a href="#nix-supplier-tab-main" data-toggle="tab"><i class="fa fa-cog"></i> {{ supplier_fieldset_settings }}</a></li>
+  <li><a href="#nix-supplier-tab-tags" data-toggle="tab"><i class="fa fa-code"></i> {{ supplier_fieldset_tags }}</a></li>
+  <li><a href="#nix-supplier-tab-product" data-toggle="tab"><i class="fa fa-list-alt"></i> {{ supplier_fieldset_product_card_fields }}</a></li>
+  <li><a href="#nix-supplier-tab-attributes" data-toggle="tab"><i class="fa fa-tags"></i> {{ supplier_fieldset_attributes }}</a></li>
+ </ul>
+
+ <div class="tab-content">
+  <div class="tab-pane active" id="nix-supplier-tab-main">
+   <fieldset>
+    <legend>{{ supplier_fieldset_settings }}</legend>
+    <div class="form-group required">
+     <label class="col-sm-4 control-label" for="input-name">{{ entry_supplier_name }}</label>
+     <div class="col-sm-8">
+      <input type="text" name="name" id="input-name" placeholder="{{ placeholder_supplier_name }}" class="form-control input-sm" value="{{ (supplier.name ? supplier.name : '')|e('html_attr') }}">
+     </div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-link-price"><span data-toggle="tooltip" title="{{ help_supplier_link_price }}">{{ entry_supplier_link_price }}</span></label>
+     <div class="col-sm-8">
+      <textarea name="link_price" id="input-link-price" rows="3" placeholder="{{ placeholder_supplier_link_price }}" class="form-control input-sm">{{ (supplier.link_price ? supplier.link_price : '')|e }}</textarea>
+      <div class="help-block">{{ help_supplier_link_price }}</div>
+     </div>
+    </div>
+    <div class="form-group required">
+     <label class="col-sm-4 control-label" for="input-markup">{{ entry_supplier_markup }}</label>
+     <div class="col-sm-8">
+      <input type="number" name="markup" id="input-markup" placeholder="0" step="0.01" class="form-control input-sm" value="{{ (supplier.markup ? supplier.markup : '0')|e('html_attr') }}">
+     </div>
+    </div>
+   </fieldset>
+   <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ help_supplier_profile_examples }}</div>
+  </div>
+
+  <div class="tab-pane" id="nix-supplier-tab-tags">
+   <fieldset>
+    <legend>{{ supplier_fieldset_tags }}</legend>
+    <div class="form-group required">
+     <label class="col-sm-4 control-label" for="input-tag-name">{{ entry_tag_product_name }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[name]" id="input-tag-name" placeholder="name" class="form-control input-sm" value="{{ (supplier.tags.name ? supplier.tags.name : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group required">
+     <label class="col-sm-4 control-label" for="input-tag-model">{{ entry_tag_product_model }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[model]" id="input-tag-model" placeholder="model" class="form-control input-sm" value="{{ (supplier.tags.model ? supplier.tags.model : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-sku">{{ entry_tag_product_sku }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[sku]" id="input-tag-sku" placeholder="vendorCode" class="form-control input-sm" value="{{ (supplier.tags.sku ? supplier.tags.sku : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group required">
+     <label class="col-sm-4 control-label" for="input-tag-price-purchasing">{{ entry_tag_product_price_purchasing }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[price_purchasing]" id="input-tag-price-purchasing" placeholder="optPrice" class="form-control input-sm" value="{{ (supplier.tags.price_purchasing ? supplier.tags.price_purchasing : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-price-rrp">{{ entry_tag_product_price_rrp }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[price_rrp]" id="input-tag-price-rrp" placeholder="price" class="form-control input-sm" value="{{ (supplier.tags.price_rrp ? supplier.tags.price_rrp : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-special-price"><span data-toggle="tooltip" title="{{ help_tag_product_special_price }}">{{ entry_tag_product_special_price }}</span></label>
+     <div class="col-sm-8"><input type="text" name="tags[special_price]" id="input-tag-special-price" placeholder="special_price" class="form-control input-sm" value="{{ (supplier.tags.special_price ? supplier.tags.special_price : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-quantity">{{ entry_tag_product_quantity }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[quantity]" id="input-tag-quantity" placeholder="quantity" class="form-control input-sm" value="{{ (supplier.tags.quantity ? supplier.tags.quantity : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-images">{{ entry_tag_product_images }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[images]" id="input-tag-images" placeholder="picture" class="form-control input-sm" value="{{ (supplier.tags.images ? supplier.tags.images : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group required">
+     <label class="col-sm-4 control-label" for="input-tag-category">{{ entry_tag_product_category }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[category]" id="input-tag-category" placeholder="categoryId" class="form-control input-sm" value="{{ (supplier.tags.category ? supplier.tags.category : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-manufacturer-name">{{ entry_tag_product_manufacturer_name }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[manufacturer_name]" id="input-tag-manufacturer-name" placeholder="vendor" class="form-control input-sm" value="{{ (supplier.tags.manufacturer_name ? supplier.tags.manufacturer_name : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-description">{{ entry_tag_product_description }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[description]" id="input-tag-description" placeholder="description" class="form-control input-sm" value="{{ (supplier.tags.description ? supplier.tags.description : '')|e('html_attr') }}"></div>
+    </div>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-attributes">{{ entry_tag_product_attributes }}</label>
+     <div class="col-sm-8"><input type="text" name="tags[attributes]" id="input-tag-attributes" placeholder="param" class="form-control input-sm" value="{{ (supplier.tags.attributes ? supplier.tags.attributes : '')|e('html_attr') }}"></div>
+    </div>
+   </fieldset>
+   <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ help_supplier_tags_examples }}</div>
+   <div class="well well-sm nix-quick-tags">
+    <strong>{{ text_quick_xml_tags }}</strong>
+    <div class="help-block" style="margin-bottom:6px;">{{ help_quick_xml_tags }}</div>
+    {% set quick_tags = ['name','model','vendorCode','sku','price','optPrice','special_price','sale_price','quantity','picture','categoryId','vendor','description','param','currencyId'] %}
+    {% for tag in quick_tags %}
+    <button type="button" class="btn btn-default btn-xs nix-tag-token" data-token="{{ tag }}">{{ tag }}</button>
+    {% endfor %}
+   </div>
+  </div>
+
+  <div class="tab-pane" id="nix-supplier-tab-product">
+   <fieldset>
+    <legend>{{ supplier_fieldset_product_card_fields }}</legend>
+    <div class="help-block">{{ help_supplier_product_card_fields }}</div>
+    {% set fields = [
+     ['meta_h1', entry_tag_product_meta_h1, 'meta_h1'],
+     ['meta_title', entry_tag_product_meta_title, 'meta_title'],
+     ['meta_description', entry_tag_product_meta_description, 'meta_description'],
+     ['meta_keyword', entry_tag_product_meta_keyword, 'meta_keyword'],
+     ['tag', entry_tag_product_tag, 'tag'],
+     ['currency', entry_tag_product_currency, 'currencyId'],
+     ['upc', entry_tag_product_upc, 'upc'],
+     ['ean', entry_tag_product_ean, 'ean'],
+     ['jan', entry_tag_product_jan, 'jan'],
+     ['isbn', entry_tag_product_isbn, 'isbn'],
+     ['mpn', entry_tag_product_mpn, 'mpn'],
+     ['location', entry_tag_product_location, 'location'],
+     ['date_available', entry_tag_product_date_available, 'date_available'],
+     ['points', entry_tag_product_points, 'points'],
+     ['minimum', entry_tag_product_minimum, 'minimum'],
+     ['subtract', entry_tag_product_subtract, 'subtract'],
+     ['stock_status_id', entry_tag_product_stock_status_id, 'stock_status_id'],
+     ['shipping', entry_tag_product_shipping, 'shipping'],
+     ['tax_class_id', entry_tag_product_tax_class_id, 'tax_class_id'],
+     ['length', entry_tag_product_length, 'length'],
+     ['width', entry_tag_product_width, 'width'],
+     ['height', entry_tag_product_height, 'height'],
+     ['length_class_id', entry_tag_product_length_class_id, 'length_class_id'],
+     ['weight', entry_tag_product_weight, 'weight'],
+     ['weight_class_id', entry_tag_product_weight_class_id, 'weight_class_id'],
+     ['status', entry_tag_product_status, 'status'],
+     ['sort_order', entry_tag_product_sort_order, 'sort_order'],
+     ['google_product_category_id', entry_tag_product_google_product_category_id, 'google_product_category_id']
+    ] %}
+    {% for field in fields %}
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-tag-{{ field[0]|replace({'_':'-'}) }}">{{ field[1] }}</label>
+     <div class="col-sm-8">
+      <input type="text" name="tags[{{ field[0] }}]" id="input-tag-{{ field[0]|replace({'_':'-'}) }}" placeholder="{{ field[2] }}" class="form-control input-sm" value="{{ attribute(supplier.tags, field[0]) is defined ? attribute(supplier.tags, field[0])|e('html_attr') : '' }}">
+     </div>
+    </div>
+    {% endfor %}
+   </fieldset>
+   <div class="well well-sm nix-quick-tags">
+    <strong>{{ text_quick_xml_tags }}</strong>
+    <div class="help-block" style="margin-bottom:6px;">{{ help_quick_xml_tags }}</div>
+    {% set product_card_tags = ['meta_h1','meta_title','meta_description','meta_keyword','tag','currencyId','upc','ean','jan','isbn','mpn','location','date_available','points','minimum','subtract','stock_status_id','shipping','tax_class_id','length','width','height','length_class_id','weight','weight_class_id','status','sort_order','google_product_category_id'] %}
+    {% for tag in product_card_tags %}
+    <button type="button" class="btn btn-default btn-xs nix-tag-token" data-token="{{ tag }}">{{ tag }}</button>
+    {% endfor %}
+   </div>
+  </div>
+
+  <div class="tab-pane" id="nix-supplier-tab-attributes">
+   <fieldset>
+    <legend>{{ supplier_fieldset_attributes }}</legend>
+    <div class="form-group">
+     <label class="col-sm-4 control-label" for="input-attribute-parent-id">{{ entry_attribute_parent_id }}</label>
+     <div class="col-sm-8">
+      <input type="text" name="attributes[parent_id]" id="input-attribute-parent-id" placeholder="parentId" class="form-control input-sm" value="{{ (supplier.attributes.parent_id ? supplier.attributes.parent_id : '')|e('html_attr') }}">
+     </div>
+    </div>
+   </fieldset>
+  </div>
+ </div>
+</form>

@@ -1,0 +1,59 @@
+Supplier Sync Parser PRO v1.6.3
+
+VERSION 1.6.3
+RU: Совместимость расширена до PHP 7.4–8.5. Устранены dynamic-property deprecation PHP 8.2+, curl_close deprecation PHP 8.5, cron-секрет перенесён из URL в HTTP-заголовок, запись изображений сделана атомарной.
+EN: Compatibility expanded to PHP 7.4–8.5. Fixed PHP 8.2+ dynamic-property deprecations, PHP 8.5 curl_close deprecation, moved the cron secret from URL to an HTTP header, and made image writes atomic.
+CodeCart PRO
+https://codecartpro.com
+
+RU
+Supplier Sync Parser PRO нужен интернет-магазинам OpenCart/ocStore, которые получают товары и цены с сайтов поставщиков без XML, CSV или API. Модуль помогает автоматизировать проверку цен, наличия и новых товаров через HTML-парсинг.
+
+Главный принцип работы — безопасность. Модуль не должен сразу менять каталог после сканирования. Он сначала создает очередь, обрабатывает страницы поставщика, сохраняет результат в предпросмотр, показывает старую и новую цену, наличие, сопоставление с товаром магазина, возможные ошибки и только после выбора администратора применяет изменения.
+
+Модуль полезен, если поставщиков много, цены часто меняются, нужно регулярно проверять наличие, находить новые товары и уменьшить ручное копирование данных. Для больших каталогов используются очередь, пакетная обработка, прогресс, фильтры, сортировка, пагинация и выбор количества строк.
+
+Стандартная последовательность: создать поставщика, указать базовый URL, валюту и язык, вставить одну карточку товара, просканировать ее, сохранить найденные правила, найти ссылки товаров в категории или добавить прямые URL товаров, создать очередь, обработать пакет, проверить предпросмотр, применить выбранные обновления или создать новые товары.
+
+Перед установкой или массовым запуском обязательно сделайте полный backup файлов сайта и базы данных.
+
+EN
+Supplier Sync Parser PRO is made for OpenCart/ocStore stores that receive products and prices from supplier websites without XML, CSV or API. The module helps automate price, stock and new product checks through HTML parsing.
+
+The key principle is safety. The module should not immediately change the catalog after scanning. It creates a queue, processes supplier pages, saves results to preview, shows old and new price, stock, local product match, possible errors and applies changes only after administrator selection.
+
+The module is useful when there are many suppliers, prices change often, stock must be checked regularly, new products must be found and manual copy-paste should be reduced. For large catalogs it uses queue processing, batches, progress, filters, sorting, pagination and selectable row limits.
+
+Standard workflow: create supplier, set base URL, currency and language, paste one product page, scan it, save detected rules, detect category product links or add direct product URLs, create queue, process batch, review preview, apply selected updates or create new products.
+
+Always create a full backup of site files and database before installation or mass processing.
+
+v1.6.0 Supplier scope and domain safety
+RU: Все рабочие вкладки теперь привязаны к выбранному поставщику. У каждого поставщика свои правила, очередь, предпросмотр, новые товары, сопоставления, история и логи. По умолчанию модуль сканирует только базовый домен поставщика и не переходит на чужие сайты. CDN-картинки могут использоваться как изображения, но не становятся страницами для парсинга товаров.
+EN: All operational tabs are now scoped to the selected supplier. Each supplier has independent rules, queue, preview, new products, mappings, history and logs. By default the module crawls only the supplier base domain and does not jump to unrelated websites. CDN images may be used as image sources, but are not queued as product parsing pages.
+
+v1.6.0 Usability update
+RU: В предпросмотре добавлен выбор действия для каждой строки. Порядок вкладок приведен к реальной последовательности работы. Пауза очереди переименована и пояснена. Значение 0 в ограничениях цены теперь действительно отключает ограничение.
+EN: Preview now has per-row action selection. Tabs follow the real workflow order. Queue pause has clearer wording and help. Zero price guard values now disable the guard correctly.
+
+VERSION 1.6.0
+RU: Добавлены массовые действия для выбранных строк очереди и новых товаров, увеличены лимиты создания очереди для больших каталогов, уточнена логика пакетной обработки и сравнения товара поставщика с товаром OpenCart.
+EN: Added bulk actions for selected queue rows and new products, increased queue creation limits for large catalogs, and clarified batch processing plus supplier-vs-OpenCart product comparison.
+
+v1.6.0 Safety update
+This version focuses on safe import quality: correct price parsing, invalid SKU cleanup, stricter product-page filtering, target-language-only product creation, and safer image import. Extra images are disabled by default because supplier pages often contain related products, banners and article images.
+
+v1.6.0 Manual linking and queue UX
+RU: Кнопки обработки выбранных строк очереди теперь работают именно с выбранными queue_id. Ручное связывание стало понятнее: поиск может автоматически взять SKU или название поставщика, предложить товары OpenCart, а после выбора сразу обновить строку предпросмотра. Вкладка новых товаров теперь поясняет, как формируется SEO URL при создании товара.
+EN: Selected queue processing now works with the exact selected queue_id values. Manual matching is clearer: search can use supplier SKU or supplier name, suggest OpenCart products and refresh the preview row immediately after linking. The New Products tab now explains how SEO URL is generated during product creation.
+
+VERSION 1.6.0 CHANGES
+- Preview action for new rows is now safer: selected unmatched rows are moved to the New Products tab first instead of creating OpenCart products immediately.
+- The New Products tab creates selected OpenCart products only after category/manual check. Created product IDs are returned in the AJAX result.
+- Added ID column to the New Products table.
+- Added delete selected actions for Preview and New Products.
+- Skip selected now updates the status message and unchecks rows; skipped rows are not created until restored to pending.
+- Queue processing no longer fills the New Products table automatically with every unmatched supplier product; candidates should be moved from Preview manually.
+
+VERSION 1.6.0
+Fixed diagnostics, category/list URL guard for product rule detection, and Google Merchant XML feed mapping with g: namespace support.

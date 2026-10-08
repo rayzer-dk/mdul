@@ -1,0 +1,1099 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <button type="submit" form="form-settings" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="container-fluid ccp-ssp">
+    {% if error_warning %}
+    <div class="alert alert-danger alert-dismissible"><i class="fa fa-exclamation-circle"></i> {{ error_warning }} <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+    {% endif %}
+    {% if success %}
+    <div class="alert alert-success alert-dismissible"><i class="fa fa-check-circle"></i> {{ success }} <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+    {% endif %}
+    {% if not module_supplier_sync_parser_pro_status %}
+    <div class="alert alert-warning alert-dismissible"><i class="fa fa-exclamation-triangle"></i> {{ error_module_disabled }} <button type="button" class="close" data-dismiss="alert">&times;</button></div>
+    {% endif %}
+
+    <div class="ccp-topbar">
+      <div>
+        <div class="ccp-title">{{ heading_title_text }} <span class="ccp-badge">PRO</span> <span class="ccp-version">v{{ version }}</span></div>
+        <div class="ccp-meta">{{ text_author }} CodeCart PRO · {{ text_compatibility }} ocStore 3.0.4.1 · OpenCart 3.x · PHP 7.4–8.5</div>
+      </div>
+      <div class="ccp-top-actions">
+        <div class="ccp-status {{ module_supplier_sync_parser_pro_status ? 'on' : 'off' }}" id="ccp-module-status-label">{{ module_supplier_sync_parser_pro_status ? text_enabled : text_disabled }}</div>
+        <button type="button" id="ccp-module-status-switch" class="ccp-switch {{ module_supplier_sync_parser_pro_status ? 'is-on' : '' }}" data-value="{{ module_supplier_sync_parser_pro_status ? 1 : 0 }}" data-target="#ccp-module-status-hidden" aria-pressed="{{ module_supplier_sync_parser_pro_status ? 'true' : 'false' }}"><span class="ccp-switch-track"><span class="ccp-switch-thumb"></span></span><span class="ccp-switch-text">{{ module_supplier_sync_parser_pro_status ? text_enabled : text_disabled }}</span></button>
+        <button type="submit" form="form-settings" class="btn btn-primary btn-sm" id="ccp-module-status-save"><i class="fa fa-save"></i> {{ button_save }}</button>
+      </div>
+    </div>
+
+    <div id="ccp-ajax-indicator" class="ccp-ajax-indicator"><i class="fa fa-spinner fa-spin"></i> {{ text_ajax_working }}</div>
+    <div id="ccp-toast" class="ccp-toast"></div>
+
+    <details class="ccp-workflow-card">
+      <summary class="ccp-card-title"><i class="fa fa-sitemap"></i> {{ text_ui_workflow_title }}</summary>
+      <div class="ccp-workflow-grid ccp-workflow-grid-6">
+        <div class="ccp-flow-step"><b><i class="fa fa-truck"></i> {{ text_ui_step_supplier_title }}</b><span>{{ text_ui_step_supplier_desc }}</span></div>
+        <div class="ccp-flow-step"><b><i class="fa fa-code"></i> {{ text_ui_step_rules_title }}</b><span>{{ text_ui_step_rules_desc }}</span></div>
+        <div class="ccp-flow-step"><b><i class="fa fa-tasks"></i> {{ text_ui_step_queue_title }}</b><span>{{ text_ui_step_queue_desc }}</span></div>
+        <div class="ccp-flow-step"><b><i class="fa fa-magic"></i> {{ text_ui_step_scan_title }}</b><span>{{ text_ui_step_scan_desc }}</span></div>
+        <div class="ccp-flow-step"><b><i class="fa fa-cogs"></i> {{ text_ui_step_process_title }}</b><span>{{ text_ui_step_process_desc }}</span></div>
+        <div class="ccp-flow-step"><b><i class="fa fa-check-square-o"></i> {{ text_ui_step_apply_title }}</b><span>{{ text_ui_step_apply_desc }}</span></div>
+      </div>
+      <div class="ccp-workflow-notes">
+        <span><i class="fa fa-bolt"></i> {{ text_ui_ajax_status }}</span>
+        <span><i class="fa fa-shield"></i> {{ text_ui_safe_note }}</span>
+      </div>
+    </details>
+
+    <div class="alert alert-warning ccp-alert"><i class="fa fa-database"></i> {{ text_warning_backup }}</div>
+    {% if module_supplier_sync_parser_pro_stop_queue %}
+    <div class="alert alert-info ccp-alert"><i class="fa fa-pause-circle"></i> {{ text_queue_stop_active }}</div>
+    {% endif %}
+
+    <div class="ccp-supplier-context {{ supplier.supplier_id ? 'is-selected' : 'is-missing' }}">
+      <div class="ccp-supplier-context-info">
+        <div class="ccp-card-title"><i class="fa fa-user-circle"></i> {{ text_supplier_context_title }}</div>
+        <div class="ccp-muted">{{ text_supplier_context_help }}</div>
+      </div>
+      <div class="ccp-supplier-context-control">
+        <select id="ccp-active-supplier" class="form-control">
+          <option value="0">{{ text_supplier_context_required }}</option>
+          {% for item in suppliers %}
+          <option value="{{ item.supplier_id }}" {{ supplier.supplier_id == item.supplier_id ? 'selected' : '' }}>{{ item.name }} #{{ item.supplier_id }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    {% if not supplier.supplier_id %}
+    <div class="alert alert-info ccp-alert"><i class="fa fa-info-circle"></i> {{ text_supplier_context_required }}</div>
+    {% endif %}
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <ul class="nav nav-tabs ccp-tabs">
+          <li class="{{ active_tab == 'master' ? 'active' : '' }}"><a href="#tab-master" data-toggle="tab"><i class="fa fa-map-signs"></i> {{ tab_master|default('Мастер запуска') }}</a></li>
+          <li class="{{ active_tab == 'suppliers' ? 'active' : '' }}"><a href="#tab-suppliers" data-toggle="tab"><i class="fa fa-truck"></i> {{ tab_suppliers }}</a></li>
+          <li><a href="#tab-rules" data-toggle="tab" data-require-supplier="1"><i class="fa fa-code"></i> {{ tab_rules }}</a></li>
+          <li><a href="#tab-queue" data-toggle="tab" data-require-supplier="1"><i class="fa fa-tasks"></i> {{ tab_queue }}</a></li>
+          <li><a href="#tab-review" data-toggle="tab" data-require-supplier="1"><i class="fa fa-eye"></i> {{ tab_review }}</a></li>
+          <li><a href="#tab-new" data-toggle="tab" data-require-supplier="1"><i class="fa fa-plus-circle"></i> {{ tab_new }}</a></li>
+          <li><a href="#tab-mapping" data-toggle="tab" data-require-supplier="1"><i class="fa fa-link"></i> {{ tab_mapping }}</a></li>
+          <li><a href="#tab-history" data-toggle="tab" data-require-supplier="1"><i class="fa fa-history"></i> {{ tab_history }}</a></li>
+          <li><a href="#tab-logs" data-toggle="tab" data-require-supplier="1"><i class="fa fa-list"></i> {{ tab_logs }}</a></li>
+          <li><a href="#tab-diagnostics" data-toggle="tab" data-require-supplier="1"><i class="fa fa-stethoscope"></i> {{ tab_diagnostics }}</a></li>
+          <li><a href="#tab-settings" data-toggle="tab"><i class="fa fa-cog"></i> {{ tab_settings }}</a></li>
+          <li><a href="#tab-about" data-toggle="tab"><i class="fa fa-info-circle"></i> {{ tab_about }}</a></li>
+        </ul>
+
+        <div class="tab-content ccp-tab-content">
+          <div class="ccp-note ccp-note-info ccp-admin-note"><i class="fa fa-info-circle"></i> {{ text_ui_admin_ready }}</div>
+          <div class="tab-pane {{ active_tab == 'master' ? 'active' : '' }}" id="tab-master">
+            <div class="ccp-card ccp-commercial-master">
+              <div class="ccp-card-title"><i class="fa fa-map-signs"></i> {{ text_master_title|default('Коммерческий мастер запуска') }}</div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-shield"></i> {{ text_master_intro|default('Работайте как в коммерческих парсерах: сначала источник, затем правила, потом поиск ссылок, проверка карточек, предпросмотр и только после этого ручное применение выбранных строк.') }}</div>
+              {% if not supplier.supplier_id %}
+              <div class="ccp-master-create">
+                <div><b><i class="fa fa-plus-circle"></i> {{ text_master_create_supplier_title|default('Начните с создания поставщика') }}</b><span>{{ text_master_create_supplier_help|default('Мастер не требует заранее выбранного поставщика. Сначала создайте поставщика, укажите домен, валюту, язык и источники, затем вернитесь в мастер для проверки правил и очереди.') }}</span></div>
+                <a class="btn btn-primary btn-sm" href="#tab-suppliers" data-toggle="tab"><i class="fa fa-truck"></i> {{ button_master_create_supplier|default('Создать поставщика') }}</a>
+              </div>
+              {% else %}
+              <div class="ccp-master-create is-ready">
+                <div><b><i class="fa fa-check-circle"></i> {{ text_master_supplier_selected|default('Поставщик выбран') }}</b><span>{{ supplier.name }} #{{ supplier.supplier_id }}. {{ text_master_supplier_selected_help|default('Теперь можно проверять правила, искать ссылки товаров и запускать пакетную проверку.') }}</span></div>
+                <a class="btn btn-default btn-sm" href="#tab-suppliers" data-toggle="tab"><i class="fa fa-pencil"></i> {{ button_master_edit_supplier|default('Открыть поставщика') }}</a>
+              </div>
+              {% endif %}
+              <div class="ccp-master-grid">
+                <div class="ccp-master-step {{ supplier.supplier_id ? 'is-ready' : '' }}"><b>1. {{ tab_suppliers }}</b><span>{{ text_master_supplier|default('Создайте поставщика, домен, валюту, язык и источники.') }}</span><a class="btn {{ supplier.supplier_id ? 'btn-default' : 'btn-primary' }} btn-xs" href="#tab-suppliers" data-toggle="tab">{{ supplier.supplier_id ? button_master_edit_supplier|default('Открыть поставщика') : button_master_create_supplier|default('Создать поставщика') }}</a></div>
+                <div class="ccp-master-step {{ supplier.name_xpath and supplier.price_xpath ? 'is-ready' : '' }}"><b>2. {{ tab_rules }}</b><span>{{ text_master_rules|default('Проверьте одну реальную карточку товара и сохраните правила.') }}</span><a class="btn btn-default btn-xs" href="#tab-rules" data-toggle="tab">{{ tab_rules }}</a></div>
+                <div class="ccp-master-step"><b>3. {{ text_master_find_links|default('Найти ссылки') }}</b><span>{{ text_master_find_links_help|default('Соберите URL товаров из категорий, домена или sitemap. Товары еще не обновляются.') }}</span><button type="button" class="btn btn-primary btn-xs" id="btn-master-find-links"><i class="fa fa-link"></i> {{ text_master_find_links|default('Найти ссылки') }}</button></div>
+                <div class="ccp-master-step"><b>4. {{ text_master_check_sample|default('Проверить первые 10') }}</b><span>{{ text_master_check_sample_help|default('Сначала проверьте малую выборку, чтобы убедиться в цене, SKU, названии и фото.') }}</span><button type="button" class="btn btn-info btn-xs" id="btn-master-check-sample"><i class="fa fa-flask"></i> {{ text_master_check_sample|default('Проверить первые 10') }}</button></div>
+                <div class="ccp-master-step"><b>5. {{ text_master_check_all|default('Проверить все') }}</b><span>{{ text_master_check_all_help|default('После успешной выборки запускайте пакетную проверку всех найденных товаров.') }}</span><button type="button" class="btn btn-success btn-xs" id="btn-master-check-all"><i class="fa fa-forward"></i> {{ text_master_check_all|default('Проверить все') }}</button></div>
+                <div class="ccp-master-step"><b>6. {{ tab_review }}</b><span>{{ text_master_apply|default('Сравните товар поставщика и ваш товар, выберите строки и примените действие вручную.') }}</span><a class="btn btn-warning btn-xs" href="#tab-review" data-toggle="tab"><i class="fa fa-eye"></i> {{ tab_review }}</a></div>
+              </div>
+              <div class="ccp-master-status">
+                <span>{{ text_master_queue|default('Очередь') }}: <b>{{ queue_stats.total|default(0) }}</b></span>
+                <span>{{ tab_review }}: <b>{{ review_stats.total|default(0) }}</b></span>
+                <span>{{ tab_new }}: <b>{{ new_stats.total|default(0) }}</b></span>
+                <span>{{ text_master_remaining|default('Осталось') }}: <b>{{ queue_stats.remaining|default(queue_stats.pending|default(0)) }}</b></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane {{ active_tab == 'suppliers' ? 'active' : '' }}" id="tab-suppliers">
+            <div class="row">
+              <div class="col-sm-4">
+                <div class="ccp-card">
+                  <div class="ccp-card-title"><i class="fa fa-truck"></i> {{ tab_suppliers }}</div>
+                  <div class="ccp-scroll ccp-list-scroll">
+                    <table class="table table-condensed table-hover ccp-supplier-table">
+                      <thead><tr><th>{{ column_supplier }}</th><th class="text-center">{{ text_status }}</th><th class="text-right"></th></tr></thead>
+                      <tbody>
+                        {% if suppliers %}
+                        {% for item in suppliers %}
+                        <tr data-supplier-row="{{ item.supplier_id }}" class="{{ supplier.supplier_id == item.supplier_id ? 'active' : '' }}">
+                          <td><a href="{{ route_url }}&supplier_id={{ item.supplier_id }}">{{ item.name }}</a><div class="ccp-muted">#{{ item.supplier_id }}</div></td>
+                          <td class="text-center"><button type="button" class="ccp-switch ccp-switch-mini ccp-supplier-row-switch {{ item.status ? 'is-on' : '' }}" data-supplier-id="{{ item.supplier_id }}" data-value="{{ item.status ? 1 : 0 }}" aria-pressed="{{ item.status ? 'true' : 'false' }}"><span class="ccp-switch-track"><span class="ccp-switch-thumb"></span></span><span class="ccp-switch-text ccp-supplier-list-status-text">{{ item.status ? text_enabled : text_disabled }}</span></button></td>
+                          <td class="text-right"><button type="button" class="btn btn-danger btn-xs ccp-delete-supplier" data-supplier-id="{{ item.supplier_id }}" title="{{ button_delete|default('Delete') }}"><i class="fa fa-trash"></i></button></td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
+                        <tr><td colspan="3" class="text-center">{{ text_none }}</td></tr>
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+                  <a class="btn btn-default btn-block" href="{{ route_url }}"><i class="fa fa-plus"></i> {{ button_add_supplier }}</a>
+                  {% for preset in preset_urls %}<a class="btn btn-default btn-block" href="{{ preset.url }}"><i class="fa fa-file-text-o"></i> {{ preset.name }}</a>{% endfor %}
+                </div>
+              </div>
+              <div class="col-sm-8">
+                <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-supplier" class="form-horizontal">
+                  <input type="hidden" name="source_preset" value="{{ source_preset }}" />
+                  <input type="hidden" name="save_supplier" value="1" />
+                  <input type="hidden" name="active_tab" class="ccp-active-tab-input" value="{{ active_tab }}" />
+                  <input type="hidden" name="supplier_id" id="supplier-id" value="{{ supplier.supplier_id }}" />
+                  <div class="ccp-card">
+                    <div class="ccp-card-title"><i class="fa fa-pencil"></i> {{ entry_supplier }}</div>
+                    <div class="ccp-note ccp-note-info"><i class="fa fa-route"></i> <b>{{ text_supplier_next_steps_title }}</b> {{ text_supplier_next_steps_desc }}</div>
+                    <div class="ccp-readiness-grid">
+                      <div class="ccp-readiness {{ supplier.supplier_id ? 'is-ready' : 'is-missing' }}"><i class="fa fa-save"></i><b>{{ text_check_supplier_saved }}</b><span>{{ supplier.supplier_id ? text_ready : text_not_ready }}</span></div>
+                      <div class="ccp-readiness {{ supplier.base_url ? 'is-ready' : 'is-missing' }}"><i class="fa fa-globe"></i><b>{{ text_check_base_url }}</b><span>{{ supplier.base_url ? text_ready : text_not_ready }}</span></div>
+                      <div class="ccp-readiness {{ supplier.name_xpath and supplier.price_xpath ? 'is-ready' : 'is-missing' }}"><i class="fa fa-code"></i><b>{{ text_check_product_rules }}</b><span>{{ supplier.name_xpath and supplier.price_xpath ? text_ready : text_not_ready }}</span></div>
+                      <div class="ccp-readiness {{ supplier.product_url_xpath or supplier.list_urls ? 'is-ready' : 'is-missing' }}"><i class="fa fa-list"></i><b>{{ text_check_queue_source }}</b><span>{{ supplier.product_url_xpath ? text_ready_category_scan : (supplier.list_urls ? text_ready_direct_urls : text_not_ready) }}</span></div>
+                    </div>
+                    <div class="ccp-subtitle"><i class="fa fa-database"></i> {{ text_source_block_title|default('1. Источники и базовые данные поставщика') }}</div>
+                    <div class="row ccp-form-grid">
+                      <input type="hidden" name="status" id="ccp-supplier-status-hidden" value="{{ supplier.supplier_id ? (supplier.status ? 1 : 0) : 1 }}" />
+                      <div class="col-sm-8"><label>{{ entry_supplier_name }}</label><input type="text" name="name" value="{{ supplier.name }}" class="form-control" maxlength="255" /></div>
+                      <div class="col-sm-4"><label>{{ entry_currency }}</label><select name="currency_code" class="form-control">{% for cur in currencies %}<option value="{{ cur.code }}" {{ supplier.currency_code == cur.code ? 'selected' : '' }}>{{ cur.code }}{% if cur.title %} - {{ cur.title }}{% endif %}{% if cur.code == base_currency %} ({{ text_base_currency }}){% endif %}</option>{% endfor %}</select></div>
+                      <div class="col-sm-12"><label>{{ entry_base_url }}</label><input type="text" name="base_url" value="{{ supplier.base_url }}" class="form-control" placeholder="https://supplier.com/" /></div>
+                      <div class="col-sm-4"><label>{{ entry_domain_policy }}</label><select name="domain_policy" class="form-control"><option value="strict_host" {{ supplier.domain_policy == 'strict_host' ? 'selected' : '' }}>{{ text_domain_policy_strict }}</option><option value="allow_subdomains" {{ supplier.domain_policy == 'allow_subdomains' ? 'selected' : '' }}>{{ text_domain_policy_subdomains }}</option><option value="allow_extra_hosts" {{ supplier.domain_policy == 'allow_extra_hosts' ? 'selected' : '' }}>{{ text_domain_policy_extra }}</option></select></div>
+                      <div class="col-sm-8"><label>{{ entry_allowed_hosts }}</label><textarea name="allowed_hosts_text" rows="2" class="form-control" placeholder="images.supplier.com">{{ allowed_hosts_text }}</textarea><div class="help-block">{{ help_domain_policy }}</div></div>
+                      <div class="col-sm-12"><label>{{ entry_list_urls }}</label><textarea name="list_urls" rows="5" class="form-control" placeholder="https://supplier.com/category-1">{{ supplier.list_urls }}</textarea><div class="help-block">{{ text_source_list_help|default('Одна ссылка в строке. Для категории используйте кнопку «Найти ссылки», для прямых карточек — режим прямых URL. Не смешивайте разные языки в одном запуске.') }}</div></div>
+                      <div class="col-sm-4"><label>{{ entry_source_type }}</label><select name="source_type" class="form-control"><option value="html" {{ supplier.source_type == 'html' ? 'selected' : '' }}>{{ text_source_type_html }}</option><option value="feed" {{ supplier.source_type == 'feed' ? 'selected' : '' }}>{{ text_source_type_feed }}</option></select></div>
+                      <div class="col-sm-4"><label>{{ entry_feed_format }}</label><select name="feed_format" class="form-control"><option value="auto" {{ supplier.feed_format == 'auto' ? 'selected' : '' }}>Auto</option><option value="xml" {{ supplier.feed_format == 'xml' ? 'selected' : '' }}>XML/YML</option><option value="csv" {{ supplier.feed_format == 'csv' ? 'selected' : '' }}>CSV</option></select></div>
+                      <div class="col-sm-4"><label>{{ entry_feed_file }}</label><input type="file" name="feed_file_upload" class="form-control" />{% if supplier.feed_file %}<div class="help-block">{{ text_feed_file_current }}: {{ supplier.feed_file }}</div>{% endif %}</div>
+                      <div class="col-sm-12"><label>{{ entry_feed_url }}</label><input type="text" name="feed_url" value="{{ supplier.feed_url }}" class="form-control" placeholder="https://supplier.com/feed.xml" /><div class="help-block">{{ text_feed_help }}</div></div>
+                      <div class="col-sm-12"><div class="ccp-note ccp-note-info"><i class="fa fa-file-code-o"></i> {{ text_feed_mapping_help }}</div></div>
+                      <div class="col-sm-12 ccp-feed-map-box">
+                        <div class="ccp-note ccp-note-info"><b>{{ text_feed_mapping_title }}</b><br>{{ text_feed_mapping_intro }}</div>
+                        <button type="button" id="btn-auto-detect-feed" class="btn btn-info btn-sm"><i class="fa fa-magic"></i> {{ button_auto_detect_feed }}</button>
+                        <button type="button" id="btn-apply-feed-detected-to-form" class="btn btn-success btn-sm"><i class="fa fa-check"></i> {{ button_apply_feed_detected }}</button>
+                        <span id="feed-auto-detect-save-result" class="ccp-muted"></span>
+                        <div id="feed-auto-detect-result" class="ccp-auto-detect-result" style="margin-top:8px;"></div>
+                      </div>
+                      <div class="col-sm-3"><label>{{ entry_feed_item_path }}</label><input type="text" name="feed_item_path" value="{{ supplier.feed_item_path }}" class="form-control" placeholder="offer" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_url_path }}</label><input type="text" name="feed_url_path" value="{{ supplier.feed_url_path }}" class="form-control" placeholder="url" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_sku_path }}</label><input type="text" name="feed_sku_path" value="{{ supplier.feed_sku_path }}" class="form-control" placeholder="vendorCode / sku" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_name_path }}</label><input type="text" name="feed_name_path" value="{{ supplier.feed_name_path }}" class="form-control" placeholder="name" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_price_path }}</label><input type="text" name="feed_price_path" value="{{ supplier.feed_price_path }}" class="form-control" placeholder="price" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_stock_path }}</label><input type="text" name="feed_stock_path" value="{{ supplier.feed_stock_path }}" class="form-control" placeholder="available / stock" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_quantity_path }}</label><input type="text" name="feed_quantity_path" value="{{ supplier.feed_quantity_path }}" class="form-control" placeholder="quantity" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_category_path }}</label><input type="text" name="feed_category_path" value="{{ supplier.feed_category_path }}" class="form-control" placeholder="category / categoryId" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_description_path }}</label><input type="text" name="feed_description_path" value="{{ supplier.feed_description_path }}" class="form-control" placeholder="description" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_manufacturer_path }}</label><input type="text" name="feed_manufacturer_path" value="{{ supplier.feed_manufacturer_path }}" class="form-control" placeholder="vendor / brand" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_image_path }}</label><input type="text" name="feed_image_path" value="{{ supplier.feed_image_path }}" class="form-control" placeholder="picture / image" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_ean_path }}</label><input type="text" name="feed_ean_path" value="{{ supplier.feed_ean_path }}" class="form-control" placeholder="ean" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_upc_path }}</label><input type="text" name="feed_upc_path" value="{{ supplier.feed_upc_path }}" class="form-control" placeholder="upc" /></div>
+                      <div class="col-sm-3"><label>{{ entry_feed_mpn_path }}</label><input type="text" name="feed_mpn_path" value="{{ supplier.feed_mpn_path }}" class="form-control" placeholder="mpn" /></div>
+                      <div class="col-sm-6"><label>{{ entry_source_language }}</label><select name="source_language_code" class="form-control"><option value="">{{ text_none }}</option>{% for lang in languages %}<option value="{{ lang.code }}" {{ supplier.source_language_code == lang.code ? 'selected' : '' }}>{{ lang.name }} ({{ lang.code }})</option>{% endfor %}</select></div>
+                      <div class="col-sm-6"><label>{{ entry_target_language }}</label><select name="target_language_id" class="form-control">{% for lang in languages %}<option value="{{ lang.language_id }}" {{ supplier.target_language_id == lang.language_id ? 'selected' : '' }}>{{ lang.name }} ({{ lang.code }})</option>{% endfor %}</select></div>
+                    </div>
+                  </div>
+
+                  <div class="ccp-card">
+                    <div class="ccp-card-title"><i class="fa fa-percent"></i> {{ tab_settings }}</div>
+                    <div class="ccp-note ccp-note-warning"><i class="fa fa-lock"></i> {{ text_commercial_safe_apply_note|default('Коммерческий режим безопасности: сканирование и проверка только готовят предпросмотр. Цены, наличие и новые товары применяются вручную из вкладок «Предпросмотр» и «Новые товары».') }}</div>
+                    <div class="row ccp-form-grid">
+                      <div class="col-sm-3"><label>{{ entry_price_formula_mode }}</label><select name="price_formula_mode" class="form-control"><option value="retail_discount_markup" {{ supplier.price_formula_mode == 'retail_discount_markup' ? 'selected' : '' }}>{{ text_formula_retail_discount_markup }}</option><option value="same_as_supplier" {{ supplier.price_formula_mode == 'same_as_supplier' ? 'selected' : '' }}>{{ text_formula_same }}</option><option value="purchase_markup" {{ supplier.price_formula_mode == 'purchase_markup' ? 'selected' : '' }}>{{ text_formula_purchase_markup }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_discount }}</label><input type="number" step="0.01" name="discount_percent" value="{{ supplier.discount_percent }}" class="form-control" /></div>
+                      <div class="col-sm-3"><label>{{ entry_markup }}</label><input type="number" step="0.01" name="markup_percent" value="{{ supplier.markup_percent }}" class="form-control" /></div>
+                      <div class="col-sm-3"><label>{{ entry_min_margin }}</label><input type="number" step="0.01" name="min_margin_percent" value="{{ supplier.min_margin_percent }}" class="form-control" /></div>
+                      <div class="col-sm-3"><label>{{ entry_max_price_change }}</label><input type="number" step="0.01" name="max_price_change_percent" value="{{ supplier.max_price_change_percent }}" class="form-control" /></div>
+                      <div class="col-sm-3"><label>{{ entry_rounding }}</label><select name="rounding_mode" class="form-control"><option value="two" {{ supplier.rounding_mode == 'two' ? 'selected' : '' }}>{{ text_rounding_two }}</option><option value="integer" {{ supplier.rounding_mode == 'integer' ? 'selected' : '' }}>{{ text_rounding_integer }}</option><option value="up_integer" {{ supplier.rounding_mode == 'up_integer' ? 'selected' : '' }}>{{ text_rounding_up_integer }}</option><option value="none" {{ supplier.rounding_mode == 'none' ? 'selected' : '' }}>{{ text_rounding_none }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_delay }}</label><input type="number" name="request_delay_ms" value="{{ supplier.request_delay_ms }}" class="form-control" /></div>
+                      <div class="col-sm-4"><label>{{ entry_category }}</label><select name="default_category_id" class="form-control"><option value="0">{{ text_none }}</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {{ supplier.default_category_id == cat.category_id ? 'selected' : '' }}>{{ cat.name }}</option>{% endfor %}</select></div>
+                      <div class="col-sm-4"><label>{{ entry_force_new_category }}</label><select name="force_new_category_id" class="form-control"><option value="0">{{ text_none }}</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {{ supplier.force_new_category_id == cat.category_id ? 'selected' : '' }}>{{ cat.name }}</option>{% endfor %}</select></div>
+                      <div class="col-sm-4"><label>{{ entry_stock_status }}</label><select name="default_stock_status_id" class="form-control"><option value="0">{{ text_none }}</option>{% for st in stock_statuses %}<option value="{{ st.stock_status_id }}" {{ supplier.default_stock_status_id == st.stock_status_id ? 'selected' : '' }}>{{ st.name }}</option>{% endfor %}</select></div>
+                      <div class="col-sm-3"><label>{{ entry_create_new }}</label><select name="create_new" class="form-control ccp-new-flag"><option value="0" {{ not supplier.create_new ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.create_new ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_create_new_status }}</label><select name="create_new_status" class="form-control ccp-new-flag"><option value="0" {{ not supplier.create_new_status ? 'selected' : '' }}>{{ text_disabled }}</option><option value="1" {{ supplier.create_new_status ? 'selected' : '' }}>{{ text_enabled }}</option></select><div class="help-block ccp-new-flags-status"></div></div>
+                      <div class="col-sm-2"><label>{{ entry_new_tax_class_id }}</label><input type="number" name="new_tax_class_id" value="{{ supplier.new_tax_class_id }}" class="form-control" /></div>
+                      <div class="col-sm-2"><label>{{ entry_new_minimum }}</label><input type="number" name="new_minimum" value="{{ supplier.new_minimum }}" class="form-control" /></div>
+                      <div class="col-sm-2"><label>{{ entry_new_subtract }}</label><select name="new_subtract" class="form-control"><option value="1" {{ supplier.new_subtract ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.new_subtract ? 'selected' : '' }}>{{ text_no }}</option></select></div>
+                      <div class="col-sm-2"><label>{{ entry_new_shipping }}</label><select name="new_shipping" class="form-control"><option value="1" {{ supplier.new_shipping ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.new_shipping ? 'selected' : '' }}>{{ text_no }}</option></select></div>
+                      <div class="col-sm-2"><label>{{ entry_new_sort_order }}</label><input type="number" name="new_sort_order" value="{{ supplier.new_sort_order }}" class="form-control" /></div>
+                      <div class="col-sm-2"><label>{{ entry_new_store_id }}</label><input type="number" name="new_store_id" value="{{ supplier.new_store_id }}" class="form-control" /></div>
+                      <div class="col-sm-4"><label>{{ entry_seo_url_mode }}</label><select name="seo_url_mode" class="form-control"><option value="all_languages" {{ supplier.seo_url_mode == 'all_languages' ? 'selected' : '' }}>{{ text_seo_all_languages }}</option><option value="main_language" {{ supplier.seo_url_mode == 'main_language' ? 'selected' : '' }}>{{ text_seo_main_language }}</option><option value="none" {{ supplier.seo_url_mode == 'none' ? 'selected' : '' }}>{{ text_none }}</option></select></div>
+                      <div class="col-sm-4"><label>{{ entry_min_new_price }}</label><input type="number" step="0.01" name="min_new_price" value="{{ supplier.min_new_price }}" class="form-control" /></div>
+                      <div class="col-sm-4"><label>{{ entry_max_new_price }}</label><input type="number" step="0.01" name="max_new_price" value="{{ supplier.max_new_price }}" class="form-control" /><div class="help-block">{{ help_price_guards }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_match_source }}</label><select name="match_source" class="form-control"><option value="auto" {{ supplier.match_source == 'auto' ? 'selected' : '' }}>{{ text_match_auto }}</option>{% for field in ['sku','model','upc','ean','jan','mpn','isbn'] %}<option value="{{ field }}" {{ supplier.match_source == field ? 'selected' : '' }}>{{ field|upper }}</option>{% endfor %}</select><div class="help-block">{{ help_match_mapping }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_match_target }}</label><select name="match_target" class="form-control">{% for field in ['sku','model','upc','ean','jan','mpn','isbn'] %}<option value="{{ field }}" {{ supplier.match_target == field ? 'selected' : '' }}>{{ field|upper }}</option>{% endfor %}</select><div class="help-block">{{ help_match_mapping }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_cron_enabled }}</label><select name="cron_enabled" class="form-control"><option value="0" {{ not supplier.cron_enabled ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.cron_enabled ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_cron_profile }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_cron_interval_minutes }}</label><input type="number" min="5" max="10080" name="cron_interval_minutes" value="{{ supplier.cron_interval_minutes }}" class="form-control" /><div class="help-block">{{ help_cron_profile }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_auto_apply_existing }}</label><select name="auto_apply_existing" class="form-control"><option value="0" {{ not supplier.auto_apply_existing ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.auto_apply_existing ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_cron_profile }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_update_price }}</label><select name="update_price" class="form-control"><option value="1" {{ supplier.update_price ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.update_price ? 'selected' : '' }}>{{ text_no }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_update_stock }}</label><select name="update_stock" class="form-control"><option value="1" {{ supplier.update_stock ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.update_stock ? 'selected' : '' }}>{{ text_no }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_missing_policy }}</label><select name="missing_policy" class="form-control"><option value="report" {{ supplier.missing_policy == 'report' ? 'selected' : '' }}>{{ text_missing_policy_report }}</option><option value="out_of_stock" {{ supplier.missing_policy == 'out_of_stock' ? 'selected' : '' }}>{{ text_missing_policy_out }}</option><option value="zero_qty" {{ supplier.missing_policy == 'zero_qty' ? 'selected' : '' }}>{{ text_missing_policy_zero }}</option><option value="disable" {{ supplier.missing_policy == 'disable' ? 'selected' : '' }}>{{ text_missing_policy_disable }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_existing_description_mode }}</label><select name="existing_description_mode" class="form-control"><option value="keep" {{ supplier.existing_description_mode == 'keep' ? 'selected' : '' }}>{{ text_mode_keep }}</option><option value="update_empty" {{ supplier.existing_description_mode == 'update_empty' ? 'selected' : '' }}>{{ text_mode_update_empty }}</option><option value="overwrite" {{ supplier.existing_description_mode == 'overwrite' ? 'selected' : '' }}>{{ text_mode_overwrite }}</option></select></div>
+                      <div class="col-sm-2"><label>{{ entry_import_attributes }}</label><select name="import_attributes" class="form-control"><option value="0" {{ not supplier.import_attributes ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.import_attributes ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
+                      <div class="col-sm-2"><label>{{ entry_import_options }}</label><select name="import_options" class="form-control"><option value="0" {{ not supplier.import_options ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.import_options ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_import_additional_images }}</label><select name="import_additional_images" class="form-control"><option value="0" {{ not supplier.import_additional_images ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.import_additional_images ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_import_additional_images }}</div></div>
+                      <div class="col-sm-2"><label>{{ entry_fill_all_languages }}</label><select name="fill_all_languages" class="form-control"><option value="0" {{ not supplier.fill_all_languages ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.fill_all_languages ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
+                      <div class="col-sm-2"><label>{{ entry_require_test_success }}</label><select name="require_test_success" class="form-control"><option value="0" {{ not supplier.require_test_success ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.require_test_success ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
+                      <div class="col-sm-12"><div class="help-block">{{ help_missing_policy }}{% if supplier.last_test_date %} · test: {{ supplier.last_test_ok ? 'OK' : 'ERROR' }} {{ supplier.last_test_date }}{% endif %}</div></div>
+                      <div class="col-sm-6"><label>{{ entry_user_agent }}</label><input type="text" name="user_agent" value="{{ supplier.user_agent }}" class="form-control" /></div>
+                    </div>
+                    <div class="help-block">{{ text_manual_mode }}</div>
+                  </div>
+                  <div class="text-right"><button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button></div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-rules">
+            <form action="{{ action }}" method="post" enctype="multipart/form-data" class="form-horizontal">
+              <input type="hidden" name="source_preset" value="{{ source_preset }}" />
+              <input type="hidden" name="save_supplier" value="1" />
+              <input type="hidden" name="supplier_id" id="rules-supplier-id" value="{{ supplier.supplier_id }}" />
+              <input type="hidden" name="active_tab" class="ccp-active-tab-input" value="{{ active_tab }}" />
+              <div class="ccp-card ccp-rules-wizard">
+                <div class="ccp-card-title"><i class="fa fa-magic"></i> {{ text_rules_quick_setup_title }}</div>
+                <div class="ccp-note ccp-note-info"><i class="fa fa-info-circle"></i> {{ text_rules_quick_setup_intro }}</div>
+                <div class="ccp-mini-steps">
+                  <span><b>1</b> {{ text_rules_step_product_url }}</span>
+                  <span><b>2</b> {{ text_rules_step_choose_values }}</span>
+                  <span><b>3</b> {{ text_rules_step_save_rules }}</span>
+                  <span><b>4</b> {{ text_rules_step_test }}</span>
+                </div>
+                <div class="row ccp-form-grid ccp-simple-scan-grid">
+                  <div class="col-sm-8"><label>{{ text_rules_product_scan_label }}</label><input type="text" id="rules-auto-detect-url" value="{{ supplier_first_product_url }}" class="form-control" placeholder="https://supplier.com/product" /><div class="help-block">{{ help_rules_product_scan }}</div></div>
+                  <div class="col-sm-4 ccp-wizard-buttons"><label>&nbsp;</label><button type="button" class="btn btn-info btn-block" id="btn-rules-auto-detect"><i class="fa fa-search"></i> {{ button_scan_product_page }}</button></div>
+                  <div class="col-sm-8"><label>{{ text_rules_list_scan_label }}</label><input type="text" id="rules-list-detect-url" value="{{ supplier_first_list_url }}" class="form-control" placeholder="https://supplier.com/category" /><div class="help-block">{{ help_rules_list_scan }}</div></div>
+                  <div class="col-sm-4 ccp-wizard-buttons"><label>&nbsp;</label><button type="button" class="btn btn-primary btn-block" id="btn-rules-detect-list-links"><i class="fa fa-sitemap"></i> {{ button_detect_list_links }}</button></div>
+                </div>
+                <div class="ccp-note ccp-note-warning"><i class="fa fa-check-circle"></i> {{ text_auto_detect_best_hint }}</div>
+                <div id="rules-auto-detect-result" class="ccp-auto-detect-result"></div>
+                <div class="ccp-actions ccp-rules-wizard-actions"><button type="button" class="btn btn-default btn-sm" id="btn-rules-apply-detected-to-form"><i class="fa fa-level-down"></i> {{ button_apply_detected_to_form }}</button><button type="button" class="btn btn-success btn-sm" id="btn-rules-save-detected-rules"><i class="fa fa-save"></i> {{ button_save_detected_rules }}</button></div>
+                <div id="rules-auto-detect-save-result" class="ccp-result-line"></div>
+              </div>
+              <div class="ccp-card">
+                <div class="ccp-card-title ccp-title-row"><span><i class="fa fa-code"></i> {{ text_rules_manual_title }}</span><span class="ccp-muted">{{ text_rules_manual_intro }}</span></div>
+                <div class="alert alert-info ccp-alert"><i class="fa fa-info-circle"></i> {{ help_xpath }}</div>
+                <button type="button" class="btn btn-default btn-sm ccp-manual-toggle" data-toggle="collapse" data-target="#ccp-manual-rules"><i class="fa fa-sliders"></i> {{ button_rules_manual_toggle }}</button>
+                <div id="ccp-manual-rules" class="collapse">
+                <div class="row ccp-form-grid">
+                  <div class="col-sm-9"><label>{{ entry_product_url_xpath }}</label><input type="text" name="product_url_xpath" value="{{ supplier.product_url_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_product_url_attr }}</label><input type="text" name="product_url_attr" value="{{ supplier.product_url_attr }}" class="form-control" /></div>
+                  <div class="col-sm-6"><label>{{ entry_list_category_xpath }}</label><input type="text" name="list_category_xpath" value="{{ supplier.list_category_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-6"><label>{{ entry_next_page_xpath }}</label><input type="text" name="next_page_xpath" value="{{ supplier.next_page_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_sku_xpath }}</label><input type="text" name="sku_xpath" value="{{ supplier.sku_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_model_xpath }}</label><input type="text" name="model_xpath" value="{{ supplier.model_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_ean_xpath }}</label><input type="text" name="ean_xpath" value="{{ supplier.ean_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_jan_xpath }}</label><input type="text" name="jan_xpath" value="{{ supplier.jan_xpath }}" class="form-control" /><div class="help-block">{{ help_match_mapping }}</div></div>
+                  <div class="col-sm-3"><label>{{ entry_isbn_xpath }}</label><input type="text" name="isbn_xpath" value="{{ supplier.isbn_xpath }}" class="form-control" /><div class="help-block">{{ help_match_mapping }}</div></div>
+                  <div class="col-sm-3"><label>{{ entry_upc_xpath }}</label><input type="text" name="upc_xpath" value="{{ supplier.upc_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_mpn_xpath }}</label><input type="text" name="mpn_xpath" value="{{ supplier.mpn_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-6"><label>{{ entry_name_xpath }}</label><input type="text" name="name_xpath" value="{{ supplier.name_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-6"><label>{{ entry_price_xpath }}</label><input type="text" name="price_xpath" value="{{ supplier.price_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-6"><label>{{ entry_stock_xpath }}</label><input type="text" name="stock_xpath" value="{{ supplier.stock_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-12"><label>{{ entry_category_xpath }}</label><input type="text" name="category_xpath" value="{{ supplier.category_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_description_xpath }}</label><input type="text" name="description_xpath" value="{{ supplier.description_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_meta_description_xpath }}</label><input type="text" name="meta_description_xpath" value="{{ supplier.meta_description_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_meta_keyword_xpath }}</label><input type="text" name="meta_keyword_xpath" value="{{ supplier.meta_keyword_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-6"><label>{{ entry_manufacturer_xpath }}</label><input type="text" name="manufacturer_xpath" value="{{ supplier.manufacturer_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-9"><label>{{ entry_image_xpath }}</label><input type="text" name="image_xpath" value="{{ supplier.image_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_image_attr }}</label><input type="text" name="image_attr" value="{{ supplier.image_attr }}" class="form-control" /></div>
+                  <div class="col-sm-12"><label>{{ entry_additional_images_xpath }}</label><input type="text" name="additional_images_xpath" value="{{ supplier.additional_images_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_attribute_row_xpath }}</label><input type="text" name="attribute_row_xpath" value="{{ supplier.attribute_row_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_attribute_name_xpath }}</label><input type="text" name="attribute_name_xpath" value="{{ supplier.attribute_name_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_attribute_value_xpath }}</label><input type="text" name="attribute_value_xpath" value="{{ supplier.attribute_value_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_option_row_xpath }}</label><input type="text" name="option_row_xpath" value="{{ supplier.option_row_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_option_name_xpath }}</label><input type="text" name="option_name_xpath" value="{{ supplier.option_name_xpath }}" class="form-control" /></div>
+                  <div class="col-sm-4"><label>{{ entry_option_value_xpath }}</label><input type="text" name="option_value_xpath" value="{{ supplier.option_value_xpath }}" class="form-control" /></div>
+                  <input type="hidden" name="source_adapter" value="{{ supplier.source_adapter }}" />
+                  <div class="col-sm-12"><label>{{ entry_new_category_name }}</label><input type="text" name="new_category_name" value="{{ supplier.new_category_name }}" class="form-control" maxlength="255" /><div class="help-block">{{ help_new_category_name }}</div></div>
+                  <div class="col-sm-6"><label>{{ entry_stock_map }}</label><textarea name="stock_map_text" rows="6" class="form-control">{{ stock_map_text }}</textarea><div class="help-block">{{ help_stock_map }}</div></div>
+                  <div class="col-sm-6"><label>{{ entry_in_stock_quantity }}</label><input type="number" min="0" max="2147483647" name="in_stock_quantity" value="{{ supplier.in_stock_quantity }}" class="form-control" /><div class="help-block">{{ help_in_stock_quantity }}</div><label>{{ entry_unknown_stock_policy }}</label><select name="unknown_stock_policy" class="form-control"><option value="keep" {{ supplier.unknown_stock_policy == 'keep' ? 'selected' : '' }}>{{ text_stock_keep }}</option><option value="zero" {{ supplier.unknown_stock_policy == 'zero' ? 'selected' : '' }}>{{ text_stock_zero }}</option></select><label>{{ entry_update_stock_status }}</label><select name="update_stock_status" class="form-control"><option value="1" {{ supplier.update_stock_status ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.update_stock_status ? 'selected' : '' }}>{{ text_no }}</option></select><div class="help-block">{{ help_update_stock_status }}</div></div>
+                  <div class="col-sm-6"><label>{{ entry_category_map }}</label><textarea name="category_map_text" rows="6" class="form-control">{{ category_map_text }}</textarea><div class="help-block">{{ help_category_map }}</div></div>
+                  <div class="col-sm-4"><label>{{ entry_excluded_skus }}</label><textarea name="excluded_skus_text" rows="4" class="form-control">{{ excluded_skus_text }}</textarea></div>
+                  <div class="col-sm-4"><label>{{ entry_excluded_urls }}</label><textarea name="excluded_urls_text" rows="4" class="form-control">{{ excluded_urls_text }}</textarea></div>
+                  <div class="col-sm-4"><label>{{ entry_excluded_categories }}</label><textarea name="excluded_categories_text" rows="4" class="form-control">{{ excluded_categories_text }}</textarea><div class="help-block">{{ help_exclusions }}</div></div>
+                </div>
+                </div>
+              </div>
+              <div class="text-right"><button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button></div>
+            </form>
+          </div>
+
+          <div class="tab-pane" id="tab-review">
+            <div class="ccp-card ccp-card-main">
+              <div class="ccp-card-title ccp-title-row"><span><i class="fa fa-eye"></i> {{ tab_review }}</span><span class="ccp-muted">{{ text_sort_hint }}</span></div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-shield"></i> {{ help_review }}</div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-filter"></i> {{ text_server_filter_hint }} {{ text_pagination_summary }} {{ review_page.total }} / limit {{ review_page.limit }} / page {{ review_page.page }}</div><div class="ccp-pagination" data-prefix="review" data-page="{{ review_page.page }}" data-total="{{ review_page.total }}" data-limit="{{ review_page.limit }}"></div>
+              <div class="ccp-stats">
+                <div class="ccp-stat ccp-stat-main"><span>{{ column_total }}</span><b>{{ review_stats.total }}</b></div>
+                <div class="ccp-stat"><span>{{ text_price_changed }}</span><b>{{ review_stats.price_changed }}</b></div>
+                <div class="ccp-stat"><span>{{ text_stock_changed }}</span><b>{{ review_stats.stock_changed }}</b></div>
+                <div class="ccp-stat ccp-stat-warn"><span>{{ status_labels.price_warning }}</span><b>{{ review_stats.warnings }}</b></div>
+                <div class="ccp-stat"><span>{{ text_new }}</span><b>{{ review_stats.new_rows }}</b></div>
+                <div class="ccp-stat"><span>{{ status_labels.duplicate }}</span><b>{{ review_stats.duplicates }}</b></div>
+                <div class="ccp-stat"><span>{{ text_excluded }}</span><b>{{ review_stats.excluded }}</b></div>
+              </div>
+              <div class="ccp-toolbar">
+                <div class="ccp-actions ccp-actions-primary">
+                  <span class="ccp-selected-counter" data-counter="review">{{ text_selected_rows }}: 0</span><button type="button" class="btn btn-primary btn-sm ccp-apply" data-mode="update_price"><i class="fa fa-money"></i> {{ button_apply_price }}</button>
+                  <button type="button" class="btn btn-info btn-sm ccp-apply" data-mode="update_stock"><i class="fa fa-cubes"></i> {{ button_apply_stock }}</button>
+                  <button type="button" class="btn btn-success btn-sm ccp-apply" data-mode="update_price_stock"><i class="fa fa-check"></i> {{ button_apply_price_stock }}</button>
+                  <button type="button" class="btn btn-primary btn-sm ccp-apply" data-mode="full_update"><i class="fa fa-refresh"></i> {{ button_full_update }}</button>
+                  <button type="button" class="btn btn-success btn-sm ccp-apply" data-mode="move_to_new"><i class="fa fa-level-down"></i> {{ button_create_selected }}</button>
+                  <button type="button" class="btn btn-warning btn-sm ccp-apply" data-mode="skip"><i class="fa fa-ban"></i> {{ button_skip_selected }}</button>
+                  <button type="button" class="btn btn-danger btn-sm ccp-apply" data-mode="skip_exclude"><i class="fa fa-times-circle"></i> {{ button_exclude_selected }}</button>
+                </div>
+                <div class="ccp-actions ccp-actions-danger">
+                  <button type="button" class="btn btn-danger btn-sm ccp-apply" data-mode="update_price_force"><i class="fa fa-exclamation-triangle"></i> {{ button_force_price }}</button>
+                  <button type="button" class="btn btn-danger btn-sm ccp-apply" data-mode="update_price_stock_force"><i class="fa fa-exclamation-circle"></i> {{ button_force_price_stock }}</button>
+                  <button type="button" class="btn btn-danger btn-sm" id="btn-delete-review-selected"><i class="fa fa-trash-o"></i> {{ button_delete_selected_reviews }}</button>
+                  <button type="button" class="btn btn-danger btn-sm" id="btn-clear-reviews"><i class="fa fa-trash"></i> {{ button_clear_reviews }}</button>
+                </div>
+              </div>
+              <div class="ccp-note ccp-note-warning"><i class="fa fa-exclamation-triangle"></i> {{ help_price_warning }}</div><div class="ccp-note ccp-note-info"><i class="fa fa-exchange"></i> {{ text_compare_names_hint }}</div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-link"></i> {{ help_manual_match }}</div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-info-circle"></i> {{ text_preview_move_to_new_hint }}</div>
+              <div class="ccp-filters ccp-filter-grid">
+                <input type="text" id="filter-review-text" class="form-control input-sm" value="{{ review_filters.text }}" placeholder="{{ entry_filter_text }}" />
+                <select id="filter-review-status" class="form-control input-sm" data-current="{{ review_filters.status }}"><option value="">{{ entry_filter_status }}</option><option value="pending">{{ status_labels.pending }}</option><option value="price_warning">{{ status_labels.price_warning }}</option><option value="duplicate">{{ status_labels.duplicate }}</option><option value="excluded">{{ status_labels.excluded }}</option><option value="applied">{{ status_labels.applied }}</option><option value="created">{{ status_labels.created }}</option><option value="skipped">{{ status_labels.skipped }}</option><option value="error">{{ status_labels.error }}</option></select>
+                <select id="filter-review-type" class="form-control input-sm" data-current="{{ review_filters.type }}"><option value="">{{ entry_filter_type }}</option><option value="existing">{{ type_labels.existing }}</option><option value="new">{{ type_labels.new }}</option><option value="excluded">{{ status_labels.excluded }}</option></select>
+                <select id="filter-review-change" class="form-control input-sm" data-current="{{ review_filters.change }}"><option value="">{{ entry_filter_change }}</option><option value="changed">{{ button_only_changed }}</option><option value="price">{{ text_price_changed }}</option><option value="stock">{{ text_stock_changed }}</option><option value="price_stock">{{ text_price_stock_changed }}</option><option value="same">{{ text_same }}</option></select>
+                <button type="button" class="btn btn-primary btn-sm ccp-server-filter" data-prefix="review"><i class="fa fa-filter"></i> {{ button_apply_server_filters }}</button><button type="button" class="btn btn-default btn-sm" id="btn-filter-reset"><i class="fa fa-eraser"></i> {{ button_filter_reset }}</button>
+              </div>
+              <div id="review-result" class="ccp-result"></div>
+              <div class="ccp-scroll ccp-review-scroll">
+                <table class="table table-condensed table-striped table-hover ccp-sortable ccp-compact-table" id="table-review">
+                  <thead>
+                    <tr>
+                      <th class="ccp-nosort"><input type="checkbox" id="review-check-all" /></th>
+                      <th data-sort="review_id">ID</th>
+                      <th data-sort="type">{{ column_type }}</th>
+                      <th data-sort="supplier_name">{{ column_supplier_product }}</th>
+                      <th>{{ column_local_product }}</th>
+                      <th data-sort="sku">{{ column_sku }}</th>
+                      <th>{{ column_category }}</th>
+                      <th data-sort="supplier_price">{{ column_supplier_price }}</th>
+                      <th data-sort="local_price">{{ column_local_price }}</th>
+                      <th data-sort="sale_price">{{ column_new_price }}</th>
+                      <th data-sort="price_delta_abs">{{ column_delta }}</th>
+                      <th>{{ column_changed }}</th>
+                      <th>{{ column_supplier_stock }}</th>
+                      <th>{{ column_local_stock }}</th>
+                      <th>{{ column_match }}</th>
+                      <th data-sort="status">{{ text_status }}</th>
+                      <th>{{ column_action }}</th>
+                      <th>{{ column_error }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if reviews %}{% for row in reviews %}
+                    {% set price_changed = row.price_delta_abs != 0 %}
+                    {% set stock_changed = (row.supplier_quantity != row.local_quantity) or (row.supplier_stock_status_id != row.local_stock_status_id) %}
+                    {% set row_change = price_changed and stock_changed ? 'price_stock' : (price_changed ? 'price' : (stock_changed ? 'stock' : 'same')) %}
+                    <tr class="ccp-review-row ccp-status-{{ row.status }} ccp-type-{{ row.review_type }} ccp-change-{{ row_change }}" data-status="{{ row.status }}" data-type="{{ row.review_type }}" data-change="{{ row_change }}" data-review-id="{{ row.review_id }}" data-supplier-name="{{ row.supplier_name|e('html_attr') }}" data-supplier-sku="{{ row.supplier_sku|e('html_attr') }}">
+                      <td><input type="checkbox" class="review-check" value="{{ row.review_id }}" /></td>
+                      <td>{{ row.review_id }}</td>
+                      <td><span class="ccp-badge-mini ccp-badge-type">{{ type_labels[row.review_type]|default(row.review_type) }}</span></td>
+                      <td><b>{{ row.supplier_name }}</b><br><span class="ccp-url-wrap">{% if row.supplier_product_url|slice(0,4) == 'http' %}<a href="{{ row.supplier_product_url }}" target="_blank" rel="noopener" class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</a>{% else %}<span class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</span>{% endif %}<button type="button" class="btn btn-default btn-xs ccp-copy-url" data-copy="{{ row.supplier_product_url|e('html_attr') }}" title="{{ text_copy_url|default('Копировать ссылку') }}"><i class="fa fa-copy"></i></button></span></td>
+                      <td>
+                        <div class="ccp-local-name">{% if row.product_id %}#{{ row.product_id }} {{ row.local_name }}{% else %}{{ text_none }}{% endif %}</div>
+                        <button type="button" class="btn btn-default btn-xs ccp-toggle-match"><i class="fa fa-link"></i> {{ button_toggle_match }}</button>
+                        <div class="ccp-manual-match">
+                          <input type="text" class="form-control input-sm ccp-match-query" placeholder="{{ entry_product_search }}" />
+                          <button type="button" class="btn btn-default btn-xs ccp-search-product" title="{{ text_match_search_hint }}"><i class="fa fa-search"></i> {{ button_search_product }}</button>
+                          <select class="form-control input-sm ccp-match-product"><option value="">{{ entry_manual_product_id }}</option></select>
+                          <button type="button" class="btn btn-primary btn-xs ccp-match-product-btn"><i class="fa fa-link"></i> {{ button_match_product }}</button>
+                          <div class="ccp-match-hint">{{ text_match_search_hint }}</div>
+                          {% if row.match_candidates %}
+                          <div class="ccp-match-candidates">
+                            <b>{{ text_match_candidates }}</b>
+                            {% for cand in row.match_candidates %}
+                              <button type="button" class="btn btn-default btn-xs ccp-candidate-pick" data-product-id="{{ cand.product_id }}" data-label="#{{ cand.product_id }} {{ cand.name|e('html_attr') }} / {{ cand.model|e('html_attr') }} / {{ cand.sku|e('html_attr') }} / {{ cand.price }} / {{ cand.similarity }}%">#{{ cand.product_id }} {{ cand.name }} ({{ cand.similarity }}%)</button>
+                            {% endfor %}
+                          </div>
+                          {% endif %}
+                        </div>
+                      </td>
+                      <td>{{ row.supplier_sku }}</td>
+                      <td>{% if row.supplier_category_clean is defined and row.supplier_category_clean %}{{ row.supplier_category_clean }}{% else %}<span class="ccp-muted">{{ text_none }}</span>{% endif %}</td>
+                      <td class="text-right">{% if row.supplier_raw_price is defined and row.supplier_raw_price > 0 %}<b>{{ row.supplier_raw_price }}</b> {{ row.supplier_currency }}<br><span class="ccp-muted">≈ {{ row.supplier_price }} {{ base_currency }}</span>{% else %}{{ row.supplier_price }} {{ base_currency }}{% endif %}</td>
+                      <td class="text-right ccp-local-price-cell">{{ row.local_price }} {{ base_currency }}</td>
+                      <td class="text-right"><b>{{ row.sale_price }}</b> {{ base_currency }}</td>
+                      <td class="text-right ccp-delta-cell">{{ row.price_delta_percent|round(2) }}%<br>{{ row.price_delta_abs }}</td>
+                      <td><span class="ccp-badge-mini ccp-change-label">{% if row_change == 'price_stock' %}{{ text_price_stock_changed }}{% elseif row_change == 'price' %}{{ text_price_changed }}{% elseif row_change == 'stock' %}{{ text_stock_changed }}{% else %}{{ text_same }}{% endif %}</span></td>
+                      <td>{% if row.supplier_stock_text %}{{ row.supplier_stock_text }}{% endif %}{% if row.supplier_quantity is not empty %}{% if row.supplier_stock_text %} / {% endif %}{{ row.supplier_quantity }}{% endif %}</td>
+                      <td class="ccp-local-quantity-cell">{{ row.local_quantity }}</td>
+                      <td class="ccp-match-source-cell">{% if row.match_source == 'none' or row.match_source is empty %}{{ text_none }}{% else %}{{ row.match_source }}{% endif %}</td>
+                      <td><span class="ccp-badge-mini ccp-status-label">{{ status_labels[row.status]|default(row.status) }}</span></td>
+                      <td class="ccp-row-action-cell"><select class="form-control input-sm ccp-row-action-mode"><option value="update_price">{{ button_apply_price }}</option><option value="update_stock">{{ button_apply_stock }}</option><option value="update_price_stock" selected>{{ button_apply_price_stock }}</option><option value="full_update">{{ button_full_update }}</option><option value="move_to_new">{{ button_create_selected }}</option><option value="skip">{{ button_skip_selected }}</option><option value="skip_exclude">{{ button_exclude_selected }}</option><option value="update_price_force">{{ button_force_price }}</option><option value="update_price_stock_force">{{ button_force_price_stock }}</option></select><button type="button" class="btn btn-primary btn-xs ccp-row-apply"><i class="fa fa-check"></i> {{ column_action }}</button></td>
+                      <td>{{ row.last_error }}</td>
+                    </tr>
+                    {% endfor %}{% else %}<tr><td colspan="18" class="text-center">{{ text_none }}</td></tr>{% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-mapping">
+            <div class="ccp-card">
+              <div class="ccp-card-title"><i class="fa fa-link"></i> {{ tab_mapping }}</div>
+              <div class="alert alert-info ccp-alert"><i class="fa fa-shield"></i> {{ help_existing_safe }}</div>
+              <div class="ccp-card-title"><i class="fa fa-sitemap"></i> {{ text_category_map_visual }}</div>
+              <div class="ccp-scroll ccp-list-scroll">
+                <table class="table table-condensed table-striped ccp-compact-table ccp-sortable">
+                  <thead><tr><th>{{ column_supplier }}</th><th>{{ column_category }}</th><th>{{ column_opencart_id }}</th><th>{{ text_status }}</th></tr></thead>
+                  <tbody>{% if category_map_rows %}{% for row in category_map_rows %}<tr><td>{{ row.provider_name }}</td><td>{{ row.supplier_category }}</td><td>#{{ row.category_id }} {{ row.category_name }}</td><td>{{ row.allow_import ? text_enabled : text_disabled }}</td></tr>{% endfor %}{% else %}<tr><td colspan="4" class="text-center">{{ text_none }}</td></tr>{% endif %}</tbody>
+                </table>
+              </div>
+              <br />
+              <div class="ccp-scroll">
+                <table class="table table-condensed table-striped ccp-sortable ccp-compact-table" id="table-mapping">
+                  <thead><tr><th>{{ column_supplier }}</th><th>{{ column_product }}</th><th>{{ column_sku }}</th><th>{{ column_price }}</th><th>{{ column_stock }}</th><th>{{ column_quantity }}</th><th>{{ column_checked }}</th><th>{{ column_error }}</th></tr></thead>
+                  <tbody>
+                    {% if links %}{% for row in links %}
+                    <tr><td>{{ row.provider_name }}</td><td>#{{ row.product_id }} {{ row.supplier_name }}</td><td>{{ row.supplier_sku }}</td><td>{{ row.last_sale_price }}</td><td>{{ row.last_stock_text }}</td><td>{{ row.last_quantity }}</td><td>{{ row.last_checked }}</td><td>{{ row.last_error }}</td></tr>
+                    {% endfor %}{% else %}<tr><td colspan="8" class="text-center">{{ text_none }}</td></tr>{% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-queue">
+            <div class="ccp-card">
+              <div class="ccp-card-title"><i class="fa fa-tasks"></i> {{ tab_queue }}</div>
+              <div class="ccp-master-strip"><span>1. {{ text_master_find_links|default('Найти ссылки') }}</span><span>2. {{ text_master_check_sample|default('Проверить первые 10') }}</span><span>3. {{ text_master_check_all|default('Проверить все') }}</span><span>4. {{ tab_review }}</span></div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-play-circle"></i> <b>{{ text_queue_scenario_title }}</b> {{ text_queue_scenario_direct }} {{ text_queue_scenario_scan }} {{ text_queue_scenario_linked }} {{ text_queue_scenario_run }}</div>
+              <div class="ccp-kpis">
+                <span>{{ column_total }}: <b id="kpi-total">{{ queue_stats.total }}</b></span>
+                <span>{{ column_pending }}: <b id="kpi-pending">{{ queue_stats.pending }}</b></span>
+                <span>{{ column_processing }}: <b id="kpi-processing">{{ queue_stats.processing }}</b></span>
+                <span>{{ column_done }}: <b id="kpi-done">{{ queue_stats.done }}</b></span>
+                <span>{{ column_error }}: <b id="kpi-error">{{ queue_stats.error }}</b></span>
+                <span>{{ column_skipped }}: <b id="kpi-skipped">{{ queue_stats.skipped }}</b></span>
+                <span>{{ text_remaining }}: <b id="kpi-remaining">{{ queue_stats.remaining }}</b></span>
+                <span>{{ text_found_preview }}: <b id="kpi-found-preview">{{ queue_stats.found_preview }}</b></span>
+                <span>{{ text_matched }}: <b id="kpi-matched">{{ queue_stats.matched }}</b></span>
+                <span>{{ text_unmatched }}: <b id="kpi-unmatched">{{ queue_stats.unmatched }}</b></span>
+                <span>{{ text_new_pending }}: <b id="kpi-new-pending">{{ queue_stats.new_pending }}</b></span>
+                <span>{{ text_eta }}: <b id="kpi-eta">{{ queue_stats.eta_seconds }}</b></span>
+                <span>{{ text_locked }}: <b id="kpi-locked">{{ queue_stats.locked }}</b></span>
+              </div>
+              <div class="ccp-queue-control">
+                <div class="ccp-queue-head"><label>{{ entry_supplier }}</label><select id="queue-supplier-id" class="form-control input-sm ccp-supplier-scope-select"><option value="0">{{ text_supplier_context_required }}</option>{% for item in suppliers %}<option value="{{ item.supplier_id }}" {{ supplier.supplier_id == item.supplier_id ? 'selected' : '' }}>{{ item.name }}</option>{% endfor %}</select></div>
+                <div class="ccp-queue-group"><div class="ccp-queue-group-title"><i class="fa fa-plus-circle"></i> {{ text_queue_group_create }}</div><div class="ccp-actions"><button type="button" class="btn btn-success btn-sm" id="btn-scan-site-all"><i class="fa fa-globe"></i> {{ button_scan_site_all }}</button><button type="button" class="btn btn-info btn-sm" id="btn-build-sitemap"><i class="fa fa-map"></i> {{ button_scan_sitemap }}</button><button type="button" class="btn btn-primary btn-sm" id="btn-build-scan"><i class="fa fa-sitemap"></i> {{ button_build_queue }}</button><button type="button" class="btn btn-default btn-sm" id="btn-build-product-urls"><i class="fa fa-list-alt"></i> {{ button_build_product_urls }}</button><button type="button" class="btn btn-primary btn-sm" id="btn-build-linked"><i class="fa fa-link"></i> {{ button_check_linked }}</button><button type="button" class="btn btn-info btn-sm" id="btn-build-new-only"><i class="fa fa-search-plus"></i> {{ button_scan_new_only }}</button><button type="button" class="btn btn-warning btn-sm" id="btn-build-feed-file"><i class="fa fa-file-code-o"></i> {{ button_build_feed_file }}</button></div><div class="ccp-muted">{{ text_queue_group_create_help }}</div></div>
+                <div class="ccp-queue-group ccp-queue-group-main"><div class="ccp-queue-group-title"><i class="fa fa-play"></i> {{ text_queue_group_process }}</div><div class="ccp-actions"><button type="button" class="btn btn-info btn-sm" id="btn-run-scan-batch"><i class="fa fa-link"></i> {{ button_run_scan_batch }}</button><button type="button" class="btn btn-primary btn-sm" id="btn-run-products-batch"><i class="fa fa-check"></i> {{ button_run_products_batch }}</button><button type="button" class="btn btn-success btn-sm" id="btn-run-products-until-done"><i class="fa fa-forward"></i> {{ button_run_products_until_done }}</button><button type="button" class="btn btn-warning btn-sm" id="btn-run-feed-until-done"><i class="fa fa-file-text-o"></i> {{ button_run_feed_until_done }}</button></div><div class="ccp-muted">{{ text_queue_group_process_help }}</div></div>
+                <div class="ccp-queue-group"><div class="ccp-queue-group-title"><i class="fa fa-wrench"></i> {{ text_queue_group_service }}</div><div class="ccp-actions"><button type="button" class="btn btn-warning btn-sm" id="btn-reset-processing"><i class="fa fa-refresh"></i> {{ button_reset_processing }}</button><button type="button" class="btn btn-info btn-sm" id="btn-recover-errors"><i class="fa fa-undo"></i> {{ button_recover_errors }}</button><button type="button" class="btn btn-default btn-sm" id="btn-resume-queue"><i class="fa fa-play-circle"></i> {{ button_resume_queue }}</button><button type="button" class="btn btn-danger btn-sm" id="btn-clear-queue"><i class="fa fa-trash"></i> {{ button_clear_queue }}</button></div><div class="ccp-muted">{{ text_queue_group_service_help }}</div></div>
+              </div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-tasks"></i> {{ text_batch_processing_hint }}<br>{{ text_limit_explain }}</div>
+              <div class="progress ccp-progress"><div id="queue-progress" class="progress-bar progress-bar-success" style="width:0%">0%</div></div>
+              <div class="ccp-live-stop-line"><button type="button" class="btn btn-danger btn-sm ccp-stop-current" id="btn-stop-queue"><i class="fa fa-stop"></i> {{ button_stop_current_process }}</button><span class="ccp-muted">{{ text_queue_category_next_step }}</span></div>
+              <div id="queue-result" class="ccp-result"></div><div class="ccp-actions ccp-queue-open-tabs"><a href="#tab-review" class="btn btn-default btn-xs ccp-open-tab"><i class="fa fa-eye"></i> {{ tab_review }}: <span id="queue-link-preview">{{ queue_stats.found_preview }}</span></a><a href="#tab-new" class="btn btn-default btn-xs ccp-open-tab"><i class="fa fa-plus-circle"></i> {{ tab_new }}: <span id="queue-link-new">{{ queue_stats.new_pending }}</span></a><a href="#tab-logs" class="btn btn-default btn-xs ccp-open-tab"><i class="fa fa-list"></i> {{ tab_logs }}</a></div><div id="queue-last-url" class="ccp-result">{{ text_last_url }}: {{ queue_stats.last_url }}</div>
+              <div class="ccp-table-control-line">
+                <div class="ccp-note ccp-note-info ccp-table-summary"><i class="fa fa-database"></i> {{ text_pagination_summary }} {{ queue_page.total }} / limit {{ queue_page.limit }} / page {{ queue_page.page }}</div>
+                <div class="ccp-pagination" data-prefix="queue" data-page="{{ queue_page.page }}" data-total="{{ queue_page.total }}" data-limit="{{ queue_page.limit }}"></div>
+                <div class="ccp-filters ccp-filter-grid ccp-filter-small"><input type="text" id="filter-queue-text" class="form-control input-sm" value="{{ queue_filters.text }}" placeholder="{{ entry_filter_text }}" /><button type="button" class="btn btn-primary btn-sm ccp-server-filter" data-prefix="queue"><i class="fa fa-filter"></i> {{ button_apply_server_filters }}</button></div>
+                <div class="ccp-actions ccp-actions-primary"><span class="ccp-muted"><i class="fa fa-check-square-o"></i> {{ text_bulk_actions }}</span><span class="ccp-selected-counter" data-counter="queue">{{ text_selected_rows }}: 0</span><button type="button" class="btn btn-primary btn-xs" id="btn-run-selected-scan"><i class="fa fa-sitemap"></i> {{ button_run_selected_scan }}</button><button type="button" class="btn btn-success btn-xs" id="btn-run-selected-products"><i class="fa fa-check"></i> {{ button_run_selected_products }}</button><button type="button" class="btn btn-info btn-xs" id="btn-queue-retry-selected"><i class="fa fa-refresh"></i> {{ button_retry_selected_queue }}</button><button type="button" class="btn btn-danger btn-xs" id="btn-queue-delete-selected"><i class="fa fa-trash"></i> {{ button_delete_selected_queue }}</button><span class="ccp-muted ccp-selected-run-hint">{{ text_queue_selected_run_hint }}</span></div>
+              </div>
+              <div class="ccp-scroll">
+                <table class="table table-condensed table-striped ccp-sortable ccp-compact-table" id="table-queue">
+                  <thead><tr><th class="ccp-nosort"><input type="checkbox" id="queue-check-all" /></th><th data-sort="queue_id">ID</th><th data-sort="supplier">{{ column_supplier }}</th><th data-sort="action">{{ column_action }}</th><th>{{ column_url }}</th><th data-sort="status">{{ text_status }}</th><th>{{ column_error }}</th><th data-sort="date">{{ column_date }}</th></tr></thead>
+                  <tbody>
+                    {% if queue %}{% for row in queue %}
+                    <tr><td><input type="checkbox" class="queue-check" value="{{ row.queue_id }}" /></td><td>{{ row.queue_id }}</td><td>{{ row.provider_name }}</td><td><span class="ccp-badge-mini">{{ row.action == 'scan_list' ? text_queue_action_scan_list : (row.action == 'check_product' ? text_queue_action_check_product : (row.action == 'import_item' ? text_queue_action_import_item : row.action)) }}</span></td><td>{% if row.payload_title %}<b>{{ row.payload_title }}</b><br>{% endif %}<span class="ccp-url-wrap">{% if row.supplier_product_url|slice(0,4) == 'http' %}<a href="{{ row.supplier_product_url }}" target="_blank" rel="noopener" class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</a>{% else %}<span class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</span>{% endif %}<button type="button" class="btn btn-default btn-xs ccp-copy-url" data-copy="{{ row.supplier_product_url|e('html_attr') }}" title="{{ text_copy_url|default('Копировать ссылку') }}"><i class="fa fa-copy"></i></button></span>{% if row.payload_mode %}<div class="ccp-muted">{{ row.payload_mode }}</div>{% endif %}</td><td><span class="ccp-badge-mini ccp-status-label">{{ status_labels[row.status]|default(row.status) }}</span></td><td>{{ row.last_error }}</td><td>{{ row.date_modified }}</td></tr>
+                    {% endfor %}{% else %}<tr><td colspan="8" class="text-center">{{ text_none }}</td></tr>{% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-new">
+            <div class="ccp-card ccp-card-main">
+              <div class="ccp-card-title ccp-title-row"><span><i class="fa fa-plus-circle"></i> {{ tab_new }}</span><span class="ccp-muted">{{ text_sort_hint }}</span></div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-eye"></i> {{ help_new_disabled }}</div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-link"></i> {{ help_new_seo_url }}</div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-info-circle"></i> {{ text_new_create_hint }}</div>
+              {% if supplier and not supplier.create_new %}<div class="ccp-note ccp-note-warning"><i class="fa fa-exclamation-triangle"></i> {{ text_new_creation_disabled_hint }}</div>{% endif %}
+              <div class="ccp-note ccp-note-info"><i class="fa fa-filter"></i> {{ text_server_filter_hint }} {{ text_pagination_summary }} {{ new_page.total }} / limit {{ new_page.limit }} / page {{ new_page.page }}</div><div class="ccp-pagination" data-prefix="new" data-page="{{ new_page.page }}" data-total="{{ new_page.total }}" data-limit="{{ new_page.limit }}"></div>
+              <div class="ccp-stats">
+                <div class="ccp-stat ccp-stat-main"><span>{{ column_total }}</span><b>{{ new_stats.total }}</b></div>
+                <div class="ccp-stat"><span>{{ status_labels.pending }}</span><b>{{ new_stats.pending }}</b></div>
+                <div class="ccp-stat"><span>{{ status_labels.duplicate }}</span><b>{{ new_stats.duplicate }}</b></div>
+                <div class="ccp-stat"><span>{{ text_excluded }}</span><b>{{ new_stats.excluded }}</b></div>
+                <div class="ccp-stat"><span>{{ status_labels.created }}</span><b>{{ new_stats.created }}</b></div>
+                <div class="ccp-stat ccp-stat-warn"><span>{{ status_labels.error }}</span><b>{{ new_stats.error }}</b></div>
+              </div>
+              <div class="ccp-toolbar">
+                <div class="ccp-actions ccp-actions-primary">
+                  <span class="ccp-selected-counter" data-counter="new">{{ text_selected_rows }}: 0</span><button type="button" class="btn btn-success btn-sm" id="btn-create-new-tab" {% if supplier and not supplier.create_new %}disabled="disabled" title="{{ text_new_creation_disabled_hint|e('html_attr') }}"{% endif %}><i class="fa fa-plus"></i> {{ button_create_new_tab }}</button><button type="button" class="btn btn-warning btn-sm" id="btn-new-skip-selected"><i class="fa fa-ban"></i> {{ button_new_skip_selected }}</button><button type="button" class="btn btn-info btn-sm" id="btn-new-restore-selected"><i class="fa fa-undo"></i> {{ button_new_restore_selected }}</button><button type="button" class="btn btn-danger btn-sm" id="btn-delete-new-selected"><i class="fa fa-trash-o"></i> {{ button_delete_selected_new }}</button>
+                  <span class="ccp-new-bulk-category"><label for="new-bulk-category" class="ccp-muted">{{ text_category_for_selected }}</label><select id="new-bulk-category" class="form-control input-sm"><option value="0">{{ text_none }}</option>{% for cat in categories %}<option value="{{ cat.category_id }}">{{ cat.name }}</option>{% endfor %}</select><button type="button" class="btn btn-info btn-sm" id="btn-apply-new-category"><i class="fa fa-level-down"></i> {{ button_apply_category_selected }}</button></span>
+                </div>
+              </div>
+              <div class="ccp-filters ccp-filter-grid">
+                <input type="text" id="filter-new-text" class="form-control input-sm" value="{{ new_filters.text }}" placeholder="{{ entry_filter_text }}" />
+                <select id="filter-new-status" class="form-control input-sm" data-current="{{ new_filters.status }}"><option value="">{{ entry_filter_status }}</option><option value="pending">{{ status_labels.pending }}</option><option value="duplicate">{{ status_labels.duplicate }}</option><option value="excluded">{{ status_labels.excluded }}</option><option value="created">{{ status_labels.created }}</option><option value="skipped">{{ status_labels.skipped }}</option><option value="error">{{ status_labels.error }}</option></select>
+                <button type="button" class="btn btn-primary btn-sm ccp-server-filter" data-prefix="new"><i class="fa fa-filter"></i> {{ button_apply_server_filters }}</button><button type="button" class="btn btn-default btn-sm" id="btn-new-filter-reset"><i class="fa fa-eraser"></i> {{ button_filter_reset }}</button>
+              </div>
+              <div id="new-result" class="ccp-result"></div>
+              <div class="ccp-scroll">
+                <table class="table table-condensed table-striped table-hover ccp-sortable ccp-compact-table" id="table-new">
+                  <thead><tr><th class="ccp-nosort"><input type="checkbox" id="new-check-all" /></th><th data-sort="new_id">ID</th><th data-sort="supplier">{{ column_supplier }}</th><th data-sort="supplier_name">{{ column_product }}</th><th data-sort="sku">{{ column_sku }}</th><th>{{ column_category }}</th><th>{{ column_supplier_price }}</th><th>{{ column_new_price }}</th><th>{{ column_supplier_stock }}</th><th>{{ column_url }}</th><th data-sort="status">{{ text_status }}</th><th>{{ column_error }}</th><th data-sort="date">{{ column_date }}</th></tr></thead>
+                  <tbody>
+                    {% if new_products %}{% for row in new_products %}
+                    <tr class="ccp-new-row ccp-status-{{ row.status }}" data-status="{{ row.status }}" data-new-id="{{ row.new_id }}"><td><input type="checkbox" class="new-check" value="{{ row.new_id }}" /></td><td>{{ row.new_id }}</td><td>{{ row.provider_name }}</td><td><b>{{ row.supplier_name }}</b></td><td>{{ row.supplier_sku }}</td><td><div class="ccp-muted">{% if row.category_text_clean is defined and row.category_text_clean %}{{ row.category_text_clean }}{% else %}{{ text_none }}{% endif %}</div><select class="form-control input-sm ccp-new-category" data-new-id="{{ row.new_id }}"><option value="0">{{ text_none }}</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {{ row.target_category_id == cat.category_id ? 'selected' : '' }}>{{ cat.name }}</option>{% endfor %}</select></td><td class="text-right">{% if row.supplier_raw_price is defined and row.supplier_raw_price > 0 %}<b>{{ row.supplier_raw_price }}</b> {{ row.supplier_currency }}<br><span class="ccp-muted">≈ {{ row.supplier_price }} {{ base_currency }}</span>{% else %}{{ row.supplier_price }} {{ base_currency }}{% endif %}</td><td class="text-right"><b>{{ row.sale_price }}</b> {{ base_currency }}</td><td>{% if row.stock_text %}{{ row.stock_text }}{% endif %}{% if row.quantity is not empty %}{% if row.stock_text %} / {% endif %}{{ row.quantity }}{% endif %}</td><td><span class="ccp-url-wrap">{% if row.supplier_product_url|slice(0,4) == 'http' %}<a href="{{ row.supplier_product_url }}" target="_blank" rel="noopener" class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</a>{% else %}<span class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</span>{% endif %}<button type="button" class="btn btn-default btn-xs ccp-copy-url" data-copy="{{ row.supplier_product_url|e('html_attr') }}" title="{{ text_copy_url|default('Копировать ссылку') }}"><i class="fa fa-copy"></i></button></span></td><td><span class="ccp-badge-mini ccp-status-label">{{ status_labels[row.status]|default(row.status) }}</span> {% if row.product_id %}#{{ row.product_id }}{% endif %}</td><td>{{ row.last_error }}</td><td>{{ row.date_modified }}</td></tr>
+                    {% endfor %}{% else %}<tr><td colspan="13" class="text-center">{{ text_none }}</td></tr>{% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-history">
+            <div class="ccp-card">
+              <div class="ccp-card-title"><i class="fa fa-history"></i> {{ tab_history }} <button type="button" class="btn btn-warning btn-sm ccp-clean-btn pull-right" id="btn-clear-history"><i class="fa fa-trash-o"></i> {{ button_clear_history }}</button></div>
+              <div class="alert alert-info ccp-alert"><i class="fa fa-info-circle"></i> {{ help_history }}</div>
+              <div class="ccp-scroll ccp-list-scroll"><table class="table table-condensed table-striped ccp-sortable ccp-compact-table" id="table-runs"><thead><tr><th>{{ column_run }}</th><th>{{ column_supplier }}</th><th>{{ column_checked }}</th><th>{{ column_updated }}</th><th>{{ column_created }}</th><th>{{ column_error }}</th><th>{{ column_date }}</th></tr></thead><tbody>{% if runs %}{% for row in runs %}<tr><td>#{{ row.run_id }}</td><td>{{ row.supplier_id }}</td><td>{{ row.checked }}</td><td>{{ row.price_updated }}</td><td>{{ row.created }}</td><td>{{ row.errors }}</td><td>{{ row.date_added }}</td></tr>{% endfor %}{% else %}<tr><td colspan="7" class="text-center">{{ text_none }}</td></tr>{% endif %}</tbody></table></div>
+              <div id="history-result" class="ccp-result"></div><div class="ccp-note ccp-note-info"><i class="fa fa-database"></i> {{ text_pagination_summary }} {{ history_page.total }} / limit {{ history_page.limit }} / page {{ history_page.page }}</div><div class="ccp-pagination" data-prefix="history" data-page="{{ history_page.page }}" data-total="{{ history_page.total }}" data-limit="{{ history_page.limit }}"></div>
+              <div class="ccp-filters ccp-filter-grid ccp-filter-small"><input type="text" id="filter-history-text" class="form-control input-sm" value="{{ history_filters.text }}" placeholder="{{ entry_filter_text }}" /><button type="button" class="btn btn-primary btn-sm ccp-server-filter" data-prefix="history"><i class="fa fa-filter"></i> {{ button_apply_server_filters }}</button></div>
+              <div class="ccp-scroll">
+                <table class="table table-condensed table-striped ccp-sortable ccp-compact-table" id="table-history">
+                  <thead><tr><th data-sort="date">{{ column_date }}</th><th data-sort="supplier">{{ column_supplier }}</th><th data-sort="product">{{ column_product }}</th><th data-sort="action">{{ column_action }}</th><th data-sort="field">{{ column_field }}</th><th>{{ column_old_price }}</th><th>{{ column_new_price_history }}</th><th>{{ column_old_quantity }}</th><th>{{ column_new_quantity }}</th><th>{{ column_url }}</th><th>{{ column_note }}</th></tr></thead>
+                  <tbody>
+                    {% if history %}{% for row in history %}
+                    <tr><td>{{ row.date_added }}{% if row.action == 'updated' %}<br><button type="button" class="btn btn-warning btn-xs ccp-history-rollback" data-history-id="{{ row.history_id }}" data-supplier-id="{{ row.supplier_id }}">{{ button_rollback_price_stock }}</button>{% endif %}</td><td>{{ row.provider_name }}</td><td>#{{ row.product_id }} {{ row.product_name }}</td><td>{{ row.action }}</td><td>{{ row.field_changed }}</td><td>{{ row.old_price }}</td><td><b>{{ row.new_price }}</b></td><td>{{ row.old_quantity }}</td><td>{{ row.new_quantity }}</td><td><span class="ccp-url-wrap">{% if row.supplier_product_url|slice(0,4) == 'http' %}<a href="{{ row.supplier_product_url }}" target="_blank" rel="noopener" class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</a>{% else %}<span class="ccp-url" title="{{ row.supplier_product_url }}">{{ row.supplier_url_label|default(row.supplier_product_url) }}</span>{% endif %}<button type="button" class="btn btn-default btn-xs ccp-copy-url" data-copy="{{ row.supplier_product_url|e('html_attr') }}" title="{{ text_copy_url|default('Копировать ссылку') }}"><i class="fa fa-copy"></i></button></span></td><td>{{ row.note }}</td></tr>
+                    {% endfor %}{% else %}<tr><td colspan="11" class="text-center">{{ text_none }}</td></tr>{% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-logs">
+            <div class="ccp-card">
+              <div class="ccp-card-title"><i class="fa fa-list"></i> {{ tab_logs }} <button type="button" class="btn btn-warning btn-sm ccp-clean-btn pull-right" id="btn-clear-logs"><i class="fa fa-trash-o"></i> {{ button_clear_logs }}</button></div>
+              <div class="ccp-note ccp-note-info"><i class="fa fa-database"></i> {{ text_pagination_summary }} {{ log_page.total }} / limit {{ log_page.limit }} / page {{ log_page.page }}</div><div class="ccp-pagination" data-prefix="log" data-page="{{ log_page.page }}" data-total="{{ log_page.total }}" data-limit="{{ log_page.limit }}"></div><div class="ccp-filters ccp-filter-grid ccp-filter-small"><input type="text" id="filter-log-text" class="form-control input-sm" value="{{ log_filters.text }}" placeholder="{{ entry_filter_text }}" /><button type="button" class="btn btn-primary btn-sm ccp-server-filter" data-prefix="log"><i class="fa fa-filter"></i> {{ button_apply_server_filters }}</button></div>
+              <div class="ccp-scroll">
+                <table class="table table-condensed table-striped ccp-sortable ccp-compact-table" id="table-logs">
+                  <thead><tr><th data-sort="date">{{ column_date }}</th><th data-sort="supplier">{{ column_supplier }}</th><th data-sort="level">{{ column_level }}</th><th data-sort="title">{{ column_message }}</th><th>{{ column_url }}</th></tr></thead>
+                  <tbody>
+                    {% if logs %}{% for row in logs %}
+                    <tr><td>{{ row.date_added }}</td><td>{{ row.provider_name }}</td><td>{{ row.level }}</td><td><b>{{ row.title }}</b><br>{{ row.message }}</td><td><span class="ccp-url-wrap">{% if row.related_url|slice(0,4) == 'http' %}<a href="{{ row.related_url }}" target="_blank" rel="noopener" class="ccp-url" title="{{ row.related_url }}">{{ row.related_url_label|default(row.related_url) }}</a>{% else %}<span class="ccp-url" title="{{ row.related_url }}">{{ row.related_url_label|default(row.related_url) }}</span>{% endif %}<button type="button" class="btn btn-default btn-xs ccp-copy-url" data-copy="{{ row.related_url|e('html_attr') }}" title="{{ text_copy_url|default('Копировать ссылку') }}"><i class="fa fa-copy"></i></button></span></td></tr>
+                    {% endfor %}{% else %}<tr><td colspan="5" class="text-center">{{ text_none }}</td></tr>{% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-diagnostics">
+            <div class="ccp-card">
+              <div class="ccp-card-title"><i class="fa fa-stethoscope"></i> {{ tab_diagnostics }}</div>
+              <div class="alert alert-info ccp-alert"><i class="fa fa-info-circle"></i> {{ diagnostics_text }}</div>
+              <div class="row ccp-form-grid">
+                <div class="col-sm-3"><label>{{ entry_supplier }}</label><select id="test-supplier-id" class="form-control ccp-supplier-scope-select"><option value="0">{{ text_supplier_context_required }}</option>{% for item in suppliers %}<option value="{{ item.supplier_id }}" {{ supplier.supplier_id == item.supplier_id ? 'selected' : '' }}>{{ item.name }}</option>{% endfor %}</select></div>
+                <div class="col-sm-7"><label>{{ entry_test_url }}</label><input type="text" id="test-url" value="" class="form-control" placeholder="https://supplier.com/product" /></div>
+                <div class="col-sm-2"><label>&nbsp;</label><button type="button" class="btn btn-primary btn-block" id="btn-test-product"><i class="fa fa-flask"></i> {{ button_test }}</button></div>
+              </div>
+              <pre id="test-result" class="ccp-pre"></pre>
+            </div>
+            <div class="ccp-card ccp-card-main">
+              <div class="ccp-card-title"><i class="fa fa-magic"></i> {{ text_auto_detect_title }}</div>
+              <div class="alert alert-warning ccp-alert"><i class="fa fa-exclamation-triangle"></i> {{ text_auto_detect_intro }}</div>
+              <div class="row ccp-form-grid">
+                <div class="col-sm-10"><label>{{ text_auto_detect_url }}</label><input type="text" id="auto-detect-url" value="" class="form-control" placeholder="https://supplier.com/product" /></div>
+                <div class="col-sm-2"><label>&nbsp;</label><button type="button" class="btn btn-info btn-block" id="btn-auto-detect"><i class="fa fa-magic"></i> {{ button_auto_detect }}</button></div>
+              </div>
+              <div class="help-block">{{ help_auto_detect }}</div>
+              <div id="auto-detect-result" class="ccp-auto-detect-result"></div>
+              <div class="ccp-toolbar ccp-toolbar-compact">
+                <button type="button" class="btn btn-default btn-sm" id="btn-apply-detected-to-form"><i class="fa fa-level-down"></i> {{ button_apply_detected_to_form }}</button>
+                <button type="button" class="btn btn-success btn-sm" id="btn-save-detected-rules"><i class="fa fa-save"></i> {{ button_save_detected_rules }}</button>
+              </div>
+              <div id="auto-detect-save-result" class="ccp-result-line"></div>
+            </div>
+          </div>
+
+          <div class="tab-pane" id="tab-settings">
+            <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-settings" class="form-horizontal">
+              <input type="hidden" name="save_settings" value="1" />
+              <input type="hidden" name="module_supplier_sync_parser_pro_status" id="ccp-module-status-hidden" value="{{ module_supplier_sync_parser_pro_status ? 1 : 0 }}" />
+              <input type="hidden" name="active_tab" class="ccp-active-tab-input" value="{{ active_tab }}" />
+              <div class="ccp-card">
+                <div class="ccp-card-title"><i class="fa fa-cog"></i> {{ tab_settings }}</div>
+                <div class="row ccp-form-grid">
+                  <div class="col-sm-3"><label>{{ entry_module_status }}</label><button type="button" id="ccp-module-status-settings" class="ccp-switch ccp-switch-form {{ module_supplier_sync_parser_pro_status ? 'is-on' : '' }}" data-value="{{ module_supplier_sync_parser_pro_status ? 1 : 0 }}" data-target="#ccp-module-status-hidden" aria-pressed="{{ module_supplier_sync_parser_pro_status ? 'true' : 'false' }}"><span class="ccp-switch-track"><span class="ccp-switch-thumb"></span></span><span class="ccp-switch-text">{{ module_supplier_sync_parser_pro_status ? text_enabled : text_disabled }}</span></button></div>
+                  <div class="col-sm-3"><label>{{ entry_batch_limit }}</label><input type="number" name="module_supplier_sync_parser_pro_batch_limit" value="{{ module_supplier_sync_parser_pro_batch_limit }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_stop_queue }}</label><input type="hidden" name="module_supplier_sync_parser_pro_stop_queue" id="ccp-stop-queue-hidden" value="{{ module_supplier_sync_parser_pro_stop_queue ? 1 : 0 }}" /><button type="button" id="ccp-stop-queue-switch" class="ccp-switch ccp-switch-form {{ module_supplier_sync_parser_pro_stop_queue ? 'is-on' : '' }}" data-value="{{ module_supplier_sync_parser_pro_stop_queue ? 1 : 0 }}" data-target="#ccp-stop-queue-hidden" aria-pressed="{{ module_supplier_sync_parser_pro_stop_queue ? 'true' : 'false' }}"><span class="ccp-switch-track"><span class="ccp-switch-thumb"></span></span><span class="ccp-switch-text">{{ module_supplier_sync_parser_pro_stop_queue ? text_enabled : text_disabled }}</span></button><div class="help-block">{{ help_queue_pause }}</div></div>
+                  <div class="col-sm-3"><label>{{ entry_review_retention }}</label><input type="number" name="module_supplier_sync_parser_pro_review_retention_days" value="{{ module_supplier_sync_parser_pro_review_retention_days }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_log_retention }}</label><input type="number" name="module_supplier_sync_parser_pro_log_retention_days" value="{{ module_supplier_sync_parser_pro_log_retention_days }}" class="form-control" /></div>
+                  <div class="col-sm-3"><label>{{ entry_history_retention }}</label><input type="number" name="module_supplier_sync_parser_pro_history_retention_days" value="{{ module_supplier_sync_parser_pro_history_retention_days }}" class="form-control" /></div>
+                  <div class="col-sm-6"><label>{{ entry_cron_token }}</label><input type="text" name="module_supplier_sync_parser_pro_cron_token" value="{{ module_supplier_sync_parser_pro_cron_token }}" class="form-control" autocomplete="off" /></div>
+                  <div class="col-sm-12"><label>{{ entry_cron_endpoint }}</label><input type="text" readonly value="{{ cron_url }}" class="form-control" /></div>
+                  <div class="col-sm-12"><label>{{ entry_cron_command }}</label><div class="input-group"><input type="text" readonly value="{{ cron_command|e('html_attr') }}" class="form-control" /><span class="input-group-btn"><button type="button" class="btn btn-default ccp-copy-url" data-copy="{{ cron_command|e('html_attr') }}" title="{{ text_copy_cron }}"><i class="fa fa-copy"></i></button></span></div><div class="help-block">{{ help_cron }}</div></div>
+                </div>
+              </div>
+              <div class="text-right"><button type="button" id="btn-cleanup-old-data" class="btn btn-warning"><i class="fa fa-trash-o"></i> {{ button_cleanup_old_data }}</button></div>
+            </form>
+          </div>
+
+          <div class="tab-pane" id="tab-about">
+            <div class="ccp-card">
+              <div class="ccp-card-title"><i class="fa fa-info-circle"></i> {{ tab_about }}</div>
+              <p>{{ about_text }}</p>
+              <div class="ccp-about-grid">
+                <div class="ccp-about-box"><b><i class="fa fa-refresh"></i> {{ text_about_benefit_sync_title }}</b><span>{{ text_about_benefit_sync }}</span></div>
+                <div class="ccp-about-box"><b><i class="fa fa-shield"></i> {{ text_about_benefit_safe_title }}</b><span>{{ text_about_benefit_safe }}</span></div>
+                <div class="ccp-about-box"><b><i class="fa fa-database"></i> {{ text_about_benefit_mass_title }}</b><span>{{ text_about_benefit_mass }}</span></div>
+                <div class="ccp-about-box"><b><i class="fa fa-language"></i> {{ text_about_benefit_lang_title }}</b><span>{{ text_about_benefit_lang }}</span></div>
+              </div>
+              <div class="ccp-card-title"><i class="fa fa-list-ol"></i> {{ text_about_workflow_title }}</div>
+              <ol class="ccp-about-steps"><li>{{ text_about_step_1 }}</li><li>{{ text_about_step_2 }}</li><li>{{ text_about_step_3 }}</li><li>{{ text_about_step_4 }}</li><li>{{ text_about_step_5 }}</li></ol>
+              <p><b>{{ text_author }}:</b> CodeCart PRO, <a href="https://codecartpro.com" target="_blank">https://codecartpro.com</a></p>
+              <p><b>{{ text_compatibility }}:</b> OpenCart 3.x, ocStore 3.0.4.1, PHP 7.4–8.5</p>
+              <p><b>{{ text_version }}:</b> {{ version }}</p>
+              <p><b>{{ text_license }}:</b> {{ text_license_note }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.ccp-ssp .ccp-topbar{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid #dfe5ef;border-left:4px solid #0057b7;border-radius:8px;padding:14px 16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.03)}.ccp-ssp .ccp-top-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.ccp-ssp .ccp-switch{border:0;background:transparent;padding:0;display:inline-flex;align-items:center;gap:8px;font-weight:700;color:#842029;outline:0}.ccp-ssp .ccp-switch-track{position:relative;display:inline-block;width:54px;height:28px;border-radius:18px;background:#d9534f;box-shadow:inset 0 1px 3px rgba(0,0,0,.18);transition:.18s}.ccp-ssp .ccp-switch-thumb{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:.18s}.ccp-ssp .ccp-switch.is-on{color:#1e7e34}.ccp-ssp .ccp-switch.is-on .ccp-switch-track{background:#28a745}.ccp-ssp .ccp-switch.is-on .ccp-switch-thumb{left:29px}.ccp-ssp .ccp-switch-form{height:34px}.ccp-ssp .ccp-switch-text{min-width:74px;text-align:left}.ccp-ssp .ccp-wizard-buttons .btn{margin-bottom:6px}.ccp-ssp .ccp-rules-wizard-actions{margin-top:8px}.ccp-ssp .ccp-manual-toggle{margin-bottom:10px}.ccp-ssp .ccp-operation-disabled{opacity:.55;pointer-events:none}.ccp-ssp .ccp-disabled-note{margin-bottom:10px}
+.ccp-ssp .ccp-title{font-size:20px;font-weight:700;color:#17365d}.ccp-ssp .ccp-badge{display:inline-block;background:#ffd700;color:#0057b7;border-radius:6px;padding:2px 10px;font-size:12px;line-height:1.2;vertical-align:middle;font-weight:700;margin-left:6px}.ccp-ssp .ccp-version{font-size:12px;color:#6b778c}.ccp-ssp .ccp-meta{font-size:12px;color:#6b778c;margin-top:4px}.ccp-ssp .ccp-status{font-weight:700;border-radius:16px;padding:6px 12px}.ccp-ssp .ccp-status.on{background:#e8f7ee;color:#1e7e34}.ccp-ssp .ccp-status.off{background:#f8d7da;color:#842029}.ccp-ssp .ccp-alert{border-radius:8px}.ccp-ssp .ccp-tabs{display:flex;overflow-x:auto;overflow-y:hidden;white-space:nowrap;border-bottom:1px solid #dfe5ef;margin-bottom:14px}.ccp-ssp .ccp-tabs>li{float:none;display:inline-block}.ccp-ssp .ccp-tabs>li>a{border:1px solid transparent;border-top:3px solid transparent;border-radius:6px 6px 0 0;padding:8px 12px;color:#17365d;font-weight:600}.ccp-ssp .ccp-tabs>li.active>a,.ccp-ssp .ccp-tabs>li.active>a:focus,.ccp-ssp .ccp-tabs>li.active>a:hover{border:1px solid #dfe5ef;border-top:3px solid #0057b7;background:#f8fbff;color:#0057b7}.ccp-ssp .ccp-card{background:#fff;border:1px solid #dfe5ef;border-radius:8px;padding:14px;margin-bottom:14px}.ccp-ssp .ccp-card-title{font-size:15px;font-weight:700;color:#17365d;margin-bottom:12px}.ccp-ssp .ccp-form-grid label{font-size:12px;color:#344563;margin-top:8px}.ccp-ssp .ccp-scroll{max-height:430px;overflow:auto;border:1px solid #edf1f7;border-radius:6px}.ccp-ssp .ccp-review-scroll{max-height:560px}.ccp-ssp .ccp-list-scroll{max-height:330px}.ccp-ssp table{margin-bottom:0}.ccp-ssp .ccp-url{max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block}.ccp-ssp .ccp-kpis{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.ccp-ssp .ccp-kpis span{background:#f4f7fb;border:1px solid #dfe5ef;border-radius:16px;padding:5px 10px}.ccp-ssp .ccp-actions{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.ccp-ssp .ccp-filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.ccp-ssp .ccp-filters select{width:190px}.ccp-ssp .ccp-manual-match{display:grid;grid-template-columns:120px 70px 160px 70px;gap:4px;margin-top:5px;min-width:440px}.ccp-ssp .ccp-row-action-cell{min-width:210px}.ccp-ssp .ccp-row-action-cell select{margin-bottom:4px}.ccp-ssp .ccp-row-action-cell .btn{width:100%}.ccp-ssp .ccp-status-price_warning td{background:#fff3cd}.ccp-ssp .ccp-actions select{width:260px}.ccp-ssp .ccp-progress{height:18px;margin-bottom:10px}.ccp-ssp .ccp-result{font-size:12px;margin-bottom:10px;color:#344563}.ccp-ssp .ccp-pre{max-height:420px;overflow:auto;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:12px}.ccp-ssp .help-block{font-size:12px}.ccp-ssp .tab-content{min-height:360px}.ccp-ssp .ccp-status-excluded td{background:#fff8e1}.ccp-ssp .ccp-status-error td{background:#fdecea}.ccp-ssp .ccp-status-applied td,.ccp-ssp .ccp-status-created td{background:#eef9f0}
+
+.ccp-ssp .panel-body{padding:12px}.ccp-ssp .ccp-card-main{padding:12px}.ccp-ssp .ccp-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.ccp-ssp .ccp-muted{font-size:11px;font-weight:400;color:#6b778c}.ccp-ssp .ccp-note{border-radius:6px;padding:8px 10px;margin-bottom:10px;font-size:12px;border-left:3px solid #dfe5ef;background:#f8fbff}.ccp-ssp .ccp-note-info{border-left-color:#0057b7}.ccp-ssp .ccp-note-warning{background:#fff8e5;border-left-color:#f0ad4e}.ccp-ssp .ccp-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:10px}.ccp-ssp .ccp-stat{border:1px solid #dfe5ef;background:#f8fbff;border-radius:8px;padding:8px 10px;min-height:50px}.ccp-ssp .ccp-stat span{display:block;font-size:11px;color:#6b778c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ccp-ssp .ccp-stat b{display:block;font-size:19px;line-height:20px;color:#17365d}.ccp-ssp .ccp-stat-main{border-left:4px solid #0057b7}.ccp-ssp .ccp-stat-warn{border-left:4px solid #f0ad4e}.ccp-ssp .ccp-toolbar{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}.ccp-ssp .ccp-actions{gap:6px;margin-bottom:0}.ccp-ssp .ccp-actions .btn{padding:4px 8px}.ccp-ssp .ccp-actions-danger{margin-left:auto}.ccp-ssp .ccp-filter-grid{display:grid;grid-template-columns:minmax(220px,1.5fr) repeat(3,minmax(150px,1fr)) auto;gap:6px;margin-bottom:8px}.ccp-ssp .ccp-filter-small{grid-template-columns:minmax(240px,420px)}.ccp-ssp .ccp-filters select{width:100%}.ccp-ssp .ccp-review-scroll{max-height:600px}.ccp-ssp .ccp-compact-table{font-size:12px;border-top:3px solid #0057d9}.ccp-ssp .ccp-compact-table>thead>tr>th+th{border-left:1px solid #dfe5ef}.ccp-ssp .ccp-table{border-top:3px solid #0057d9}.ccp-ssp .ccp-table>thead>tr>th+th{border-left:1px solid #dfe5ef}.ccp-ssp .ccp-compact-table>thead>tr>th,.ccp-ssp .ccp-compact-table>tbody>tr>td{padding:5px 6px;vertical-align:middle}.ccp-ssp .ccp-compact-table thead th{position:sticky;top:0;background:#f5f7fb;z-index:2;white-space:nowrap;cursor:pointer}.ccp-ssp .ccp-compact-table thead th.ccp-nosort{cursor:default}.ccp-ssp .ccp-compact-table thead th.ccp-sort-asc:after{content:' ↑';color:#0057b7}.ccp-ssp .ccp-compact-table thead th.ccp-sort-desc:after{content:' ↓';color:#0057b7}.ccp-ssp .ccp-badge-mini{display:inline-block;border-radius:10px;padding:2px 7px;font-size:11px;line-height:1.3;background:#eef3fa;color:#17365d;white-space:nowrap}.ccp-ssp .ccp-change-price .ccp-change-label,.ccp-ssp .ccp-change-stock .ccp-change-label,.ccp-ssp .ccp-change-price_stock .ccp-change-label{background:#e9f5ff;color:#0057b7}.ccp-ssp .ccp-change-same .ccp-change-label{background:#f1f3f5;color:#6b778c}.ccp-ssp .ccp-status-price_warning .ccp-status-label{background:#fff3cd;color:#8a5a00}.ccp-ssp .ccp-status-error .ccp-status-label{background:#fdecea;color:#a94442}.ccp-ssp .ccp-status-applied .ccp-status-label,.ccp-ssp .ccp-status-created .ccp-status-label{background:#e8f7ee;color:#1e7e34}.ccp-ssp .ccp-status-excluded .ccp-status-label,.ccp-ssp .ccp-status-duplicate .ccp-status-label{background:#fff8e1;color:#8a5a00}.ccp-ssp .ccp-local-name{max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ccp-ssp .ccp-toggle-match{margin-top:3px}.ccp-ssp .ccp-manual-match{display:none;grid-template-columns:140px 70px 170px 80px;gap:4px;margin-top:5px;min-width:470px}.ccp-ssp .ccp-manual-match.open{display:grid}.ccp-ssp .ccp-url{max-width:260px}.ccp-ssp .ccp-scroll{scrollbar-width:thin}.ccp-ssp .ccp-card{box-shadow:0 1px 4px rgba(0,0,0,.02)}.ccp-ssp .ccp-pagination{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin:0 0 8px}.ccp-ssp .ccp-pagination .form-control{width:70px;height:28px;padding:3px 6px}.ccp-ssp .ccp-pagination .btn{padding:3px 8px}.ccp-ssp .ccp-pagination .ccp-page-info{font-size:12px;color:#6b778c;padding:4px 6px}.ccp-ssp .ccp-selected-counter{display:inline-block;background:#eef6ff;border:1px solid #cfe2ff;border-radius:12px;padding:3px 9px;font-size:12px;color:#0057b7;font-weight:700}.ccp-ssp .ccp-new-bulk-category{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap;background:#f8fbff;border:1px solid #dfe5ef;border-radius:8px;padding:6px 8px;margin-left:6px}.ccp-ssp .ccp-new-bulk-category select{width:260px;max-width:100%}
+
+.ccp-ssp .ccp-workflow-card{background:#fff;border:1px solid #dfe5ef;border-left:4px solid #0057b7;border-radius:8px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 5px rgba(0,0,0,.025)}
+.ccp-ssp .ccp-workflow-grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:8px;margin-bottom:8px}
+.ccp-ssp .ccp-workflow-card summary{cursor:pointer;margin-bottom:0}.ccp-ssp .ccp-workflow-card[open] summary{margin-bottom:10px}
+.ccp-ssp .ccp-flow-step{border:1px solid #edf1f7;background:#f8fbff;border-radius:8px;padding:9px 10px;min-height:82px}
+.ccp-ssp .ccp-flow-step b{display:block;color:#17365d;font-size:13px;margin-bottom:5px}
+.ccp-ssp .ccp-flow-step span{display:block;color:#53627a;font-size:12px;line-height:1.35}
+.ccp-ssp .ccp-workflow-notes{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ccp-ssp .ccp-workflow-notes span{display:block;border-radius:6px;background:#f4f7fb;border:1px solid #e3eaf5;padding:8px 10px;font-size:12px;color:#344563}
+.ccp-ssp .ccp-ajax-indicator{display:none;position:fixed;right:24px;bottom:24px;z-index:9999;background:#17365d;color:#fff;border-radius:18px;padding:8px 13px;font-size:12px;box-shadow:0 4px 16px rgba(0,0,0,.18)}
+.ccp-ssp .ccp-toast{display:none;position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9999;min-width:260px;max-width:520px;background:#fff;border:1px solid #dfe5ef;border-left:4px solid #0057b7;border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.35;font-weight:600;color:#1f2d3d;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.16)}
+.ccp-ssp .ccp-field-help-icon{color:#6b9bd1;margin-left:5px;cursor:help;font-size:12px}.ccp-ssp .ccp-new-category{min-width:220px;margin-top:4px}.ccp-ssp .ccp-field-help{display:none}
+.ccp-ssp .ccp-form-grid label{display:block;min-height:17px}
+.ccp-ssp .ccp-card-title i{color:#0057b7;margin-right:4px}
+.ccp-ssp .ccp-admin-note{margin-top:-4px}
+
+
+.ccp-ssp .ccp-supplier-context{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff;border:1px solid #dfe5ef;border-left:4px solid #0057b7;border-radius:8px;padding:12px 14px;margin-bottom:12px}.ccp-ssp .ccp-supplier-context.is-missing{border-left-color:#f0ad4e;background:#fffaf0}.ccp-ssp .ccp-supplier-context .ccp-card-title{margin-bottom:4px}.ccp-ssp .ccp-supplier-context-control{min-width:320px}.ccp-ssp .ccp-muted{color:#6b778c;font-size:12px}.ccp-ssp .ccp-tab-locked{opacity:.55}.ccp-ssp .ccp-domain-note{background:#f8fbff;border:1px solid #dfe5ef;border-radius:6px;padding:8px 10px;margin-top:6px}
+.ccp-ssp .ccp-switch-mini{gap:4px;font-size:11px;white-space:nowrap}.ccp-ssp .ccp-switch-mini .ccp-switch-track{width:38px;height:20px}.ccp-ssp .ccp-switch-mini .ccp-switch-thumb{width:16px;height:16px;top:2px;left:2px}.ccp-ssp .ccp-switch-mini.is-on .ccp-switch-thumb{left:20px}.ccp-ssp .ccp-switch-mini .ccp-switch-text{min-width:0}.ccp-ssp .ccp-supplier-table .active td{background:#f2f7ff}.ccp-ssp .ccp-detect-table select{max-width:520px}.ccp-ssp .ccp-detected-xpath{font-size:11px;margin-top:3px;max-width:520px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.ccp-ssp .ccp-simple-scan-grid{display:block}.ccp-ssp .ccp-simple-scan-grid .col-sm-8,.ccp-ssp .ccp-simple-scan-grid .col-sm-4{margin-bottom:8px}
+
+
+.ccp-ssp .ccp-workflow-grid-6{grid-template-columns:repeat(6,minmax(140px,1fr))}
+.ccp-ssp .ccp-readiness-grid{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:8px;margin:0 0 10px}
+.ccp-ssp .ccp-readiness{border:1px solid #dfe5ef;border-left:4px solid #d9534f;border-radius:8px;background:#fff;padding:8px 10px;min-height:58px}
+.ccp-ssp .ccp-readiness.is-ready{border-left-color:#28a745;background:#f8fff9}.ccp-ssp .ccp-readiness i{color:#0057b7;margin-right:4px}.ccp-ssp .ccp-readiness b{display:block;font-size:12px;color:#17365d}.ccp-ssp .ccp-readiness span{font-size:12px;color:#53627a}
+.ccp-ssp .ccp-mini-steps{display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:6px;margin-bottom:10px}.ccp-ssp .ccp-mini-steps span{display:block;background:#f8fbff;border:1px solid #dfe5ef;border-radius:8px;padding:8px 10px;font-size:12px;color:#344563}.ccp-ssp .ccp-mini-steps b{display:inline-block;background:#0057b7;color:#fff;border-radius:50%;width:19px;height:19px;line-height:19px;text-align:center;margin-right:5px}
+.ccp-ssp .ccp-queue-control{border:1px solid #dfe5ef;border-radius:8px;background:#f8fbff;padding:10px;margin-bottom:10px}.ccp-ssp .ccp-queue-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}.ccp-ssp .ccp-queue-head label{margin:0;font-size:12px;color:#344563}.ccp-ssp .ccp-queue-head select{max-width:320px}.ccp-ssp .ccp-queue-group{background:#fff;border:1px solid #edf1f7;border-radius:8px;padding:8px;margin-bottom:8px}.ccp-ssp .ccp-queue-group-title{font-weight:700;color:#17365d;margin-bottom:6px}.ccp-ssp .ccp-queue-group .ccp-actions{margin-bottom:4px}.ccp-ssp .ccp-about-grid{display:grid;grid-template-columns:repeat(4,minmax(160px,1fr));gap:10px;margin:12px 0}.ccp-ssp .ccp-about-box{border:1px solid #dfe5ef;border-radius:8px;background:#f8fbff;padding:10px}.ccp-ssp .ccp-about-box b{display:block;color:#17365d;margin-bottom:5px}.ccp-ssp .ccp-about-box span{font-size:12px;color:#53627a}.ccp-ssp .ccp-about-steps{padding-left:20px}.ccp-ssp .ccp-about-steps li{margin-bottom:6px}
+
+.ccp-ssp .ccp-commercial-master{border-left:4px solid #0057b7}.ccp-ssp .ccp-master-grid{display:grid;grid-template-columns:repeat(3,minmax(220px,1fr));gap:10px}.ccp-ssp .ccp-master-step{border:1px solid #dfe5ef;border-left:4px solid #f0ad4e;border-radius:8px;background:#fffaf0;padding:10px;min-height:120px}.ccp-ssp .ccp-master-step.is-ready{border-left-color:#28a745;background:#f8fff9}.ccp-ssp .ccp-master-step b{display:block;color:#17365d;margin-bottom:6px}.ccp-ssp .ccp-master-step span{display:block;color:#53627a;font-size:12px;line-height:1.35;min-height:40px;margin-bottom:8px}.ccp-ssp .ccp-master-status{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.ccp-ssp .ccp-master-status span{border:1px solid #dfe5ef;background:#f8fbff;border-radius:14px;padding:5px 10px;font-size:12px}.ccp-ssp .ccp-master-strip{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.ccp-ssp .ccp-master-strip span{background:#f8fbff;border:1px solid #dfe5ef;border-left:3px solid #0057b7;border-radius:8px;padding:7px 10px;font-size:12px;color:#17365d}.ccp-ssp .ccp-subtitle{font-weight:700;color:#17365d;background:#f8fbff;border:1px solid #edf1f7;border-left:3px solid #0057b7;border-radius:6px;padding:8px 10px;margin:8px 0 10px}
+
+.ccp-ssp .ccp-master-create{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid #dfe5ef;border-left:4px solid #0057b7;border-radius:8px;background:#f8fbff;padding:12px;margin:10px 0 12px}.ccp-ssp .ccp-master-create b{display:block;color:#17365d;margin-bottom:4px}.ccp-ssp .ccp-master-create span{display:block;color:#53627a;font-size:12px;line-height:1.4}.ccp-ssp .ccp-master-create.is-ready{border-left-color:#28a745;background:#f8fff9}.ccp-ssp .ccp-queue-group-main{border-left:4px solid #28a745}
+@media (max-width: 1199px){.ccp-ssp .ccp-master-grid{grid-template-columns:repeat(2,minmax(220px,1fr))}}@media (max-width: 767px){.ccp-ssp .ccp-master-grid{grid-template-columns:1fr}}
+
+@media (max-width: 1199px){.ccp-ssp .ccp-workflow-grid-6{grid-template-columns:repeat(3,minmax(160px,1fr))}.ccp-ssp .ccp-about-grid{grid-template-columns:repeat(2,minmax(160px,1fr))}.ccp-ssp .ccp-readiness-grid{grid-template-columns:repeat(2,minmax(120px,1fr))}}
+
+.ccp-ssp .ccp-table-control-line{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0}.ccp-ssp .ccp-table-control-line .ccp-note{margin:0}.ccp-ssp .ccp-table-control-line .ccp-pagination{margin:0}.ccp-ssp .ccp-table-control-line .ccp-filter-small{display:inline-flex;grid-template-columns:none;align-items:center;margin:0}.ccp-ssp .ccp-table-control-line .ccp-filter-small input{width:260px}.ccp-ssp .ccp-table-control-line .ccp-actions{margin:0}.ccp-ssp .ccp-table-summary{white-space:nowrap}.ccp-ssp .ccp-live-stop-line{display:flex;align-items:center;gap:10px;margin:-4px 0 10px}.ccp-ssp .ccp-stop-current{font-weight:700}.ccp-ssp .ccp-queue-loop-active .ccp-stop-current{box-shadow:0 0 0 3px rgba(217,83,79,.15)}
+@media (max-width: 767px){.ccp-ssp .ccp-workflow-grid{grid-template-columns:1fr}.ccp-ssp .ccp-workflow-notes{grid-template-columns:1fr}.ccp-ssp .ccp-topbar{display:block}.ccp-ssp .ccp-status{display:inline-block;margin-top:8px}.ccp-ssp .ccp-actions select{width:100%}.ccp-ssp .ccp-actions .btn{width:100%}.ccp-ssp .ccp-filter-grid{grid-template-columns:1fr}.ccp-ssp .ccp-toolbar{display:block}.ccp-ssp .ccp-actions-danger{margin-left:0}.ccp-ssp .ccp-manual-match{grid-template-columns:1fr;min-width:0}}
+
+.ccp-ssp .ccp-pagination{display:inline-flex!important;flex-wrap:nowrap!important;align-items:center;gap:6px;margin:0 8px 0 0;vertical-align:middle}.ccp-ssp .ccp-pagination .ccp-limit{width:74px!important}.ccp-ssp .ccp-table-summary{display:inline-flex;align-items:center;margin:0 8px 8px 0}.ccp-ssp .ccp-toolbar .ccp-filters,.ccp-ssp .ccp-queue-table-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.ccp-ssp .ccp-table-filter{max-width:260px}.ccp-ssp .ccp-limit-label{font-size:12px;color:#6b778c;margin-left:4px}
+
+.ccp-ssp .ccp-clean-btn{border-color:#dfe5ef;background:#fff;color:#6b778c;border-radius:14px;padding:3px 10px;font-weight:600;box-shadow:none;transition:.15s}
+.ccp-ssp .ccp-clean-btn i{color:#d9534f;margin-right:4px}
+.ccp-ssp .ccp-clean-btn:hover,.ccp-ssp .ccp-clean-btn:focus{border-color:#d9534f;background:#fff5f5;color:#a94442}
+.ccp-ssp .ccp-card-title .ccp-clean-btn{margin-top:-2px}
+
+.ccp-ssp .ccp-clean-btn{border-color:#f0ad4e;background:#fff7e6;color:#8a5a00;font-weight:700;border-radius:16px;padding:5px 12px}.ccp-ssp .ccp-clean-btn:hover{background:#f0ad4e;color:#fff;border-color:#eea236}
+.ccp-ssp .ccp-match-hint{grid-column:1/-1;font-size:11px;color:#6b778c;line-height:1.25}.ccp-ssp .ccp-match-candidates{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.ccp-ssp .ccp-match-candidates b{width:100%;font-size:11px;color:#17365d}.ccp-ssp .ccp-candidate-pick{max-width:100%;white-space:normal;text-align:left}.ccp-ssp .ccp-selected-run-hint{display:inline-flex;align-items:center;max-width:360px;line-height:1.25}
+
+.ccp-ssp .ccp-url-wrap{display:inline-flex;align-items:center;gap:4px;max-width:310px;vertical-align:middle}.ccp-ssp .ccp-url-wrap .ccp-url{max-width:250px}.ccp-ssp .ccp-copy-url{padding:1px 5px;line-height:1.2;color:#0057b7}.ccp-ssp .ccp-copy-url.copied{background:#e8f7ee;border-color:#28a745;color:#1e7e34}.ccp-ssp .ccp-compact-table .btn-warning,.ccp-ssp .ccp-compact-table .btn-danger,.ccp-ssp .ccp-compact-table .btn-info,.ccp-ssp .ccp-compact-table .btn-success,.ccp-ssp .ccp-compact-table .btn-primary{font-weight:600}
+</style>
+<script>
+(function($){
+  var ccpModuleEnabled = {{ module_supplier_sync_parser_pro_status ? 'true' : 'false' }};
+  var ccpActiveSupplierId = {{ supplier.supplier_id ? supplier.supplier_id : 0 }};
+  var ccpBaseCurrency = '{{ base_currency|e('js') }}';
+  var ccpSupplierStorageKey = 'ccp_ssp_active_supplier_id';
+  var ccpStopStorageKey = 'ccp_ssp_queue_stop_requested';
+  function ccpStoreActiveSupplier(id){id=parseInt(id||0,10)||0;ccpActiveSupplierId=id;try{if(id>0){window.localStorage.setItem(ccpSupplierStorageKey,String(id));}else{window.localStorage.removeItem(ccpSupplierStorageKey);}}catch(e){}}
+  function ccpGetStoredSupplier(){try{return parseInt(window.localStorage.getItem(ccpSupplierStorageKey)||0,10)||0;}catch(e){return 0;}}
+  function ccpMarkStopRequested(on){try{if(on){window.localStorage.setItem(ccpStopStorageKey,String(Date.now()));}else{window.localStorage.removeItem(ccpStopStorageKey);}}catch(e){}}
+  function ccpIsStopRequested(){try{return !!window.localStorage.getItem(ccpStopStorageKey);}catch(e){return false;}}
+  function setSwitchState($switch, value){
+    value = String(value) === '1' ? '1' : '0';
+    var on = value === '1';
+    $switch.attr('data-value', value).toggleClass('is-on', on).attr('aria-pressed', on ? 'true' : 'false');
+    $switch.find('.ccp-switch-text').text(on ? '{{ text_enabled|e('js') }}' : '{{ text_disabled|e('js') }}');
+    var target = $switch.data('target');
+    if (target) { $(target).val(value); }
+  }
+  function syncModuleStatus(value){
+    value = String(value) === '1' ? '1' : '0';
+    ccpModuleEnabled = value === '1';
+    $('#ccp-module-status-hidden').val(value);
+    setSwitchState($('#ccp-module-status-switch'), value);
+    setSwitchState($('#ccp-module-status-settings'), value);
+    $('#ccp-module-status-label').toggleClass('on', ccpModuleEnabled).toggleClass('off', !ccpModuleEnabled).text(ccpModuleEnabled ? '{{ text_enabled|e('js') }}' : '{{ text_disabled|e('js') }}');
+  }
+  $(document).on('click','.ccp-switch',function(){
+    var $switch = $(this);
+    if ($switch.hasClass('ccp-supplier-row-switch')) { return; }
+    var next = String($switch.attr('data-value') || '0') === '1' ? '0' : '1';
+    setSwitchState($switch, next);
+    if ($switch.attr('id') === 'ccp-module-status-switch' || $switch.attr('id') === 'ccp-module-status-settings') {
+      syncModuleStatus(next);
+    }
+  });
+  if (!ccpModuleEnabled) {
+    $('#btn-auto-detect,#btn-rules-auto-detect,#btn-rules-detect-list-links,#btn-rules-scan-save,#btn-rules-apply-detected-to-form,#btn-rules-save-detected-rules,#btn-save-detected-rules,#btn-apply-detected-to-form,#btn-test-product,#btn-scan-site-all,#btn-build-scan,#btn-build-sitemap,#btn-build-product-urls,#btn-build-linked,#btn-build-new-only,#btn-build-feed-file,#btn-run-queue,#btn-run-until-done,#btn-run-scan-batch,#btn-run-products-batch,#btn-run-products-until-done,#btn-run-feed-until-done,#btn-run-selected-scan,#btn-run-selected-products,#btn-clear-queue,#btn-reset-processing,#btn-recover-errors,#btn-stop-queue,#btn-resume-queue,#btn-clear-history,#btn-clear-logs,#btn-cleanup-old-data,#btn-clear-reviews,#btn-create-new-tab,#btn-queue-retry-selected,#btn-queue-delete-selected,#btn-new-skip-selected,#btn-new-restore-selected,#btn-delete-new-selected,#btn-delete-review-selected,.ccp-apply,.ccp-row-apply,.ccp-search-product,.ccp-match-product-btn,#btn-exclude-selected').prop('disabled', true).addClass('ccp-operation-disabled');
+  }
+  var ccpCurrentXhr=null; var ccpAbortRequested=false;
+  function setAjaxBusy(on){$('#ccp-ajax-indicator').toggle(!!on);$('.ccp-ssp').toggleClass('ccp-queue-loop-active', !!on && ccpQueueLoopRunning);} 
+  function toast(text){if(!text){return;}var box=$('#ccp-toast');box.text(text).stop(true,true).fadeIn(160).delay(3600).fadeOut(280);} 
+
+  function ccpFallbackCopy(text){var tmp=$('<textarea readonly></textarea>').css({position:'fixed',left:'-9999px',top:'-9999px'}).val(text);$('body').append(tmp);tmp[0].select();try{document.execCommand('copy');}catch(e){}tmp.remove();}
+  $(document).on('click','.ccp-copy-url',function(){var btn=$(this), text=String(btn.attr('data-copy')||'');if(!text){return;}var done=function(){btn.addClass('copied');toast('{{ text_copied|default('Ссылка скопирована')|e('js') }}');setTimeout(function(){btn.removeClass('copied');},900);};if(navigator.clipboard && navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,function(){ccpFallbackCopy(text);done();});}else{ccpFallbackCopy(text);done();}});
+
+  function parseJsonResponse(response){
+    var text = response === undefined || response === null ? '' : String(response);
+    try { return JSON.parse(text); } catch(e) {}
+    var start = text.indexOf('{'), end = text.lastIndexOf('}');
+    if (start >= 0 && end > start) {
+      try { return JSON.parse(text.substring(start, end + 1)); } catch(e2) {}
+    }
+    return {ok:false,message:'{{ text_ajax_invalid_json|e('js') }} '+text.substring(0,700)};
+  }
+  function ccpLooksLikeProductUrl(url){
+    url=String(url||'').trim();
+    if(!url){return false;}
+    var a=document.createElement('a');a.href=url;
+    var path=String(a.pathname||'').toLowerCase();
+    var query=String(a.search||'').toLowerCase();
+    if(query.indexOf('product_id=')>=0 || path.indexOf('/product/')>=0){return true;}
+    if(/\/(cart|checkout|account|compare|wishlist|login|register|contact|blog|news|stati|information|manufacturer|delivery|oplata|about|testimonials)(\/|$)/.test(path)){return false;}
+    var parts=path.replace(/^\/+|\/+$/g,'').split('/').filter(Boolean);
+    if(!parts.length){return false;}
+    var last=parts[parts.length-1];
+    if(/^(filtry|filters|nasosy|pumpy|shlangi|hoses|schetchiki|meters|pistolety|komplekty|baki|emkosti|aksessuary|zapchasti|oborudovanie)[-_]?(page|p)?[0-9]+$/i.test(last)){return false;}
+    if(/[0-9]/.test(last) && /[a-zа-яієїґ]/i.test(last) && /[-_]/.test(last)){return true;}
+    if(/^p[0-9]{4,}[-_a-z0-9]*\.html$/i.test(last)){return true;}
+    if(/[a-zа-яієїґ]{2,}[0-9]{2,}|[0-9]{2,}[a-zа-яієїґ]{2,}/i.test(last)){return true;}
+    if(parts.length>=2 && /[a-zа-яієїґ]+[-_][a-zа-яієїґ0-9]+[-_][a-zа-яієїґ0-9]+/i.test(last)){return true;}
+    return false;
+  }
+
+  function post(url, data, cb){
+    data=data||{};var silent=!!data.__silent;if(silent){delete data.__silent;}
+    var btn=!silent ? $(document.activeElement).filter('button,a.btn') : $();
+    if(!silent){setAjaxBusy(true);if(btn.length){btn.data('ccp-old-disabled',btn.prop('disabled')).prop('disabled',true).addClass('disabled');}}
+    var xhr=$.ajax({url:url,type:'post',data:data,dataType:'text',success:function(response){var json=parseJsonResponse(response);if(!silent && json.message){toast(json.message);}if(cb){cb(json);}},error:function(xhr){if(xhr.statusText==='abort'){if(cb){cb({ok:false,aborted:true,message:'{{ text_success_queue_stopped|e('js') }}'});}return;}var response=xhr.responseText||'';var json=response?parseJsonResponse(response):{ok:false,message:'{{ text_ajax_error|e('js') }} '+xhr.status};if(!json.message){json.message='{{ text_ajax_error|e('js') }} '+xhr.status;}if(cb){cb(json);}if(!silent){toast(json.message);}},complete:function(){if(ccpCurrentXhr===xhr){ccpCurrentXhr=null;}if(!silent){setAjaxBusy(false);if(btn.length && !btn.data('ccp-old-disabled')){btn.prop('disabled',false).removeClass('disabled');}}}});
+    if(!silent){ccpCurrentXhr=xhr;}
+    return xhr;
+  }
+  $(document).on('click','.ccp-supplier-row-switch',function(){
+    var $switch=$(this), oldValue=String($switch.attr('data-value')||'0'), next=oldValue==='1'?'0':'1', supplierId=parseInt($switch.data('supplier-id')||0,10), row=$switch.closest('tr');
+    if(!supplierId){return;}
+    post('{{ ajax_toggle_supplier_status }}',{supplier_id:supplierId,status:next},function(json){
+      if(json.ok){setSwitchState($switch,next);row.find('.ccp-supplier-list-status-text').text(next==='1'?'{{ text_enabled|e('js') }}':'{{ text_disabled|e('js') }}');if(String($('#supplier-id').val()||'0')===String(supplierId)){$('#ccp-supplier-status-hidden').val(next);}}
+      else{setSwitchState($switch,oldValue);toast(json.message||'{{ text_ajax_error|e('js') }}');}
+    });
+  });
+  $(document).on('click','.ccp-delete-supplier',function(){
+    var supplierId=parseInt($(this).data('supplier-id')||0,10), row=$(this).closest('tr');
+    if(!supplierId || !confirm('{{ text_confirm_delete_supplier|e('js') }}')){return;}
+    post('{{ ajax_delete_supplier }}',{supplier_id:supplierId},function(json){
+      if(json.ok){row.remove();if(String($('#supplier-id').val()||'0')===String(supplierId)){window.location=ccpBuildUrl({supplier_id:0, active_tab:'suppliers'});}}
+      else{toast(json.message||'{{ text_ajax_error|e('js') }}');}
+    });
+  });
+  function showResult(text){$('#queue-result').text(text);}
+  function formatRowErrors(json){var list=(json&&$.isArray(json.row_errors))?json.row_errors:[];if(!list.length){return '';}var parts=[];$.each(list.slice(0,5),function(i,item){var id=item.new_id||item.review_id||'';var msg=item.message||'';parts.push((id?('ID '+id+': '):'')+msg);});if(list.length>5){parts.push('...');}return ' {{ text_error_details|e('js') }}: '+parts.join(' | ');}
+  function formatEta(sec){sec=parseInt(sec||0,10);if(sec<=0){return '-';}var m=Math.floor(sec/60),s=sec%60,h=Math.floor(m/60);m=m%60;return (h>0?h+'h ':'')+m+'m '+s+'s';}
+  function updateStats(stats){if(!stats){return;}if(parseInt(stats.stopped||0,10)>0){ccpAbortRequested=true;ccpMarkStopRequested(true);}$('#kpi-total').text(stats.total||0);$('#kpi-pending').text(stats.pending||0);$('#kpi-processing').text(stats.processing||0);$('#kpi-done').text(stats.done||0);$('#kpi-error').text(stats.error||0);$('#kpi-skipped').text(stats.skipped||0);$('#kpi-remaining').text(stats.remaining||0);$('#kpi-found-preview').text(stats.found_preview||0);$('#kpi-matched').text(stats.matched||0);$('#kpi-unmatched').text(stats.unmatched||0);$('#kpi-new-pending').text(stats.new_pending||0);$('#queue-link-preview').text(stats.found_preview||0);$('#queue-link-new').text(stats.new_pending||0);$('#kpi-eta').text(formatEta(stats.eta_seconds||0));$('#kpi-locked').text(stats.locked?((stats.lock_owner||'locked')):'0');$('#queue-last-url').text('{{ text_last_url }}: '+(stats.last_url||''));var pc=parseInt(stats.progress_percent||0,10);$('#queue-progress').css('width',pc+'%').text(pc+'%');}
+
+  $('select[data-current]').each(function(){var current=$(this).attr('data-current');if(current){$(this).val(current);}});
+  var activeTab='{{ active_tab|e('js') }}';
+  if(ccpActiveSupplierId>0){ccpStoreActiveSupplier(ccpActiveSupplierId);}else{var storedSupplierId=ccpGetStoredSupplier();if(storedSupplierId>0 && !/[?&]supplier_id=/.test(window.location.search)){setTimeout(function(){reloadWithSupplier(storedSupplierId);},60);}}
+  if(activeTab){var target='#tab-'+activeTab.replace(/^tab-/,'');var link=$('.ccp-tabs a[href="'+target+'"]');if(link.length){link.tab('show');}}
+  $('.ccp-tabs a[data-toggle="tab"]').on('shown.bs.tab',function(e){var id=String($(e.target).attr('href')||'').replace(/^#tab-/,'');$('.ccp-active-tab-input').val(id);});
+  var ccpAdminIndexUrl = '{{ admin_index_url|e('js') }}';
+  var ccpUserToken = '{{ user_token|e('js') }}';
+  function ccpBuildUrl(params){
+    params=params||{};
+    var explicitSupplier = Object.prototype.hasOwnProperty.call(params,'supplier_id');
+    var base = (ccpAdminIndexUrl || 'index.php').replace(/&amp;/g,'&').split('?')[0];
+    var current = new URL(window.location.href);
+    var data = {};
+    var keep = ['supplier_id','active_tab','review_page','review_limit','review_sort','review_order','review_text','review_status','review_type','review_change','new_page','new_limit','new_sort','new_order','new_text','new_status','queue_page','queue_limit','queue_sort','queue_order','queue_text','history_page','history_limit','history_sort','history_order','history_text','log_page','log_limit','log_sort','log_order','log_text'];
+    $.each(keep,function(i,k){var v=current.searchParams.get(k);if(v!==null && v!=='' && v!=='0'){data[k]=v;}});
+    if(!explicitSupplier && !data.supplier_id && ccpActiveSupplierId>0){data.supplier_id=ccpActiveSupplierId;}
+    $.each(params,function(k,v){if(v===null||v===''||v===0||v==='0'){delete data[k];}else{data[k]=v;}});
+    if(!explicitSupplier && !data.supplier_id && ccpActiveSupplierId>0){data.supplier_id=ccpActiveSupplierId;}
+    var query=['route=extension/module/supplier_sync_parser_pro','user_token='+encodeURIComponent(ccpUserToken||'')];
+    $.each(data,function(k,v){query.push(encodeURIComponent(k)+'='+encodeURIComponent(v));});
+    return base+'?'+query.join('&');
+  }
+  function restoreCurrentControls(context){
+    context=context||document;
+    initPaginationBoxes(context);
+    $(context).find('select[data-current]').each(function(){var current=$(this).attr('data-current');if(current){$(this).val(current);}});
+    $(context).find('[data-toggle="tooltip"]').tooltip({container:'body',html:false});
+  }
+  function reloadWithSupplier(supplierId){
+    supplierId=parseInt(supplierId||0,10)||0;
+    ccpStoreActiveSupplier(supplierId);
+    var active = String($('.ccp-tabs li.active a').attr('href') || '#tab-master').replace(/^#tab-/, '');
+    var url = ccpBuildUrl({supplier_id:(supplierId && supplierId !== '0') ? supplierId : '', active_tab:active});
+    setAjaxBusy(true);
+    $.ajax({url:url,type:'get',dataType:'html',success:function(html){
+      var parsed=$('<div/>').append($.parseHTML(html, document, true));
+      var fresh=parsed.find('.ccp-ssp');
+      if(fresh.length && $('.ccp-ssp').length){
+        $('.ccp-ssp').html(fresh.html());
+        ccpStoreActiveSupplier(supplierId);
+        restoreCurrentControls($('.ccp-ssp'));
+        var target='#tab-'+active;
+        if($('.ccp-tabs a[href="'+target+'"]').length){$('.ccp-tabs a[href="'+target+'"]').tab('show');}
+        history.pushState(null,'',url);
+        
+      } else {
+        window.location.href=url;
+      }
+    },error:function(){window.location.href=url;},complete:function(){setAjaxBusy(false);}});
+  }
+  $(document).on('change','#ccp-active-supplier,.ccp-supplier-scope-select',function(){ reloadWithSupplier(String($(this).val() || '0')); });
+  $(document).on('click','.ccp-tabs a[data-require-supplier="1"]',function(e){
+    if (!ccpActiveSupplierId) {
+      e.preventDefault();
+      toast('{{ text_supplier_context_required|e('js') }}');
+      $('.ccp-tabs a[href="#tab-master"]').tab('show');
+      return false;
+    }
+  });
+  var ccpFieldHelps={
+    base_url:"{{ help_field_base_url|e('js') }}",
+    list_urls:"{{ help_field_list_urls|e('js') }}",
+    currency_code:"{{ help_field_currency|e('js') }}",
+    source_language_code:"{{ help_field_language|e('js') }}",
+    target_language_id:"{{ help_field_language|e('js') }}",
+    force_new_category_id:"{{ help_field_force_new_category|e('js') }}",
+    price_formula_mode:"{{ help_field_price_formula|e('js') }}",
+    discount_percent:"{{ help_field_price_formula|e('js') }}",
+    markup_percent:"{{ help_field_price_formula|e('js') }}",
+    min_margin_percent:"{{ help_field_price_formula|e('js') }}",
+    request_delay_ms:"{{ help_field_delay|e('js') }}",
+    create_new:"{{ help_field_create_new|e('js') }}",
+    create_new_status:"{{ help_field_create_new|e('js') }}",
+    product_url_xpath:"{{ help_field_xpath_required|e('js') }}",
+    name_xpath:"{{ help_field_xpath_required|e('js') }}",
+    price_xpath:"{{ help_field_xpath_required|e('js') }}",
+    stock_xpath:"{{ help_field_xpath_required|e('js') }}",
+    sku_xpath:"{{ help_field_xpath_required|e('js') }}",
+    ean_xpath:"{{ help_field_xpath_required|e('js') }}",
+    upc_xpath:"{{ help_field_xpath_required|e('js') }}",
+    excluded_skus_text:"{{ help_field_exclusions|e('js') }}",
+    excluded_urls_text:"{{ help_field_exclusions|e('js') }}",
+    excluded_categories_text:"{{ help_field_exclusions|e('js') }}"
+  };
+  $.each(ccpFieldHelps,function(name,txt){var field=$('[name="'+name+'"]').first();if(field.length && txt){var label=field.closest('div').find('label').first();if(label.length && !label.find('.ccp-field-help-icon').length){label.append(' <i class="fa fa-info-circle ccp-field-help-icon" data-toggle="tooltip" data-placement="top" title="'+escapeHtml(txt)+'"></i>');}}});
+  $('[data-toggle="tooltip"]').tooltip({container:'body',html:false});
+  function getActivePane(){var active=$('.ccp-tabs li.active a').attr('href')||'#tab-review';return active;}
+  function initPaginationBoxes(context){context=context||document;$(context).find('.ccp-pagination').each(function(){var box=$(this),prefix=box.data('prefix'),page=parseInt(box.data('page')||1,10),total=parseInt(box.data('total')||0,10),limit=parseInt(box.data('limit')||100,10);if($.inArray(limit,[50,100,200,500])===-1){limit=100;}var pages=Math.max(1,Math.ceil(total/Math.max(1,limit)));page=Math.max(1,Math.min(pages,page));var html='<button type="button" class="btn btn-default btn-xs ccp-page" data-page="1" '+(page<=1?'disabled':'')+'>{{ button_page_first }}</button> <button type="button" class="btn btn-default btn-xs ccp-page" data-page="'+Math.max(1,page-1)+'" '+(page<=1?'disabled':'')+'>{{ button_page_prev }}</button> ';var windowStart=Math.max(1,page-2),windowEnd=Math.min(pages,page+2);if(windowStart>1){html+='<button type="button" class="btn btn-default btn-xs ccp-page" data-page="1">1</button>';if(windowStart>2){html+='<span class="ccp-page-info">…</span>';}}for(var p=windowStart;p<=windowEnd;p++){html+='<button type="button" class="btn btn-xs ccp-page '+(p===page?'btn-primary':'btn-default')+'" data-page="'+p+'" '+(p===page?'disabled':'')+'>'+p+'</button>';}if(windowEnd<pages){if(windowEnd<pages-1){html+='<span class="ccp-page-info">…</span>';}html+='<button type="button" class="btn btn-default btn-xs ccp-page" data-page="'+pages+'">'+pages+'</button>';}html+=' <button type="button" class="btn btn-default btn-xs ccp-page" data-page="'+Math.min(pages,page+1)+'" '+(page>=pages?'disabled':'')+'>{{ button_page_next }}</button> <button type="button" class="btn btn-default btn-xs ccp-page" data-page="'+pages+'" '+(page>=pages?'disabled':'')+'>{{ button_page_last }}</button> <span class="ccp-page-info">'+page+' / '+pages+'</span> <select class="form-control input-sm ccp-limit"><option>50</option><option>100</option><option>200</option><option>500</option></select>';box.html(html);box.find('.ccp-limit').val(String(limit));});}
+  function ccpParamsFromUrl(url){var out={};try{var u=new URL(String(url), window.location.href);u.searchParams.forEach(function(v,k){if(k!=='route'&&k!=='user_token'){out[k]=v;}});}catch(e){}return out;}
+  function ajaxNavigateUrl(url){var pane=getActivePane();var tab=pane.replace(/^#tab-/,'');var urlStr=ccpBuildUrl($.extend({}, ccpParamsFromUrl(url), {active_tab:tab}));setAjaxBusy(true);$.ajax({url:urlStr,type:'get',dataType:'html',success:function(html){var parsed=$('<div/>').append($.parseHTML(html, document, true));var fresh=parsed.find(pane);if(fresh.length && $(pane).length){$(pane).html(fresh.html());restoreCurrentControls($(pane));if(typeof updateSelectedCounters==='function'){updateSelectedCounters();}history.pushState(null,'',urlStr);}else{window.location.href=urlStr;}},error:function(){window.location.href=urlStr;},complete:function(){setAjaxBusy(false);}});}
+  function refreshActivePane(){ajaxNavigateUrl(ccpBuildUrl({}));} 
+  $(document).on('click','.ccp-open-tab',function(e){e.preventDefault();var href=$(this).attr('href');$('.ccp-tabs a[href="'+href+'"]').tab('show');var url=ccpBuildUrl({active_tab:href.replace(/^#tab-/,'')});history.replaceState(null,'',url);});
+  function setParams(params){ajaxNavigateUrl(ccpBuildUrl(params||{}));}
+  function collectPrefix(prefix){var out={};if(prefix==='review'){out.review_text=$('#filter-review-text').val()||'';out.review_status=$('#filter-review-status').val()||'';out.review_type=$('#filter-review-type').val()||'';out.review_change=$('#filter-review-change').val()||'';out.review_page=1;}if(prefix==='new'){out.new_text=$('#filter-new-text').val()||'';out.new_status=$('#filter-new-status').val()||'';out.new_page=1;}if(prefix==='queue'){out.queue_text=$('#filter-queue-text').val()||'';out.queue_page=1;}if(prefix==='history'){out.history_text=$('#filter-history-text').val()||'';out.history_page=1;}if(prefix==='log'){out.log_text=$('#filter-log-text').val()||'';out.log_page=1;}return out;}
+  $(document).on('click','.ccp-server-filter',function(){setParams(collectPrefix($(this).data('prefix')));});
+  $(document).on('click','.ccp-pagination .ccp-page',function(){var box=$(this).closest('.ccp-pagination'),prefix=box.data('prefix'),p=$(this).data('page'),prm={};prm[prefix+'_page']=p;setParams(prm);});
+  $(document).on('change','.ccp-pagination .ccp-limit',function(){var box=$(this).closest('.ccp-pagination'),prefix=box.data('prefix'),prm={};prm[prefix+'_limit']=$(this).val();prm[prefix+'_page']=1;setParams(prm);});
+  initPaginationBoxes(document);
+  function checkedReviews(){var ids=[];$('#table-review .review-check:checked:visible').each(function(){ids.push($(this).val());});return ids;}
+  function checkedNew(){var ids=[];$('#table-new .new-check:checked:visible').each(function(){ids.push($(this).val());});return ids;}
+  function ccpGetActiveSupplierId(){var v=parseInt($('#ccp-active-supplier').val()||0,10)||0;if(v>0){return v;}v=parseInt($('#queue-supplier-id').val()||0,10)||0;if(v>0){return v;}return parseInt(ccpActiveSupplierId||0,10)||0;}
+  function checkedQueue(){var ids=[];$('#table-queue .queue-check:checked:visible').each(function(){ids.push($(this).val());});return ids;}
+  function changeMatches(wanted, actual){if(!wanted){return true;}if(wanted==='changed'){return actual!=='same';}if(wanted==='price'){return actual==='price'||actual==='price_stock';}if(wanted==='stock'){return actual==='stock'||actual==='price_stock';}return actual===wanted;}
+  function filterReviews(){var txt=($('#filter-review-text').val()||'').toLowerCase();var st=$('#filter-review-status').val();var tp=$('#filter-review-type').val();var ch=$('#filter-review-change').val();var shown=0;$('.ccp-review-row').each(function(){var row=$(this);var ok=true;if(txt && row.text().toLowerCase().indexOf(txt)===-1){ok=false;}if(st && row.data('status')!==st){ok=false;}if(tp && row.data('type')!==tp){ok=false;}if(!changeMatches(ch,row.data('change'))){ok=false;}row.toggle(ok);if(ok){shown++;}});$('#review-check-all').prop('checked',false);}
+  function filterNew(){var txt=($('#filter-new-text').val()||'').toLowerCase();var st=$('#filter-new-status').val();$('.ccp-new-row').each(function(){var row=$(this);var ok=true;if(txt && row.text().toLowerCase().indexOf(txt)===-1){ok=false;}if(st && row.data('status')!==st){ok=false;}row.toggle(ok);});$('#new-check-all').prop('checked',false);}
+  function filterPlainTable(input){var target=$($(input).data('target'));var txt=($(input).val()||'').toLowerCase();target.find('tbody tr').each(function(){var row=$(this);row.toggle(!txt || row.text().toLowerCase().indexOf(txt)!==-1);});}
+  $(document).on('input change','#filter-review-text,#filter-review-status,#filter-review-type,#filter-review-change',filterReviews);
+  $(document).on('input change','#filter-new-text,#filter-new-status',filterNew);
+  $(document).on('input change','.ccp-table-filter',function(){filterPlainTable(this);});
+  $(document).on('click','#btn-filter-reset',function(){$('#filter-review-text,#filter-review-status,#filter-review-type,#filter-review-change').val('');filterReviews();});
+  $(document).on('click','#btn-new-filter-reset',function(){$('#filter-new-text,#filter-new-status').val('');filterNew();});
+  function updateSelectedCounters(){
+    $('.ccp-selected-counter[data-counter="review"]').text('{{ text_selected_rows|e('js') }}: '+checkedReviews().length);
+    $('.ccp-selected-counter[data-counter="new"]').text('{{ text_selected_rows|e('js') }}: '+checkedNew().length);
+    $('.ccp-selected-counter[data-counter="queue"]').text('{{ text_selected_rows|e('js') }}: '+checkedQueue().length);
+  }
+  $(document).on('change','#review-check-all',function(){$('.review-check:visible').prop('checked',$(this).prop('checked'));updateSelectedCounters();});
+  $(document).on('change','#new-check-all',function(){$('.new-check:visible').prop('checked',$(this).prop('checked'));updateSelectedCounters();});
+  $(document).on('change','#queue-check-all',function(){$('.queue-check:visible').prop('checked',$(this).prop('checked'));updateSelectedCounters();});
+  $(document).on('change','.review-check,.new-check,.queue-check',updateSelectedCounters);
+  updateSelectedCounters();
+  $(document).on('click','.ccp-toggle-match',function(){$(this).siblings('.ccp-manual-match').toggleClass('open');});
+  $(document).on('click','.ccp-candidate-pick',function(){var btn=$(this);var wrap=btn.closest('.ccp-manual-match');var productId=btn.data('product-id');var label=btn.data('label')||('#'+productId);var sel=wrap.find('.ccp-match-product');if(!sel.find('option[value="'+productId+'"]').length){sel.append($('<option/>').attr('value',productId).text(label));}sel.val(productId);});
+  $(document).on('click','.ccp-sortable th:not(.ccp-nosort)',function(){var th=$(this);var serverSort=th.data('sort');var tableId=th.closest('table').attr('id')||'';var prefix=tableId==='table-review'?'review':(tableId==='table-new'?'new':(tableId==='table-queue'?'queue':((tableId==='table-runs'||tableId==='table-history')?'history':(tableId==='table-logs'?'log':''))));if(serverSort && prefix){var currentParams=ccpParamsFromUrl(ccpBuildUrl({}));var currentSort=currentParams[prefix+'_sort']||'';var currentOrder=currentParams[prefix+'_order']||'desc';var nextOrder=(currentSort===serverSort && currentOrder==='asc')?'desc':'asc';var prm={};prm[prefix+'_sort']=serverSort;prm[prefix+'_order']=nextOrder;prm[prefix+'_page']=1;ajaxNavigateUrl(ccpBuildUrl(prm));return;}var table=th.closest('table');var idx=th.index();var asc=!th.hasClass('ccp-sort-asc');table.find('th').removeClass('ccp-sort-asc ccp-sort-desc');th.addClass(asc?'ccp-sort-asc':'ccp-sort-desc');var rows=table.find('tbody tr').get();rows.sort(function(a,b){var av=$.trim($(a).children('td').eq(idx).text());var bv=$.trim($(b).children('td').eq(idx).text());var an=parseFloat(av.replace(/[^0-9,.-]/g,'').replace(',','.'));var bn=parseFloat(bv.replace(/[^0-9,.-]/g,'').replace(',','.'));if(!isNaN(an)&&!isNaN(bn)){return asc?an-bn:bn-an;}return asc?av.localeCompare(bv):bv.localeCompare(av);});$.each(rows,function(i,row){table.children('tbody').append(row);});});
+  $(document).on('click','.ccp-apply',function(){
+    var ids=checkedReviews();
+    if(!ids.length){$('#review-result').text('{{ text_no_selected_rows|e('js') }}');return;}
+    var mode=$(this).data('mode');
+    if((mode==='update_price_force'||mode==='update_price_stock_force') && !confirm('{{ text_confirm_force_price|e('js') }}')){return;}
+    if(mode==='full_update' && !confirm('{{ text_confirm_full_update|e('js') }}')){return;}
+    if(mode==='create_new' && !confirm('{{ text_confirm_create_new|e('js') }}')){return;}
+    post('{{ ajax_apply_reviews }}',{supplier_id:ccpGetActiveSupplierId(),review_ids:ids,mode:mode},function(json){var extra='';if(json.moved_new){extra+=', {{ text_moved_new|e('js') }}: '+json.moved_new;}if(json.created_ids&&json.created_ids.length){extra+=', {{ text_created_product_ids|e('js') }}: '+json.created_ids.join(', ');}$('#review-result').text((json.message||'{{ text_done|e('js') }}')+' {{ text_updated|e('js') }}: '+(json.updated||0)+', {{ text_created|e('js') }}: '+(json.created||0)+extra+', {{ text_skipped|e('js') }}: '+(json.skipped||0)+', {{ text_errors|e('js') }}: '+(json.errors||0)+formatRowErrors(json));$('#review-check-all,#table-review .review-check').prop('checked',false);updateSelectedCounters();if(mode==='move_to_new' && parseInt(json.moved_new||0,10)>0){$('.ccp-tabs a[href="#tab-new"]').tab('show');reloadWithSupplier(ccpActiveSupplierId);}else{refreshActivePane();}});
+  });
+  $(document).on('click','.ccp-row-apply',function(){
+    var row=$(this).closest('.ccp-review-row');
+    var id=row.data('review-id');
+    var mode=row.find('.ccp-row-action-mode').val()||'update_price_stock';
+    if(!id){$('#review-result').text('{{ text_no_selected_rows|e('js') }}');return;}
+    if((mode==='update_price_force'||mode==='update_price_stock_force') && !confirm('{{ text_confirm_force_price|e('js') }}')){return;}
+    if(mode==='full_update' && !confirm('{{ text_confirm_full_update|e('js') }}')){return;}
+    if(mode==='create_new' && !confirm('{{ text_confirm_create_new|e('js') }}')){return;}
+    post('{{ ajax_apply_reviews }}',{supplier_id:ccpGetActiveSupplierId(),review_ids:[id],mode:mode},function(json){var extra='';if(json.moved_new){extra+=', {{ text_moved_new|e('js') }}: '+json.moved_new;}if(json.created_ids&&json.created_ids.length){extra+=', {{ text_created_product_ids|e('js') }}: '+json.created_ids.join(', ');}$('#review-result').text((json.message||'{{ text_done|e('js') }}')+' {{ text_updated|e('js') }}: '+(json.updated||0)+', {{ text_created|e('js') }}: '+(json.created||0)+extra+', {{ text_skipped|e('js') }}: '+(json.skipped||0)+', {{ text_errors|e('js') }}: '+(json.errors||0)+formatRowErrors(json));if(mode==='move_to_new' && parseInt(json.moved_new||0,10)>0){$('.ccp-tabs a[href="#tab-new"]').tab('show');reloadWithSupplier(ccpActiveSupplierId);}else{refreshActivePane();}});
+  });
+  $(document).on('click','#btn-clear-reviews',function(){if(!confirm('{{ button_clear_reviews }}?')){return;}post('{{ ajax_clear_reviews }}',{supplier_id:ccpGetActiveSupplierId()},function(json){$('#review-result').text(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+  $(document).on('click','#btn-delete-review-selected',function(){var ids=checkedReviews();if(!ids.length){$('#review-result').text('{{ text_no_selected_rows|e('js') }}');return;}if(!confirm('{{ button_delete_selected_reviews|e('js') }}?')){return;}post('{{ ajax_delete_review_selected }}',{supplier_id:ccpGetActiveSupplierId(),review_ids:ids},function(json){$('#review-result').text((json.message||'{{ text_done|e('js') }}')+' {{ text_deleted|e('js') }}: '+(json.deleted||0));$('#review-check-all,#table-review .review-check').prop('checked',false);updateSelectedCounters();refreshActivePane();});});
+  $(document).on('click','#btn-apply-new-category',function(){var ids=checkedNew();var cat=$('#new-bulk-category').val()||'0';if(!ids.length){$('#new-result').text('{{ text_no_selected_rows|e('js') }}');return;}if(parseInt(cat,10)<=0){$('#new-result').text('{{ text_category_required|e('js') }}');return;}$('.new-check:checked:visible').each(function(){$(this).closest('.ccp-new-row').find('.ccp-new-category').val(cat);});$('#new-result').text('{{ text_category_applied_to_selected|e('js') }}: '+ids.length);});
+  $(document).on('change', '#form-supplier select[name="create_new"], #form-supplier select[name="create_new_status"]', function(){
+    var supplierId = parseInt($('#supplier-id').val() || ccpActiveSupplierId || 0, 10);
+    if (!supplierId) {
+      return;
+    }
+    var box = $('.ccp-new-flags-status');
+    box.text('{{ text_loading|e('js') }}');
+    post('{{ ajax_save_supplier_new_flags }}', {
+      supplier_id: supplierId,
+      create_new: $('#form-supplier select[name="create_new"]').val() || 0,
+      create_new_status: $('#form-supplier select[name="create_new_status"]').val() || 0
+    }, function(json){
+      box.text(json.message || '{{ text_success_supplier_new_flags_saved|e('js') }}');
+      if (parseInt(json.create_new || 0, 10) > 0) {
+        $('#btn-create-new-tab').prop('disabled', false).removeAttr('title');
+        $('#tab-new .ccp-note-warning').filter(function(){return $(this).text().indexOf('{{ text_new_creation_disabled_hint|e('js') }}') !== -1;}).hide();
+      }
+    });
+  });
+
+  $(document).on('click','#btn-create-new-tab',function(){var ids=checkedNew();if(!ids.length){$('#new-result').text('{{ text_no_selected_rows|e('js') }}');return;}var categoryIds={};$('.new-check:checked:visible').each(function(){var id=$(this).val();var row=$(this).closest('.ccp-new-row');var cat=row.find('.ccp-new-category').val()||0;if(parseInt(cat,10)>0){categoryIds[id]=cat;}});if(!confirm('{{ text_confirm_create_new|e('js') }}')){return;}post('{{ ajax_apply_new_products }}',{supplier_id:ccpGetActiveSupplierId(),new_ids:ids,category_ids:categoryIds},function(json){var extra='';if(json.created_ids&&json.created_ids.length){extra=', {{ text_created_product_ids|e('js') }}: '+json.created_ids.join(', ');}$('#new-result').text((json.message||'{{ text_done|e('js') }}')+' {{ text_created|e('js') }}: '+(json.created||0)+extra+', {{ text_skipped|e('js') }}: '+(json.skipped||0)+', {{ text_errors|e('js') }}: '+(json.errors||0)+formatRowErrors(json));$('#new-check-all,#table-new .new-check').prop('checked',false);updateSelectedCounters();refreshActivePane();});});
+  $(document).on('click','.ccp-search-product',function(){var wrap=$(this).closest('.ccp-manual-match');var row=wrap.closest('.ccp-review-row');var query=$.trim(wrap.find('.ccp-match-query').val()||'');if(!query){query=$.trim(row.data('supplier-sku')||'');if(!query){query=$.trim(row.data('supplier-name')||'');}wrap.find('.ccp-match-query').val(query);}var sel=wrap.find('.ccp-match-product');sel.html('<option value="">{{ text_loading|e('js') }}</option>');post('{{ ajax_search_products }}',{query:query},function(json){sel.empty();sel.append('<option value="">{{ entry_manual_product_id }}</option>');if(json.products&&json.products.length){$.each(json.products,function(i,p){var score=(p.similarity!==undefined&&p.similarity!==null)?(' / '+p.similarity+'%'):'';sel.append($('<option/>').attr('value',p.product_id).text('#'+p.product_id+' '+p.name+' / '+p.model+' / '+p.sku+' / '+p.price+score));});if(json.products.length===1){sel.val(json.products[0].product_id);}}else{sel.append('<option value="">{{ text_none|e('js') }}</option>');}});});
+  $(document).on('click','.ccp-match-product-btn',function(){var row=$(this).closest('.ccp-review-row');var product_id=row.find('.ccp-match-product').val();if(!product_id){$('#review-result').text('{{ entry_manual_product_id }}');return;}post('{{ ajax_match_review_product }}',{supplier_id:ccpGetActiveSupplierId(),review_id:row.data('review-id'),product_id:product_id},function(json){$('#review-result').text(json.message||'{{ text_done|e('js') }}');if(json.ok){var status=json.status||'pending';row.attr('data-status',status).attr('data-type','existing').data('status',status).data('type','existing');row.removeClass(function(i,c){return (c.match(/(^|\s)ccp-(status|type)-\S+/g)||[]).join(' ');}).addClass('ccp-status-'+status+' ccp-type-existing');row.find('.ccp-local-name').text('#'+json.product_id+' '+(json.product_name||''));row.find('.ccp-local-price-cell').text(String(json.local_price||0)+' '+ccpBaseCurrency);row.find('.ccp-local-quantity-cell').text(String(json.local_quantity||0));row.find('.ccp-delta-cell').html(String(json.price_delta_percent||0)+'%<br>'+String(json.price_delta_abs||0));row.find('.ccp-match-source-cell').text(json.match_source||'manual');row.find('.ccp-status-label').text(json.status_label||status);row.find('.ccp-manual-match').removeClass('open');toast('{{ text_match_selected|e('js') }}');}});});
+  $(document).on('click','#btn-test-product',function(){var data={supplier_id:$('#test-supplier-id').val(),url:$('#test-url').val()};$('#test-result').text('{{ text_loading|e('js') }}');post('{{ ajax_test_product }}',data,function(json){$('#test-result').text(JSON.stringify(json,null,2));});});
+  var ccpDetectedFields = {};
+  function escapeHtml(v){return $('<div/>').text(v===undefined||v===null?'':String(v)).html();}
+  function confidenceText(label){if(label==='high'){return '{{ text_auto_detect_high|e('js') }}';}if(label==='medium'){return '{{ text_auto_detect_medium|e('js') }}';}if(label==='low'){return '{{ text_auto_detect_low|e('js') }}';}return '{{ text_auto_detect_none|e('js') }}';}
+  var ccpAutoFieldLabels={product_url_xpath:'{{ entry_product_url_xpath|e('js') }}',next_page_xpath:'{{ entry_next_page_xpath|e('js') }}',name_xpath:'{{ entry_name_xpath|e('js') }}',price_xpath:'{{ entry_price_xpath|e('js') }}',stock_xpath:'{{ entry_stock_xpath|e('js') }}',sku_xpath:'{{ entry_sku_xpath|e('js') }}',model_xpath:'{{ entry_model_xpath|e('js') }}',ean_xpath:'{{ entry_ean_xpath|e('js') }}',upc_xpath:'{{ entry_upc_xpath|e('js') }}',mpn_xpath:'{{ entry_mpn_xpath|e('js') }}',manufacturer_xpath:'{{ entry_manufacturer_xpath|e('js') }}',category_xpath:'{{ entry_category_xpath|e('js') }}',description_xpath:'{{ entry_description_xpath|e('js') }}',meta_description_xpath:'{{ entry_meta_description_xpath|e('js') }}',meta_keyword_xpath:'{{ entry_meta_keyword_xpath|e('js') }}',image_xpath:'{{ entry_image_xpath|e('js') }}',additional_images_xpath:'{{ entry_additional_images_xpath|e('js') }}',attribute_row_xpath:'{{ entry_attribute_row_xpath|e('js') }}',option_row_xpath:'{{ entry_option_row_xpath|e('js') }}',feed_item_path:'{{ entry_feed_item_path|e('js') }}',feed_url_path:'{{ entry_feed_url_path|e('js') }}',feed_sku_path:'{{ entry_feed_sku_path|e('js') }}',feed_name_path:'{{ entry_feed_name_path|e('js') }}',feed_price_path:'{{ entry_feed_price_path|e('js') }}',feed_stock_path:'{{ entry_feed_stock_path|e('js') }}',feed_quantity_path:'{{ entry_feed_quantity_path|e('js') }}',feed_category_path:'{{ entry_feed_category_path|e('js') }}',feed_description_path:'{{ entry_feed_description_path|e('js') }}',feed_manufacturer_path:'{{ entry_feed_manufacturer_path|e('js') }}',feed_image_path:'{{ entry_feed_image_path|e('js') }}',feed_ean_path:'{{ entry_feed_ean_path|e('js') }}',feed_upc_path:'{{ entry_feed_upc_path|e('js') }}',feed_mpn_path:'{{ entry_feed_mpn_path|e('js') }}'};
+  function detectOptionLabel(c){var src=c.source||'';var conf=confidenceText(c.confidence_label||'');var val=c.value?(' — '+String(c.value).substring(0,90)) : '';var label=(conf?conf:'')+(src?' · '+src:'')+val;return label.length>160?label.substring(0,157)+'...':label;}
+  function buildAutoDetectPool(fields){var pool=[],seen={};$.each(fields||{},function(f,item){$.each((item&&item.candidates)||[],function(i,c){if(!c||!c.xpath){return;}var key=(c.xpath||'')+'|'+(c.attr||'');if(seen[key]){return;}seen[key]=1;var copy=$.extend({},c);copy.pool_field=f;pool.push(copy);});});return pool;}
+  function renderAutoDetect(fields, boxSelector){ccpDetectedFields=fields||{};boxSelector=boxSelector||'#auto-detect-result';var pool=buildAutoDetectPool(ccpDetectedFields);var html='<div class="ccp-note ccp-note-info"><i class="fa fa-info-circle"></i> Для каждого стандартного поля можно выбрать любой найденный блок страницы или оставить пусто, если поле не нужно импортировать. Автовыбор только предлагает вариант, окончательное соответствие выбираете вы.</div><div class="table-responsive"><table class="table table-bordered table-condensed ccp-table ccp-detect-table"><thead><tr><th>{{ text_auto_detect_field|e('js') }}</th><th>{{ text_auto_detect_select|e('js') }}</th><th>{{ text_detect_xpath_override|default('XPath / поле')|e('js') }}</th><th>{{ text_auto_detect_value|e('js') }}</th><th>{{ text_auto_detect_source|e('js') }}</th><th>{{ text_auto_detect_confidence|e('js') }}</th></tr></thead><tbody>';var has=false;$.each(ccpDetectedFields,function(field,item){var candidates=item.candidates||[];has=true;html+='<tr data-field="'+escapeHtml(field)+'"><td><b>'+escapeHtml(ccpAutoFieldLabels[field]||item.label||field)+'</b><div class="ccp-muted">'+escapeHtml(field)+'</div></td><td><select class="form-control input-sm ccp-detected-rule" data-field="'+escapeHtml(field)+'"><option value="" data-attr="" data-value="" data-source="{{ text_auto_detect_none|e('js') }}" data-confidence="">— {{ text_auto_detect_none|e('js') }} / не импортировать —</option>';if(candidates.length){html+='<optgroup label="Автоподбор для этого поля">';$.each(candidates,function(i,c){html+='<option value="'+escapeHtml(c.xpath)+'" data-attr="'+escapeHtml(c.attr||'')+'" data-value="'+escapeHtml(c.value||'')+'" data-source="'+escapeHtml(c.source||'')+'" data-confidence="'+escapeHtml(c.confidence_label||'')+'" title="'+escapeHtml(c.xpath)+'">'+escapeHtml(detectOptionLabel(c))+'</option>';});html+='</optgroup>';}if(pool.length){html+='<optgroup label="Все найденные значения страницы">';$.each(pool,function(i,c){html+='<option value="'+escapeHtml(c.xpath)+'" data-attr="'+escapeHtml(c.attr||'')+'" data-value="'+escapeHtml(c.value||'')+'" data-source="'+escapeHtml((ccpAutoFieldLabels[c.pool_field]||c.pool_field)+' / '+(c.source||''))+'" data-confidence="'+escapeHtml(c.confidence_label||'')+'" title="'+escapeHtml(c.xpath)+'">'+escapeHtml((ccpAutoFieldLabels[c.pool_field]||c.pool_field)+' · '+detectOptionLabel(c))+'</option>';});html+='</optgroup>';}html+='</select></td><td><input type="text" class="form-control input-sm ccp-detected-xpath-input" data-field="'+escapeHtml(field)+'" value="" placeholder="XPath"><div class="ccp-muted">{{ help_detect_xpath_override|default('Можно вручную заменить XPath, если автоопределение выбрало не тот блок.')|e('js') }}</div></td><td class="ccp-detected-value"></td><td class="ccp-detected-source"></td><td class="ccp-detected-confidence">{{ text_auto_detect_none|e('js') }}</td></tr>';});if(!has){html+='<tr><td colspan="6" class="text-center">{{ text_auto_detect_none|e('js') }}</td></tr>';}html+='</tbody></table></div>';$(boxSelector).html(html);$(boxSelector+' .ccp-detected-rule').each(function(){var $select=$(this);var first=$select.find('optgroup:first option:first');if(first.length){$select.val(first.val()).trigger('change');}else{$select.val('').trigger('change');}});}
+  $(document).on('change','.ccp-detected-rule',function(){var opt=$(this).find('option:selected');var row=$(this).closest('tr');row.find('.ccp-detected-value').text(opt.data('value')||'');row.find('.ccp-detected-source').text(opt.data('source')||'');row.find('.ccp-detected-confidence').text(confidenceText(opt.data('confidence')||''));row.find('.ccp-detected-xpath-input').val(opt.val()||'').attr('data-attr',opt.data('attr')||'');});
+  function collectDetectedRules(boxSelector){boxSelector=boxSelector||'#auto-detect-result';var rules={};$(boxSelector+' .ccp-detected-xpath-input').each(function(){var field=$(this).data('field');var val=$.trim($(this).val()||'');if(field){rules[field]=val;var attr=$(this).attr('data-attr')||'';if(field==='image_xpath'){rules.image_attr=attr||'src';}if(field==='product_url_xpath'){rules.product_url_attr=attr||'href';}}});return rules;}
+  $('#btn-auto-detect').on('click',function(){var url=$('#auto-detect-url').val()||$('#test-url').val();$('#auto-detect-save-result').text('');$('#auto-detect-result').html('<div class="ccp-note ccp-note-info"><i class="fa fa-spinner fa-spin"></i> {{ text_loading|e('js') }}</div>');post('{{ ajax_auto_detect_rules }}',{supplier_id:$('#test-supplier-id').val(),url:url},function(json){if(json.ok){renderAutoDetect(json.fields||{}, '#auto-detect-result');}else{$('#auto-detect-result').html('<div class="alert alert-danger">'+escapeHtml(json.message||'{{ text_ajax_error|e('js') }}')+'</div>');}});});
+  $('#btn-apply-detected-to-form').on('click',function(){var rules=collectDetectedRules('#auto-detect-result');$.each(rules,function(field,value){$('input[name="'+field+'"]').val(value);});$('#auto-detect-save-result').text('{{ text_done|e('js') }}');});
+  $('#btn-auto-detect-feed').on('click',function(){var supplierId=ccpGetActiveSupplierId();$('#feed-auto-detect-save-result').text('');$('#feed-auto-detect-result').html('<div class="ccp-note ccp-note-info"><i class="fa fa-spinner fa-spin"></i> {{ text_loading|e('js') }}</div>');post('{{ ajax_auto_detect_feed_rules }}',{supplier_id:supplierId},function(json){if(json.ok){renderAutoDetect(json.fields||{}, '#feed-auto-detect-result');}else{$('#feed-auto-detect-result').html('<div class="alert alert-danger">'+escapeHtml(json.message||'{{ text_ajax_error|e('js') }}')+'</div>');}});});
+  $('#btn-apply-feed-detected-to-form').on('click',function(){var rules=collectDetectedRules('#feed-auto-detect-result');fillRuleInputs(rules);$('#feed-auto-detect-save-result').text('{{ text_done|e('js') }}');});
+  $('#btn-save-detected-rules').on('click',function(){var rules=collectDetectedRules('#auto-detect-result');post('{{ ajax_save_detected_rules }}',{supplier_id:$('#test-supplier-id').val(),rules:rules},function(json){$('#auto-detect-save-result').text((json.message||'{{ text_done|e('js') }}')+' ('+(json.saved||0)+')');});});
+  function fillRuleInputs(rules){$.each(rules,function(field,value){$('input[name="'+field+'"],textarea[name="'+field+'"]').val(value);});}
+  function scanRulesFromProduct(saveAfter){
+    var supplierId = $('#rules-supplier-id').val() || $('#test-supplier-id').val() || '0';
+    var url = $('#rules-auto-detect-url').val() || $('#auto-detect-url').val() || $('#test-url').val();
+    $('#rules-auto-detect-save-result').text('');
+    $('#rules-auto-detect-result').html('<div class="ccp-note ccp-note-info"><i class="fa fa-spinner fa-spin"></i> {{ text_loading|e('js') }}</div>');
+    post('{{ ajax_auto_detect_rules }}',{supplier_id:supplierId,url:url},function(json){
+      if(json.ok){
+        renderAutoDetect(json.fields||{}, '#rules-auto-detect-result');
+        var rules=collectDetectedRules('#rules-auto-detect-result');
+        fillRuleInputs(rules);
+        if(saveAfter){
+          post('{{ ajax_save_detected_rules }}',{supplier_id:supplierId,rules:rules,list_url:''},function(saved){$('#rules-auto-detect-save-result').text((saved.message||'{{ text_done|e('js') }}')+' ('+(saved.saved||0)+')');});
+        } else {
+          $('#rules-auto-detect-save-result').text('{{ text_done|e('js') }}');
+        }
+      } else {
+        $('#rules-auto-detect-result').html('<div class="alert alert-danger">'+escapeHtml(json.message||'{{ text_ajax_error|e('js') }}')+'</div>');
+      }
+    });
+  }
+  $(document).on('click','#btn-rules-auto-detect',function(){scanRulesFromProduct(false);});
+  $(document).on('click','#btn-rules-detect-list-links',function(){var supplierId=$('#rules-supplier-id').val()||'0';var url=$('#rules-list-detect-url').val()||'';if(!url){toast('{{ help_rules_list_scan|e('js') }}');return;}if(ccpLooksLikeProductUrl(url)){toast('{{ text_list_url_product_warning|default('Это похоже на карточку товара. Для поиска ссылок товаров вставьте ссылку на категорию или список.')|e('js') }}');return;}$('#rules-auto-detect-save-result').text('');$('#rules-auto-detect-result').html('<div class="ccp-note ccp-note-info"><i class="fa fa-spinner fa-spin"></i> {{ text_loading|e('js') }}</div>');post('{{ ajax_auto_detect_list_rules }}',{supplier_id:supplierId,url:url},function(json){if(json.ok){renderAutoDetect(json.fields||{}, '#rules-auto-detect-result');var rules=collectDetectedRules('#rules-auto-detect-result');fillRuleInputs(rules);$('#rules-auto-detect-save-result').text('{{ text_done|e('js') }}');}else{$('#rules-auto-detect-result').html('<div class="alert alert-danger">'+escapeHtml(json.message||'{{ text_ajax_error|e('js') }}')+'</div>');}});});
+  $(document).on('click','#btn-rules-scan-save',function(){scanRulesFromProduct(true);});
+  $(document).on('click','#btn-rules-apply-detected-to-form',function(){var rules=collectDetectedRules('#rules-auto-detect-result');fillRuleInputs(rules);$('#rules-auto-detect-save-result').text('{{ text_done|e('js') }}');});
+  $(document).on('click','#btn-rules-save-detected-rules',function(){var rules=collectDetectedRules('#rules-auto-detect-result'), listUrl=$('#rules-list-detect-url').val()||'';if(listUrl && ccpLooksLikeProductUrl(listUrl)){toast('{{ text_list_url_product_warning|default('Это похоже на карточку товара. Для поля категории вставьте ссылку на категорию или список товаров.')|e('js') }}');listUrl='';}post('{{ ajax_save_detected_rules }}',{supplier_id:$('#rules-supplier-id').val(),rules:rules,list_url:listUrl},function(json){if(json.list_url_saved&&listUrl){$('textarea[name="list_urls"]').val(listUrl);}$('#rules-auto-detect-save-result').text((json.message||'{{ text_done|e('js') }}')+' ('+(json.saved||0)+')');});});
+  $(document).on('click','#btn-queue-retry-selected',function(){var ids=checkedQueue();if(!ids.length){showResult('{{ text_no_selected_rows|e('js') }}');return;}post('{{ ajax_retry_queue_selected }}',{supplier_id:ccpGetActiveSupplierId(),queue_ids:ids},function(json){showResult((json.message||'{{ text_done|e('js') }}')+' {{ text_updated|e('js') }}: '+(json.updated||0));refreshActivePane();});});
+  $(document).on('click','#btn-queue-delete-selected',function(){var ids=checkedQueue();if(!ids.length){showResult('{{ text_no_selected_rows|e('js') }}');return;}if(!confirm('{{ button_delete_selected_queue|e('js') }}?')){return;}post('{{ ajax_delete_queue_selected }}',{supplier_id:ccpGetActiveSupplierId(),queue_ids:ids},function(json){showResult((json.message||'{{ text_done|e('js') }}')+' {{ button_delete|e('js') }}: '+(json.deleted||0));refreshActivePane();});});
+  $(document).on('click','#btn-new-skip-selected',function(){var ids=checkedNew();if(!ids.length){$('#new-result').text('{{ text_no_selected_rows|e('js') }}');return;}post('{{ ajax_update_new_status }}',{supplier_id:ccpGetActiveSupplierId(),new_ids:ids,status:'skipped'},function(json){$('#new-result').text((json.message||'{{ text_done|e('js') }}')+' {{ text_skipped|e('js') }}: '+(json.updated||0));$('#new-check-all,#table-new .new-check').prop('checked',false);updateSelectedCounters();refreshActivePane();});});
+  $(document).on('click','#btn-delete-new-selected',function(){var ids=checkedNew();if(!ids.length){$('#new-result').text('{{ text_no_selected_rows|e('js') }}');return;}if(!confirm('{{ button_delete_selected_new|e('js') }}?')){return;}post('{{ ajax_delete_new_selected }}',{supplier_id:ccpGetActiveSupplierId(),new_ids:ids},function(json){$('#new-result').text((json.message||'{{ text_done|e('js') }}')+' {{ text_deleted|e('js') }}: '+(json.deleted||0));$('#new-check-all,#table-new .new-check').prop('checked',false);updateSelectedCounters();refreshActivePane();});});
+  $(document).on('click','#btn-new-restore-selected',function(){var ids=checkedNew();if(!ids.length){$('#new-result').text('{{ text_no_selected_rows|e('js') }}');return;}post('{{ ajax_update_new_status }}',{supplier_id:ccpGetActiveSupplierId(),new_ids:ids,status:'pending'},function(json){$('#new-result').text((json.message||'{{ text_done|e('js') }}')+' {{ text_updated|e('js') }}: '+(json.updated||0));refreshActivePane();});});
+  function buildQueueMode(mode, cb){if(ccpIsStopRequested()){ccpAbortRequested=true;showResult('{{ text_success_queue_stopped|e('js') }}');return;}post('{{ ajax_build_queue }}',{supplier_id:ccpGetActiveSupplierId(),mode:mode},function(json){showResult((json.message||'')+' {{ text_created|e('js') }}: '+(json.created||0));if(json.stats){updateStats(json.stats);}if(cb){cb(json);}else{refreshActivePane();}});}
+  $(document).on('click','#btn-build-scan',function(){buildQueueMode('scan',function(json){if(json.ok===false){return;}runUntilDoneAfterBuild('scan_list');});});
+  $(document).on('click','#btn-build-sitemap',function(){buildQueueMode('sitemap');});
+  $(document).on('click','#btn-build-product-urls',function(){buildQueueMode('product_urls');});
+  $(document).on('click','#btn-build-linked',function(){buildQueueMode('linked_products');});
+  $(document).on('click','#btn-build-new-only',function(){buildQueueMode('new_only');});
+  $(document).on('click','#btn-build-feed-file',function(){buildQueueMode('feed_file');});
+
+  $(document).on('click','#btn-master-find-links',function(){ $('a[href="#tab-queue"]').tab('show'); buildQueueMode('scan',function(json){ if(json.ok!==false){ runUntilDoneAfterBuild('scan_list'); } }); });
+  $(document).on('click','#btn-master-check-sample',function(){ $('a[href="#tab-queue"]').tab('show'); runOneBatch('check_product',function(json){ refreshActivePane(); },10); });
+  $(document).on('click','#btn-master-check-all',function(){ $('a[href="#tab-queue"]').tab('show'); runUntilDoneAfterBuild('check_product'); });
+
+  var ccpQueueLoopRunning=false; var ccpQueueLoopTimer=null; var ccpQueueLoopRunId=0;
+  function ccpStopQueueLoopLocal(){ccpAbortRequested=true;ccpQueueLoopRunId++;ccpQueueLoopRunning=false;if(ccpQueueLoopTimer){clearTimeout(ccpQueueLoopTimer);ccpQueueLoopTimer=null;}if(ccpCurrentXhr && ccpCurrentXhr.readyState!==4){try{ccpCurrentXhr.abort();}catch(e){}}setAjaxBusy(false);}
+  function runOneBatch(actionFilter, cb, limitOverride, queueIds){if(typeof actionFilter==='function'){cb=actionFilter;actionFilter='';}actionFilter=actionFilter||'';queueIds=$.isArray(queueIds)?queueIds:[];if(ccpIsStopRequested()){ccpAbortRequested=true;}if(ccpAbortRequested){if(cb){cb({ok:false,aborted:true,message:'{{ text_success_queue_stopped|e('js') }}'});}return null;}var batchLimit=limitOverride||$('input[name="module_supplier_sync_parser_pro_batch_limit"]').val()||20;var payload={supplier_id:ccpGetActiveSupplierId(),limit:batchLimit,action_filter:actionFilter};if(queueIds.length){payload.queue_ids=queueIds;}return post('{{ ajax_run_queue }}',payload,function(json){var prefix=json.message?json.message+' · ':'';var left=json.stats?parseInt(json.stats.remaining||0,10):0;var done=json.stats?parseInt(json.stats.completed||0,10):0;var total=json.stats?parseInt(json.stats.total||0,10):0;var scanLeft=json.stats?parseInt(json.stats.pending_scan_lists||0,10):0;var prodLeft=json.stats?parseInt(json.stats.pending_products||0,10):0;showResult(prefix+'{{ text_processed|e('js') }}: '+(json.processed||0)+', {{ text_found_urls|e('js') }}: '+(json.found_urls||0)+', {{ text_preview|e('js') }}: '+(json.preview||0)+', {{ text_updated|e('js') }}: '+(json.updated||0)+', {{ text_price_short|e('js') }}: '+(json.price_updated||0)+', {{ text_stock_short|e('js') }}: '+(json.stock_updated||0)+', {{ text_created|e('js') }}: '+(json.created||0)+', {{ text_errors|e('js') }}: '+(json.errors||0)+', {{ text_completed|e('js') }}: '+done+'/'+total+', {{ text_remaining|e('js') }}: '+left+', {{ text_scan_pages_left|e('js') }}: '+scanLeft+', {{ text_products_left|e('js') }}: '+prodLeft);updateStats(json.stats);if(cb){cb(json);}else{refreshActivePane();}});}
+  var ccpQueueLoopTicks=0;function runUntilDoneAfterBuild(actionFilter){actionFilter=actionFilter||'';if(ccpQueueLoopRunning){showResult('{{ text_queue_loop_already_running|e('js') }}');return;}if(ccpIsStopRequested()){ccpAbortRequested=true;showResult('{{ text_success_queue_stopped|e('js') }}');return;}ccpAbortRequested=false;ccpQueueLoopRunning=true;ccpQueueLoopTicks=0;var runId=++ccpQueueLoopRunId;showResult('{{ text_running|e('js') }}');function loop(){if(runId!==ccpQueueLoopRunId || !ccpQueueLoopRunning || ccpAbortRequested){ccpQueueLoopRunning=false;return;}runOneBatch(actionFilter,function(json){if(runId!==ccpQueueLoopRunId){return;}if(json.aborted||ccpAbortRequested){ccpQueueLoopRunning=false;showResult('{{ text_success_queue_stopped|e('js') }}');refreshActivePane();return;}var pending=json.stats?parseInt(json.stats.pending||0,10):0;var scanLeft=json.stats?parseInt(json.stats.pending_scan_lists||0,10):0;var prodLeft=json.stats?parseInt(json.stats.pending_products||0,10):0;var shouldContinue=pending>0;if(actionFilter==='scan_list'){shouldContinue=scanLeft>0;}if(actionFilter==='check_product'){shouldContinue=prodLeft>0;}ccpQueueLoopTicks++;if(ccpQueueLoopTicks%5===0 && !ccpAbortRequested){refreshActivePane();}if(json.ok===false || !shouldContinue || parseInt(json.processed||0,10)<=0){ccpQueueLoopRunning=false;refreshActivePane();return;}if(!ccpAbortRequested && runId===ccpQueueLoopRunId){ccpQueueLoopTimer=setTimeout(loop,650);}});}loop();}
+  $(document).on('click','#btn-run-scan-batch',function(){runOneBatch('scan_list');});
+  $(document).on('click','#btn-run-products-batch',function(){runOneBatch('check_product');});
+  $(document).on('click','#btn-run-selected-scan',function(){var ids=checkedQueue();if(!ids.length){showResult('{{ text_no_selected_rows|e('js') }}');return;}runOneBatch('scan_list',function(){refreshActivePane();},ids.length,ids);});
+  $(document).on('click','#btn-run-selected-products',function(){var ids=checkedQueue();if(!ids.length){showResult('{{ text_no_selected_rows|e('js') }}');return;}runOneBatch('',function(){refreshActivePane();},ids.length,ids);});
+  $(document).on('click','#btn-run-products-until-done',function(){runUntilDoneAfterBuild('check_product');});
+  $(document).on('click','#btn-run-feed-until-done',function(){runUntilDoneAfterBuild('import_item');});
+  $(document).on('click','#btn-run-queue',function(){runOneBatch();});
+  $(document).on('click','#btn-run-until-done',function(){runUntilDoneAfterBuild();});
+  $(document).on('click','#btn-scan-site-all',function(){if(ccpQueueLoopRunning){showResult('{{ text_queue_loop_already_running|e('js') }}');return;}buildQueueMode('scan_site',function(json){if(json.ok===false){return;}runUntilDoneAfterBuild('scan_list');});});
+  if (ccpModuleEnabled) { setInterval(function(){post('{{ ajax_queue_status }}',{supplier_id:ccpGetActiveSupplierId(),__silent:1},function(json){if(json.ok){if(parseInt(json.stopped||0,10)>0){ccpMarkStopRequested(true);ccpAbortRequested=true;}updateStats(json.stats);}});},15000); }
+  $(document).on('click','#btn-clear-queue',function(){if(!confirm('{{ button_clear_queue }}?')){return;}post('{{ ajax_clear_queue }}',{supplier_id:ccpGetActiveSupplierId()},function(json){showResult(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+  $(document).on('click','#btn-reset-processing',function(){post('{{ ajax_reset_processing }}',{supplier_id:ccpGetActiveSupplierId()},function(json){showResult(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+  $(document).on('click','#btn-recover-errors',function(){post('{{ ajax_recover_errors }}',{supplier_id:ccpGetActiveSupplierId()},function(json){showResult(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+  $(document).on('click','#btn-stop-queue,.ccp-stop-current',function(){ccpMarkStopRequested(true);ccpStopQueueLoopLocal();showResult('{{ text_success_queue_stopped|e('js') }}');$.ajax({url:'{{ ajax_stop_queue }}',type:'post',data:{supplier_id:ccpGetActiveSupplierId()},dataType:'text',success:function(response){var json=parseJsonResponse(response);if(json.message){showResult(json.message);toast(json.message);}},complete:function(){setAjaxBusy(false);setTimeout(function(){refreshActivePane();},250);}});});
+  $(document).on('click','#btn-resume-queue',function(){ccpMarkStopRequested(false);ccpAbortRequested=false;post('{{ ajax_resume_queue }}',{supplier_id:ccpGetActiveSupplierId()},function(json){showResult(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+  $(document).on('click','.ccp-history-rollback',function(){
+    if(!confirm('{{ confirm_rollback_price_stock|e('js') }}')){return;}
+    var button=$(this);
+    post('{{ ajax_rollback_history }}',{history_id:button.data('history-id'),supplier_id:button.data('supplier-id')},function(json){
+      $('#history-result').text(json.message||'');
+      if(json.ok){refreshActivePane();}
+    });
+  });
+  $(document).on('click','#btn-clear-history',function(){if(!confirm('{{ button_clear_history }}?')){return;}post('{{ ajax_clear_history }}',{supplier_id:ccpGetActiveSupplierId()},function(json){$('#history-result').text(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+  $(document).on('click','#btn-clear-logs',function(){if(!confirm('{{ button_clear_logs }}?')){return;}post('{{ ajax_clear_logs }}',{supplier_id:ccpGetActiveSupplierId()},function(json){showResult(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+  $(document).on('click','#btn-cleanup-old-data',function(){if(!confirm('{{ button_cleanup_old_data }}?')){return;}post('{{ ajax_cleanup_old_data }}',{},function(json){showResult(json.message||'{{ text_done|e('js') }}');refreshActivePane();});});
+})(jQuery);
+</script>
+{{ footer }}

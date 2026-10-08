@@ -1,0 +1,9 @@
+{
+  "sku": "Артикул поставщика",
+  "price": "Цена продажи",
+  "quantity": "Остаток",
+  "manufacturer": "Бренд",
+  "categories": "Категория",
+  "image": "Фото 1",
+  "additional_images": "Галерея"
+}

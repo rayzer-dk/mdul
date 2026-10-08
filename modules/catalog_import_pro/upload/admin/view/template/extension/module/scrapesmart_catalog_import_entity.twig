@@ -1,0 +1,228 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right"><a href="{{ back }}" class="btn btn-default" title="{{ button_back }}"><i class="fa fa-reply"></i></a></div>
+      <h1>{{ heading_title }}</h1>
+      <ul class="breadcrumb">{% for breadcrumb in breadcrumbs %}<li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>{% endfor %}</ul>
+    </div>
+  </div>
+  <div class="container-fluid catalog-import-entity" data-enabled="{{ enabled ? 1 : 0 }}">
+    {% if not enabled %}<div class="alert alert-warning"><i class="fa fa-power-off"></i> {{ text_module_disabled }}</div>{% endif %}
+    <div id="ajax-alert"></div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-upload"></i> {{ heading_title }}</h3></div>
+      <div class="panel-body">
+        <div class="alert alert-info"><i class="fa fa-shield"></i> {{ text_safe_defaults }}</div>
+        <form id="import-form" class="form-horizontal" enctype="multipart/form-data">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group"><label class="col-sm-4 control-label" for="csv-file">{{ text_csv_file }}</label><div class="col-sm-8"><input type="file" name="csv_file" id="csv-file" accept=".csv,.txt,text/csv,text/plain" class="form-control"{% if not enabled %} disabled{% endif %}><p class="help-block">{{ file_limit_text }}</p></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label" for="import-profile">{{ text_profile }}</label><div class="col-sm-8"><select name="import_profile" id="import-profile" class="form-control"><option value="custom">{{ text_profile_custom }}</option>{% if entity_options.show_product %}<option value="price_only">{{ text_profile_price }}</option><option value="stock_only">{{ text_profile_stock }}</option><option value="price_stock">{{ text_profile_price_stock }}</option>{% endif %}<option value="new_only">{{ text_profile_new }}</option><option value="update_only">{{ text_profile_update }}</option><option value="full_import">{{ text_profile_full }}</option></select><p class="help-block">{{ help_profile }}</p></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label">{{ text_quick_modes }}</label><div class="col-sm-8 quick-modes">{% if entity_options.show_product %}<button type="button" class="btn btn-info btn-sm quick-profile" data-profile="price_only"><i class="fa fa-money"></i> {{ button_price_only }}</button><button type="button" class="btn btn-default btn-sm quick-profile" data-profile="stock_only"><i class="fa fa-cubes"></i> {{ button_stock_only }}</button>{% endif %}<button type="button" class="btn btn-success btn-sm quick-profile" data-profile="new_only"><i class="fa fa-plus-circle"></i> {{ button_new_only }}</button><button type="button" class="btn btn-primary btn-sm quick-profile" data-profile="full_import"><i class="fa fa-refresh"></i> {{ button_full_import }}</button></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label" for="mode">{{ text_mode }}</label><div class="col-sm-8"><select name="mode" id="mode" class="form-control"><option value="upsert">{{ text_upsert }}</option><option value="add">{{ text_add }}</option><option value="update">{{ text_update }}</option><option value="delete">{{ text_delete }}</option></select></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label" for="key-field">{{ text_key_field }}</label><div class="col-sm-8"><select name="key_field" id="key-field" class="form-control">{% for key_field in entity_options.key_fields %}<option value="{{ key_field }}">{{ key_field }}</option>{% endfor %}</select></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label">{{ text_key_strategy }}</label><div class="col-sm-8"><input type="hidden" name="key_strategy" id="key-strategy" value="strict"><p class="form-control-static"><span class="label label-success">{{ text_key_strict }}</span></p><p class="help-block">{{ help_key_strategy }}</p></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label" for="delimiter">{{ text_delimiter }}</label><div class="col-sm-8"><select name="delimiter" id="delimiter" class="form-control"><option value="auto">{{ text_auto }}</option><option value=";">{{ text_semicolon }} (;)</option><option value=",">{{ text_comma }} (,)</option><option value="tab">{{ text_tab }}</option><option value="|">{{ text_pipe }} (|)</option></select></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label" for="encoding">{{ text_encoding }}</label><div class="col-sm-8"><select name="encoding" id="encoding" class="form-control"><option value="UTF-8">UTF-8</option><option value="Windows-1251">Windows-1251</option></select></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label" for="language-id">{{ text_language }}</label><div class="col-sm-8"><select name="language_id" id="language-id" class="form-control">{% for language in languages %}<option value="{{ language.language_id }}"{% if language.language_id == default_language_id %} selected{% endif %}>{{ language.name }}</option>{% endfor %}</select></div></div>
+              <div class="form-group"><label class="col-sm-4 control-label">{{ text_stores }}</label><div class="col-sm-8 store-list">{% for store in stores %}<label class="checkbox-inline"><input type="checkbox" name="store_ids[]" value="{{ store.store_id }}"{% if store.store_id == 0 %} checked{% endif %}> {{ store.name }}</label>{% endfor %}</div></div>
+              <div class="form-group"><label class="col-sm-4 control-label" for="batch-size">{{ text_batch_size }}</label><div class="col-sm-8"><input type="number" name="batch_size" id="batch-size" value="10" min="1" max="50" class="form-control input-small"></div></div>
+            </div>
+
+            <div class="col-lg-6 options-column">
+              <label class="option-row"><input type="checkbox" name="dry_run" value="1" checked> <strong>{{ text_dry_run }}</strong><small>{{ help_dry_run }}</small></label>
+              <label class="option-row"><input type="checkbox" name="empty_field" value="1" checked> {{ text_ignore_empty }}<small>{{ help_ignore_empty }}</small></label>
+              <label class="option-row danger-option"><input type="checkbox" name="import_id" value="1"> {{ text_import_ids }}<small>{{ help_import_ids }}</small></label>
+              <label class="option-row"><input type="checkbox" name="copy_default_language" value="1"> {{ text_copy_languages }}<small>{{ help_copy_languages }}</small></label>
+              <label class="option-row"><input type="checkbox" name="replace_store_links" value="1"> {{ text_replace_stores }}<small>{{ help_replace_stores }}</small></label>
+              <label class="option-row"><input type="checkbox" name="replace_seo_url" value="1"> {{ text_replace_seo }}<small>{{ help_replace_seo }}</small></label>
+
+              {% if entity_options.show_product or entity_options.show_category or entity_type == 'manufacturer' %}
+              <label class="option-row"><input type="checkbox" name="download_images" value="1"> {{ text_download_images }}<small>{{ help_download_images }}</small></label>
+              <div class="form-group compact-field"><label class="col-sm-5 control-label" for="image-directory">{{ text_image_directory }}</label><div class="col-sm-7"><input type="text" name="image_directory" id="image-directory" value="catalog/import" class="form-control"></div></div>
+              {% endif %}
+
+              {% if entity_options.show_product %}
+              <label class="option-row"><input type="checkbox" name="create_categories" value="1" checked> {{ text_create_categories }}</label>
+              <label class="option-row"><input type="checkbox" name="create_manufacturers" value="1" checked> {{ text_create_manufacturers }}</label>
+              <label class="option-row"><input type="checkbox" name="replace_attributes" value="1"> {{ text_replace_attributes }}</label>
+              <div class="supplier-sync-box">
+                <h4><i class="fa fa-truck"></i> {{ text_supplier_sync }}</h4>
+                <div class="form-group compact-field"><label class="col-sm-5 control-label" for="supplier-code">{{ text_supplier_code }}</label><div class="col-sm-7"><input type="text" name="supplier_code" id="supplier-code" maxlength="64" class="form-control" placeholder="supplier_a"><p class="help-block">{{ help_supplier_code }}</p></div></div>
+                <div class="form-group compact-field"><label class="col-sm-5 control-label" for="sync-missing-action">{{ text_missing_action }}</label><div class="col-sm-7"><select name="sync_missing_action" id="sync-missing-action" class="form-control"><option value="none">{{ text_missing_none }}</option><option value="disable">{{ text_missing_disable }}</option><option value="zero">{{ text_missing_zero }}</option><option value="delete">{{ text_missing_delete }}</option></select></div></div>
+                <label class="option-row danger-option"><input type="checkbox" name="sync_missing_confirm" value="1"> {{ text_missing_confirm }}<small>{{ help_missing_sync }}</small></label>
+              </div>
+              {% endif %}
+
+              {% if entity_options.show_category %}
+              <label class="option-row danger-option"><input type="checkbox" name="delete_category_children" value="1"> {{ text_delete_children }}</label>
+              {% endif %}
+
+              {% if entity_options.show_option %}
+              <label class="option-row"><input type="checkbox" name="create_global_options" value="1" checked> {{ text_create_options }}</label>
+              <label class="option-row"><input type="checkbox" name="create_option_values" value="1" checked> {{ text_create_option_values }}</label>
+              <label class="option-row danger-option"><input type="checkbox" name="update_option_definitions" value="1"> {{ text_update_option_definitions }}<small>{{ help_update_option_definitions }}</small></label>
+              {% endif %}
+            </div>
+          </div>
+
+          <div class="row advanced-row">
+            <div class="col-md-6">
+              <label for="column-map">{{ text_column_map }}</label>
+              <textarea name="column_map_text" id="column-map" rows="6" class="form-control code-input" placeholder="Supplier SKU=_SKU_&#10;Purchase price=_PRICE_&#10;Stock=_QUANTITY_"></textarea>
+              <p class="help-block">{{ help_column_map }}</p>
+            </div>
+            <div class="col-md-6">
+              <label>{{ text_field_rules }}</label>
+              <p class="help-block">{{ help_field_rules }}</p>
+              <div class="field-policy-list">
+                {% for rule_field in field_rule_fields %}
+                <div class="field-policy-item">
+                  <label for="policy-{{ loop.index }}"><code>{{ rule_field.field }}</code></label>
+                  <select name="field_policy[{{ rule_field.field }}]" id="policy-{{ loop.index }}" class="form-control input-sm">
+                    <option value="">{{ text_rule_default }}</option>
+                    <option value="preserve">{{ text_rule_preserve }}</option>
+                    <option value="overwrite">{{ text_rule_overwrite }}</option>
+                    <option value="fill_empty">{{ text_rule_fill_empty }}</option>
+                    {% if rule_field.kind == 'text' or rule_field.kind == 'list' %}<option value="merge">{{ text_rule_merge }}</option>{% endif %}
+                    {% if rule_field.kind == 'list' %}<option value="replace">{{ text_rule_replace }}</option>{% endif %}
+                    {% if rule_field.allow_clear %}<option value="clear">{{ text_rule_clear }}</option>{% endif %}
+                  </select>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+          <div class="sample"><strong>{{ text_sample_headers }}:</strong><code>{{ sample_headers }}</code></div>
+          <div class="action-bar">
+            <button type="button" id="btn-upload" class="btn btn-primary"{% if not enabled %} disabled{% endif %}><i class="fa fa-cloud-upload"></i> {{ text_create_queue }}</button>
+            <button type="button" id="btn-start" class="btn btn-success" disabled><i class="fa fa-play"></i> {{ text_start }}</button>
+            <button type="button" id="btn-pause" class="btn btn-warning" disabled><i class="fa fa-pause"></i> {{ text_pause }}</button>
+            <button type="button" id="btn-cancel" class="btn btn-danger" disabled><i class="fa fa-stop"></i> {{ text_cancel }}</button>
+            <button type="button" id="btn-recover" class="btn btn-default" disabled><i class="fa fa-refresh"></i> {{ text_recover }}</button>
+            <button type="button" id="btn-export" class="btn btn-info"{% if not enabled %} disabled{% endif %}><i class="fa fa-download"></i> {{ text_export }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-history"></i> {{ text_recent_batches }}</h3></div>
+      <div class="panel-body"><select id="recent-batch" class="form-control"><option value="">{{ text_no_batches }}</option>{% for batch in recent_batches %}<option value="{{ batch.batch_id }}">{{ batch.date_added }} — {{ batch.file_name }} — {{ batch.status }} — {{ batch.queued_rows }}/{{ batch.total_rows }}</option>{% endfor %}</select></div>
+    </div>
+
+    <div class="panel panel-default" id="progress-panel">
+      <div class="panel-heading"><h3 class="panel-title"><i class="fa fa-tasks"></i> {{ text_progress_import }}</h3></div>
+      <div class="panel-body">
+        <div class="progress-label"><span>{{ text_progress_prepare }}</span><strong id="prepare-text">0%</strong></div>
+        <div class="progress"><div id="prepare-bar" class="progress-bar progress-bar-info" style="width:0%">0%</div></div>
+        <div class="progress-label"><span>{{ text_progress_import }}</span><strong id="process-text">0%</strong></div>
+        <div class="progress"><div id="process-bar" class="progress-bar progress-bar-success" style="width:0%">0%</div></div>
+        <div id="counts" class="counts"></div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-heading result-heading">
+        <h3 class="panel-title"><i class="fa fa-list"></i> {{ text_results }}</h3>
+        <div class="result-actions">
+          <button type="button" id="btn-select-all" class="btn btn-default btn-sm" disabled><i class="fa fa-check-square-o"></i> {{ text_select_all }}</button>
+          <button type="button" id="btn-select-none" class="btn btn-default btn-sm" disabled><i class="fa fa-square-o"></i> {{ text_select_none }}</button>
+          <button type="button" id="btn-apply-selected" class="btn btn-success btn-sm" disabled><i class="fa fa-check"></i> {{ text_apply_selected }}</button>
+          <button type="button" id="btn-retry-errors" class="btn btn-warning btn-sm" disabled><i class="fa fa-repeat"></i> {{ text_retry_errors }}</button>
+          <button type="button" id="btn-report" class="btn btn-info btn-sm" disabled><i class="fa fa-file-text-o"></i> {{ text_download_report }}</button>
+        </div>
+      </div>
+      <div class="result-filter">
+        <select id="result-status" class="form-control input-sm">
+          <option value="">{{ text_all_statuses }}</option>
+          <option value="review">{{ status_review }}</option>
+          <option value="error">{{ status_error }}</option>
+          <option value="warning">{{ status_warning }}</option>
+          <option value="created">{{ status_created }}</option>
+          <option value="updated">{{ status_updated }}</option>
+          <option value="deleted">{{ status_deleted }}</option>
+          <option value="skipped">{{ status_skipped }}</option>
+        </select>
+        <input type="text" id="result-search" class="form-control input-sm" maxlength="100" placeholder="{{ text_search }}">
+        <button type="button" id="btn-filter-results" class="btn btn-default btn-sm"><i class="fa fa-filter"></i> {{ text_filter }}</button>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover table-condensed" id="result-table">
+          <thead><tr><th class="select-column">{{ text_select }}</th><th>{{ text_row }}</th><th>{{ text_key }}</th><th>{{ text_entity_id }}</th><th>{{ text_status }}</th><th>{{ text_action }}</th><th>{{ text_message }}</th></tr></thead>
+          <tbody><tr class="empty-row"><td colspan="7" class="text-center text-muted">{{ text_no_batches }}</td></tr></tbody>
+        </table>
+      </div>
+      <div class="result-pagination">
+        <button type="button" id="btn-result-prev" class="btn btn-default btn-sm" disabled><i class="fa fa-chevron-left"></i> {{ text_previous }}</button>
+        <span id="result-page-text">{{ text_page }} 1 / 1</span>
+        <button type="button" id="btn-result-next" class="btn btn-default btn-sm" disabled>{{ text_next }} <i class="fa fa-chevron-right"></i></button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.catalog-import-entity .panel{border-radius:5px}.catalog-import-entity .panel-heading{background:#f8fafc}.catalog-import-entity .form-control{max-width:540px}.catalog-import-entity .input-small{max-width:120px}.catalog-import-entity .store-list{padding-top:6px}.catalog-import-entity .option-row{display:block;padding:9px 12px;margin:0 0 8px;border:1px solid #dce3ea;border-radius:4px;background:#fbfdff;font-weight:400}.catalog-import-entity .option-row small{display:block;margin:4px 0 0 22px;color:#778}.catalog-import-entity .danger-option{border-left:3px solid #f0ad4e}.catalog-import-entity .compact-field{margin:8px 0 12px}.catalog-import-entity .advanced-row{margin-top:16px;padding-top:16px;border-top:1px solid #e7ebef}.catalog-import-entity .code-input{max-width:none;font-family:monospace;resize:vertical}.catalog-import-entity .sample{padding:12px;margin-top:14px;background:#f5f7f9;border-radius:4px;overflow:auto}.catalog-import-entity .sample code{margin-left:8px;white-space:nowrap}.catalog-import-entity .action-bar,.catalog-import-entity .result-actions{display:flex;flex-wrap:wrap;gap:8px}.catalog-import-entity .action-bar{margin-top:15px}.catalog-import-entity #recent-batch{max-width:none}.catalog-import-entity .progress-label{display:flex;justify-content:space-between;margin-bottom:4px}.catalog-import-entity .counts{display:flex;flex-wrap:wrap;gap:7px}.catalog-import-entity .count-item{padding:5px 8px;border-radius:3px;background:#eef3f7}.catalog-import-entity td{vertical-align:middle!important}.catalog-import-entity .status-label{display:inline-block;min-width:78px;text-align:center}.catalog-import-entity .options-column{border-left:1px solid #e7ebef}.catalog-import-entity .result-filter{display:flex;gap:8px;align-items:center;padding:10px 15px;border-bottom:1px solid #e7ebef}.catalog-import-entity .result-filter select{max-width:220px}.catalog-import-entity .result-filter input{max-width:360px}.catalog-import-entity .result-pagination{display:flex;align-items:center;justify-content:center;gap:12px;padding:12px}.catalog-import-entity .result-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}.catalog-import-entity .select-column{width:70px;text-align:center}.catalog-import-entity .review-checkbox{margin:0}.catalog-import-entity .quick-modes{display:flex;flex-wrap:wrap;gap:6px}.catalog-import-entity .quick-profile.active{box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}.catalog-import-entity .supplier-sync-box{margin:14px 0 0;padding:12px;border:1px solid #d9e2ea;border-radius:5px;background:#f8fbfd}.catalog-import-entity .supplier-sync-box h4{margin:0 0 10px;font-size:15px}.catalog-import-entity .field-policy-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:360px;overflow:auto;padding:8px;border:1px solid #dce3ea;border-radius:4px;background:#fbfdff}.catalog-import-entity .field-policy-item{display:flex;align-items:center;gap:8px;min-width:0}.catalog-import-entity .field-policy-item label{flex:0 0 150px;margin:0;overflow:hidden;text-overflow:ellipsis}.catalog-import-entity .field-policy-item select{max-width:none}.catalog-import-entity .missing-danger{border-color:#d9534f;background:#fff5f5}@media(max-width:1199px){.catalog-import-entity .options-column{border-left:0;margin-top:12px}}@media(max-width:767px){.catalog-import-entity .field-policy-list{grid-template-columns:1fr;max-height:none}.catalog-import-entity .field-policy-item label{flex-basis:135px}.catalog-import-entity .result-heading{align-items:flex-start}.catalog-import-entity .result-actions{width:100%}}
+</style>
+<script>
+(function($){
+'use strict';
+var enabled={{ enabled ? 'true' : 'false' }};
+var batchId='';
+var running=false;
+var preparing=false;
+var lastSummary=null;
+var resultPage=1;
+var resultPages=1;
+var storageKey='catalog_import_pro_{{ entity_type|e('js') }}_batch';
+var countLabels={total:'{{ count_total|e('js') }}',pending:'{{ count_pending|e('js') }}',processing:'{{ count_processing|e('js') }}',created:'{{ count_created|e('js') }}',updated:'{{ count_updated|e('js') }}',deleted:'{{ count_deleted|e('js') }}',skipped:'{{ count_skipped|e('js') }}',dry_run:'{{ count_dry_run|e('js') }}',review:'{{ count_review|e('js') }}',warning:'{{ count_warning|e('js') }}',error:'{{ count_error|e('js') }}',remaining:'{{ count_remaining|e('js') }}'};
+var statusLabels={created:'{{ status_created|e('js') }}',updated:'{{ status_updated|e('js') }}',deleted:'{{ status_deleted|e('js') }}',skipped:'{{ status_skipped|e('js') }}',dry_run:'{{ status_dry_run|e('js') }}',review:'{{ status_review|e('js') }}',warning:'{{ status_warning|e('js') }}',error:'{{ status_error|e('js') }}'};
+var actionLabels={create:'{{ action_create|e('js') }}',update:'{{ action_update|e('js') }}',delete:'{{ action_delete|e('js') }}',disable:'{{ action_disable|e('js') }}',zero:'{{ action_zero|e('js') }}',link:'{{ action_link|e('js') }}',unlink:'{{ action_unlink|e('js') }}',skip:'{{ action_skip|e('js') }}',cancel:'{{ action_cancel|e('js') }}',error:'{{ action_error|e('js') }}'};
+var urls={upload:'{{ ajax_upload|e('js') }}',prepare:'{{ ajax_prepare|e('js') }}',process:'{{ ajax_process|e('js') }}',summary:'{{ ajax_summary|e('js') }}',results:'{{ ajax_results|e('js') }}',recover:'{{ ajax_recover|e('js') }}',cancel:'{{ ajax_cancel|e('js') }}',selection:'{{ ajax_selection|e('js') }}',applyReview:'{{ ajax_apply_review|e('js') }}',retryErrors:'{{ ajax_retry_errors|e('js') }}',report:'{{ report_url|e('js') }}',export:'{{ export_url|e('js') }}'};
+
+function showAlert(type,message){var box=$('<div class="alert"></div>').addClass('alert-'+type).text(message);$('#ajax-alert').empty().append(box);}
+function ajaxError(xhr){var message='HTTP '+xhr.status;try{var data=JSON.parse(xhr.responseText);if(data.error){message=data.error;}}catch(e){}showAlert('danger',message);running=false;preparing=false;updateButtons(lastSummary);}
+function post(url,data,done){$.ajax({url:url,type:'post',data:data,dataType:'json',cache:false}).done(function(json){if(json&&json.error){showAlert('danger',json.error);running=false;preparing=false;updateButtons(lastSummary);return;}done(json||{});}).fail(ajaxError);}
+function updateButtons(summary){summary=summary||lastSummary;var has=!!batchId;var batch=summary&&summary.batch?summary.batch:{};var counts=summary&&summary.counts?summary.counts:{};var ready=batch.prepare_status==='ready';var review=batch.status==='review';var finished=!!counts.finished;var pending=(parseInt(counts.pending,10)||0)>0;var errors=(parseInt(counts.error,10)||0)>0;$('#btn-upload').prop('disabled',!enabled||preparing||running);$('#btn-start').prop('disabled',!enabled||!has||!ready||running||review||!pending);$('#btn-pause').prop('disabled',!running);$('#btn-cancel').prop('disabled',!enabled||!has||batch.status==='cancelled'||(finished&&!review));$('#btn-recover').prop('disabled',!enabled||!has||running);$('#btn-select-all,#btn-select-none,#btn-apply-selected').prop('disabled',!enabled||!review||running);$('#btn-retry-errors').prop('disabled',!enabled||!has||!errors||running||review);$('#btn-report').prop('disabled',!has);}
+function setProgress(id,value){value=Math.max(0,Math.min(100,parseFloat(value)||0));$('#'+id+'-bar').css('width',value+'%').text(value+'%');$('#'+id+'-text').text(value+'%');}
+function statusClass(status){if(status==='error'){return 'label-danger';}if(status==='warning'){return 'label-warning';}if(status==='created'){return 'label-success';}if(status==='updated'){return 'label-primary';}if(status==='review'){return 'label-info';}if(status==='deleted'){return 'label-danger';}return 'label-default';}
+function renderItems(items){var tbody=$('#result-table tbody').empty();if(!items||!items.length){$('<tr class="empty-row"><td colspan="7" class="text-center text-muted"></td></tr>').find('td').text('{{ text_no_batches|e('js') }}').end().appendTo(tbody);return;}$.each(items,function(_,item){var tr=$('<tr></tr>');var selectTd=$('<td class="text-center"></td>');if(item.status==='review'){$('<input type="checkbox" class="review-checkbox">').attr('data-queue-id',item.queue_id).prop('checked',parseInt(item.selected,10)===1).appendTo(selectTd);}selectTd.appendTo(tr);$('<td></td>').text(item.row).appendTo(tr);$('<td></td>').text(item.key_value).appendTo(tr);$('<td></td>').text(item.entity_id||'').appendTo(tr);$('<td></td>').append($('<span class="label status-label"></span>').addClass(statusClass(item.status)).text(statusLabels[item.status]||item.status)).appendTo(tr);$('<td></td>').text(actionLabels[item.action]||item.action).appendTo(tr);var message=item.message+(item.warnings?' | '+item.warnings:'');$('<td></td>').text(message).appendTo(tr);tbody.append(tr);});}
+function renderSummary(summary){if(!summary||!summary.counts){return;}lastSummary=summary;var c=summary.counts;setProgress('prepare',c.prepare_percent);setProgress('process',c.percent);var keys=['total','pending','processing','created','updated','deleted','skipped','dry_run','review','warning','error','remaining'];var counts=$('#counts').empty();$.each(keys,function(_,key){if(typeof c[key]!=='undefined'){$('<span class="count-item"></span>').text((countLabels[key]||key)+': '+c[key]).appendTo(counts);}});renderItems(summary.items||[]);updateButtons(summary);}
+function loadResults(page){if(!batchId){return;}resultPage=Math.max(1,parseInt(page,10)||1);post(urls.results,{batch_id:batchId,status:$('#result-status').val(),search:$('#result-search').val(),page:resultPage,limit:50},function(json){resultPage=parseInt(json.page,10)||1;resultPages=parseInt(json.pages,10)||1;renderItems(json.items||[]);$('#result-page-text').text('{{ text_page|e('js') }} '+resultPage+' / '+resultPages+' ('+(parseInt(json.total,10)||0)+')');$('#btn-result-prev').prop('disabled',resultPage<=1);$('#btn-result-next').prop('disabled',resultPage>=resultPages);});}
+function saveBatch(id){batchId=id||'';if(batchId){localStorage.setItem(storageKey,batchId);$('#recent-batch').val(batchId);}else{localStorage.removeItem(storageKey);}}
+function loadSummary(id){if(!id){return;}batchId=id;saveBatch(id);post(urls.summary,{batch_id:id},function(json){renderSummary(json);loadResults(1);if(json.batch&&json.batch.prepare_status==='preparing'){prepareNext();}});}
+function prepareNext(){if(!batchId||preparing||running){return;}preparing=true;updateButtons(lastSummary);post(urls.prepare,{batch_id:batchId,prepare_limit:250},function(json){preparing=false;renderSummary(json.summary);if(json.prepare_complete){showAlert('success',json.summary.batch.message||'{{ text_queue_ready|e('js') }}');updateButtons(json.summary);}else{window.setTimeout(prepareNext,80);}});}
+function processNext(){if(!running||!batchId){return;}post(urls.process,{batch_id:batchId,batch_size:$('#batch-size').val()},function(json){renderSummary(json.summary);if(json.summary&&json.summary.counts&&json.summary.counts.finished){running=false;if(json.summary.batch&&json.summary.batch.status==='review'){showAlert('info',json.summary.batch.message||'{{ text_review_ready|e('js') }}');$('#result-status').val('review');loadResults(1);}else{showAlert(json.summary.counts.error>0?'warning':'success',json.summary.batch.message||'{{ text_completed|e('js') }}');loadResults(1);}updateButtons(json.summary);}else{window.setTimeout(processNext,json.processed_now>0?80:1000);}});}
+function startProcessing(){if(!batchId){return;}running=true;updateButtons(lastSummary);processNext();}
+function setReviewSelection(all,selected,ids){var data={batch_id:batchId,selected:selected?1:0,all:all?1:0};if(ids&&ids.length){data.queue_ids=ids;}post(urls.selection,data,function(json){showAlert('success',json.success||'{{ text_selection_updated|e('js') }}');renderSummary(json.summary);loadResults(resultPage);});}
+
+function applyProfile(profile){$('#import-profile').val(profile);if(profile==='price_only'||profile==='stock_only'||profile==='price_stock'||profile==='update_only'){$('#mode').val('update');}else if(profile==='new_only'){$('#mode').val('add');$('#sync-missing-action').val('none').trigger('change');$('input[name="sync_missing_confirm"]').prop('checked',false);}else if(profile==='full_import'){$('#mode').val('upsert');}$('#key-strategy').val('strict');$('.quick-profile').removeClass('active').filter('[data-profile="'+profile+'"]').addClass('active');}
+$('#import-profile').on('change',function(){applyProfile($(this).val());});
+$('.quick-profile').on('click',function(){applyProfile($(this).data('profile'));});
+$('#sync-missing-action').on('change',function(){var dangerous=$(this).val()!=='none';$('.supplier-sync-box').toggleClass('missing-danger',dangerous);if(dangerous){$('input[name="dry_run"]').prop('checked',true);$('#key-strategy').val('strict');}});
+$('#btn-upload').on('click',function(){if(!enabled){return;}var file=$('#csv-file')[0].files[0];if(!file){showAlert('warning','{{ error_file_missing|default('CSV file is required.')|e('js') }}');return;}running=false;preparing=false;var fd=new FormData($('#import-form')[0]);$('#btn-upload').prop('disabled',true);$.ajax({url:urls.upload,type:'post',data:fd,dataType:'json',processData:false,contentType:false,cache:false}).done(function(json){if(json.error){showAlert('danger',json.error);updateButtons(lastSummary);return;}saveBatch(json.batch_id);renderSummary(json.summary);prepareNext();}).fail(ajaxError);});
+$('#btn-start').on('click',startProcessing);
+$('#btn-pause').on('click',function(){running=false;showAlert('info','{{ text_pause|e('js') }}');updateButtons(lastSummary);});
+$('#btn-cancel').on('click',function(){if(!batchId||!window.confirm('{{ text_cancel|e('js') }}?')){return;}running=false;preparing=false;post(urls.cancel,{batch_id:batchId},function(json){showAlert('success',json.success||'Cancelled.');loadSummary(batchId);});});
+$('#btn-recover').on('click',function(){if(!batchId){return;}post(urls.recover,{batch_id:batchId},function(json){showAlert('success',json.success||'Recovered.');renderSummary(json.summary);loadResults(resultPage);});});
+$('#btn-export').on('click',function(){if(!enabled){return;}window.location=urls.export+'&language_id='+encodeURIComponent($('#language-id').val())+'&delimiter='+encodeURIComponent($('#delimiter').val()==='auto'?';':$('#delimiter').val());});
+$('#btn-report').on('click',function(){if(!batchId){return;}window.location=urls.report+'&batch_id='+encodeURIComponent(batchId)+'&delimiter='+encodeURIComponent($('#delimiter').val()==='auto'?';':$('#delimiter').val());});
+$('#btn-select-all').on('click',function(){setReviewSelection(true,true,[]);});
+$('#btn-select-none').on('click',function(){setReviewSelection(true,false,[]);});
+$(document).on('change','.review-checkbox',function(){setReviewSelection(false,$(this).prop('checked'),[$(this).data('queue-id')]);});
+$('#btn-apply-selected').on('click',function(){if(!batchId||!window.confirm('{{ text_apply_selected|e('js') }}?')){return;}post(urls.applyReview,{batch_id:batchId},function(json){showAlert('success',json.success||'{{ text_apply_started|e('js') }}');renderSummary(json.summary);loadResults(resultPage);startProcessing();});});
+$('#btn-retry-errors').on('click',function(){if(!batchId){return;}post(urls.retryErrors,{batch_id:batchId},function(json){showAlert('success',json.success||'{{ text_errors_requeued|e('js') }}');renderSummary(json.summary);loadResults(1);startProcessing();});});
+$('#btn-filter-results').on('click',function(){loadResults(1);});
+$('#result-search').on('keydown',function(e){if(e.keyCode===13){e.preventDefault();loadResults(1);}});
+$('#result-status').on('change',function(){loadResults(1);});
+$('#btn-result-prev').on('click',function(){if(resultPage>1){loadResults(resultPage-1);}});
+$('#btn-result-next').on('click',function(){if(resultPage<resultPages){loadResults(resultPage+1);}});
+$('#recent-batch').on('change',function(){running=false;preparing=false;var id=$(this).val();if(id){loadSummary(id);}else{saveBatch('');lastSummary=null;updateButtons(null);}});
+
+var stored=localStorage.getItem(storageKey);if(stored&&/^[a-f0-9]{32,40}$/.test(stored)){loadSummary(stored);}else{updateButtons(null);}
+})(jQuery);
+</script>
+{{ footer }}

@@ -1,0 +1,102 @@
+Supplier Sync Parser PRO v1.6.3
+Installation / Update / Uninstall
+
+RU: Важно перед установкой
+Перед началом установки любого модуля обязательно создайте полную резервную копию файлов вашего сайта и базы данных.
+Сначала устанавливайте и проверяйте модуль на тестовой копии сайта.
+
+RU: Установка
+1. В админке OpenCart откройте Расширения -> Установка расширений.
+2. Загрузите архив Supplier_Sync_Parser_Pro_v1.6.3.ocmod.zip.
+3. Откройте Расширения -> Модификаторы и нажмите Обновить.
+4. Откройте Система -> Пользователи -> Группы пользователей и выдайте права access/modify для extension/module/supplier_sync_parser_pro.
+5. Откройте Расширения -> Модули -> Supplier Sync Parser PRO.
+6. Включите модуль, задайте cron token, batch limit и сохраните настройки.
+7. Создайте поставщика, настройте XPath и выполните тест URL перед массовым запуском.
+
+v1.6.3 update note
+RU: Рекомендуется заменить cron-команду на вариант с заголовком X-CCP-Cron-Key. Старый ?token= продолжает работать только для обратной совместимости.
+EN: Replace the cron command with the X-CCP-Cron-Key header form when practical. The old ?token= form remains only for backward compatibility.
+
+RU: Обновление
+1. Сделайте полную резервную копию файлов и базы данных.
+2. Установите новый OCMOD-архив поверх старого.
+3. Обновите модификаторы.
+4. Очистите кеш OpenCart/ocStore, если используется.
+5. Откройте страницу модуля. Схема таблиц обновится только при отличии версии схемы и наличии прав modify.
+6. Проверьте одного поставщика через диагностику и один batch очереди.
+
+RU: Удаление
+1. Остановите очередь в модуле.
+2. Отключите модуль и сохраните настройки.
+3. Удалите расширение через установщик/модификаторы OpenCart.
+4. Обновите модификаторы.
+5. Пользовательские таблицы с историей и связями не удаляются автоматически, чтобы не потерять данные. Удаляйте их вручную только после резервной копии и осознанного решения.
+
+RU: Cron для Mirohost
+Не запускайте cron чаще одного раза в 5 минут.
+Минуты: */5
+Часы: *
+Дни месяца: *
+Месяцы: *
+Дни недели: *
+Команда: curl -fsS --max-time 120 -H 'X-CCP-Cron-Key: YOUR_TOKEN' 'https://YOUR-DOMAIN/index.php?route=extension/module/supplier_sync_parser_pro/cron&limit=20' >/dev/null
+
+EN: Important before installation
+Before installing any module, create a full backup of your website files and database.
+Install and test the module on a staging copy first.
+
+EN: Installation
+1. In OpenCart admin open Extensions -> Installer.
+2. Upload Supplier_Sync_Parser_Pro_v1.6.3.ocmod.zip.
+3. Open Extensions -> Modifications and click Refresh.
+4. Open System -> Users -> User Groups and grant access/modify permissions for extension/module/supplier_sync_parser_pro.
+5. Open Extensions -> Modules -> Supplier Sync Parser PRO.
+6. Enable the module, set cron token, batch limit and save settings.
+7. Create a supplier, configure XPath rules and run URL diagnostics before mass processing.
+
+EN: Update
+1. Create a full backup of files and database.
+2. Upload the new OCMOD archive over the previous version.
+3. Refresh modifications.
+4. Clear OpenCart/ocStore cache if used.
+5. Open the module page. Database schema is upgraded only when schema version differs and modify permission is available.
+6. Test one supplier URL and one queue batch.
+
+EN: Uninstall
+1. Stop the queue in the module.
+2. Disable the module and save settings.
+3. Remove the extension through OpenCart installer/modifications.
+4. Refresh modifications.
+5. User tables with history and mappings are not dropped automatically to prevent data loss. Remove them manually only after a backup and an explicit decision.
+
+EN: Mirohost cron
+Do not run cron more often than once every 5 minutes.
+Minutes: */5
+Hours: *
+Days of month: *
+Months: *
+Days of week: *
+Command: curl -fsS --max-time 120 -H 'X-CCP-Cron-Key: YOUR_TOKEN' 'https://YOUR-DOMAIN/index.php?route=extension/module/supplier_sync_parser_pro/cron&limit=20' >/dev/null
+
+v1.6.0 update note
+RU: После обновления проверьте у каждого поставщика поле «Доменная защита». Рекомендуемый режим по умолчанию — «Только базовый домен поставщика». Дополнительные HTML-домены добавляйте только если поставщик реально размещает карточки товаров на другом разрешенном домене.
+EN: After the update, check the Domain Guard setting for each supplier. The recommended default is Only supplier base domain. Add additional HTML domains only when the supplier really hosts product pages on another allowed domain.
+
+v1.6.0 update note
+RU: После обновления откройте модуль, сохраните настройки поставщика и проверьте, что значения мин./макс. цены новых товаров равны 0, если ограничения не нужны.
+EN: After updating, open the module, save supplier settings and verify that new-product min/max price fields are 0 if guards are not needed.
+
+v1.6.0 update note
+After updating, open the supplier settings and check the target language, price XPath and image XPath again. Additional images are disabled by default for safety. Run a test on one product before processing a large queue.
+
+VERSION 1.6.0 CHANGES
+- Preview action for new rows is now safer: selected unmatched rows are moved to the New Products tab first instead of creating OpenCart products immediately.
+- The New Products tab creates selected OpenCart products only after category/manual check. Created product IDs are returned in the AJAX result.
+- Added ID column to the New Products table.
+- Added delete selected actions for Preview and New Products.
+- Skip selected now updates the status message and unchecks rows; skipped rows are not created until restored to pending.
+- Queue processing no longer fills the New Products table automatically with every unmatched supplier product; candidates should be moved from Preview manually.
+
+v1.6.0 update note
+After update, refresh OpenCart modifications and clear cache. For XML/YML Google Merchant feeds, run auto field detection again and review the proposed field mapping before building the feed queue.

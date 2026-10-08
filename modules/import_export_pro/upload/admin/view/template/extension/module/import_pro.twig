@@ -1,0 +1,922 @@
+{{ header }}{{ column_left }}
+<div id="content">
+  <div class="page-header">
+    <div class="container-fluid">
+      <div class="pull-right">
+        <a href="{{ update_url|replace({'&amp;':'&'})|e('html_attr') }}" target="_blank" rel="noopener" data-toggle="tooltip" title="{{ button_upgrade_module }}" class="btn btn-warning"><i class="fa fa-download"></i></a>
+        <button type="submit" form="form-module" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
+        <a href="{{ cancel|replace({'&amp;':'&'})|e('html_attr') }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
+      </div>
+      <h1>{{ heading_title_html|raw }}</h1>
+      <ul class="breadcrumb">
+        {% for breadcrumb in breadcrumbs %}
+        <li><a href="{{ breadcrumb.href|replace({'&amp;':'&'})|e('html_attr') }}">{{ breadcrumb.text }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-fluid importpro-page">
+    {% if error_warning %}<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ error_warning }}</div>{% endif %}
+    {% if success %}<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ success }}</div>{% endif %}
+
+    <style>
+      .importpro-page .ip-card{border:1px solid #dfe5ec;border-radius:8px;background:#fff;margin-bottom:16px;box-shadow:0 1px 4px rgba(15,23,42,.04)}
+      .importpro-page .ip-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 14px;border-bottom:1px solid #e8edf3;background:linear-gradient(180deg,#fff 0,#f8fbff 100%);border-radius:8px 8px 0 0;flex-wrap:wrap}
+      .importpro-page .ip-title{margin:0;font-size:15px;font-weight:700;color:#0f172a}.importpro-page .ip-title .fa{color:#0057b7;margin-right:6px}
+      .importpro-page .ip-body{padding:14px}.importpro-page .ip-muted{color:#667085;font-size:12px;line-height:1.45}.importpro-page .ip-help{color:#667085;font-size:12px;line-height:1.4;margin-top:4px}.importpro-page .ip-help .fa{margin-right:3px;color:#0057b7}
+      .importpro-page .ip-toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+      .importpro-page .ip-badge{display:inline-block;border-radius:12px;padding:2px 9px;font-size:11px;font-weight:700;background:#ffd700;color:#0057b7}
+      .importpro-page .ip-pill{display:inline-block;border-radius:12px;padding:3px 9px;font-size:11px;background:#eef6ff;color:#0057b7;border:1px solid #cfe2ff}
+      .importpro-page .ip-pill .fa{margin-right:3px}
+      .importpro-page .nav-tabs{margin-bottom:14px;border-bottom:1px solid #dfe5ec}
+      .importpro-page .nav-tabs>li>a{font-weight:600;color:#334155;padding:10px 14px}
+      .importpro-page .nav-tabs>li.active>a,.importpro-page .nav-tabs>li.active>a:hover{color:#0057b7;border-color:#dfe5ec #dfe5ec transparent}
+      .importpro-page .nav-tabs .fa{margin-right:5px;color:#0057b7}
+      .importpro-page .ip-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.importpro-page .ip-grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.importpro-page .ip-grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+      .importpro-page .ip-box{border:1px solid #e8edf3;border-radius:8px;background:#fbfdff;padding:12px}.importpro-page .ip-box h4{margin:0 0 10px;font-size:14px;color:#0057b7;font-weight:700}.importpro-page .ip-box h4 .fa{margin-right:5px}
+      .importpro-page .form-group{margin-left:0;margin-right:0;margin-bottom:10px}.importpro-page .control-label{font-weight:600;color:#334155;display:block;margin-bottom:4px}
+      .importpro-page .control-label .fa{margin-right:4px;color:#0057b7;font-size:11px}
+      .importpro-page .checkbox,.importpro-page .checkbox-inline{margin-top:0;margin-bottom:8px}.importpro-page .btn .fa{margin-right:4px}
+      .importpro-page .ip-profile-list{display:flex;flex-wrap:wrap;gap:8px}
+      .importpro-page .ip-profile{min-width:220px;max-width:320px;border:1px solid #dfe5ec;border-radius:8px;background:#fff;padding:10px 12px;cursor:pointer;transition:.15s ease}
+      .importpro-page .ip-profile:hover{border-color:#9ec5fe;background:#f8fbff}.importpro-page .ip-profile.active-row{border-color:#0057b7;background:#eef6ff}
+      .importpro-page .ip-profile-title{font-weight:700;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.importpro-page .ip-profile-meta{font-size:12px;color:#667085;margin-top:3px}
+      .importpro-page .ip-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:12px;border-top:1px solid #e8edf3}
+      .importpro-page .ip-result{margin-top:14px}.importpro-page .ip-scroll{overflow:auto}
+      .importpro-page .ip-table-wide{min-width:1100px}.importpro-page .ip-table-wide th,.importpro-page .ip-table-wide td{white-space:normal;word-break:break-word;vertical-align:top}
+      .importpro-page .ip-code{font-family:Consolas,Monaco,monospace;min-height:130px}.importpro-page .ip-hidden{display:none}
+      .importpro-page .mapping-sample{max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#667085}.importpro-page .mapping-target{min-width:240px}
+      .importpro-page .export-field-groups{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+      .importpro-page .export-field-list{display:flex;flex-direction:column;gap:5px;max-height:190px;overflow:auto}
+      .importpro-page .export-presets{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+      .importpro-page .ip-sticky-actions{position:sticky;bottom:0;z-index:20;background:#fff;border:1px solid #dfe5ec;border-radius:8px;padding:10px;box-shadow:0 -2px 10px rgba(15,23,42,.07)}
+      .importpro-page .ip-cron-fields{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;font-family:Consolas,Monaco,monospace;font-size:13px;background:#fff;border:1px solid #e8edf3;border-radius:6px;padding:8px;margin:6px 0}
+      .importpro-page .ip-cron-fields div{padding:4px 6px;background:#f8fbff;border-radius:4px;text-align:center}
+      .importpro-page .ip-cron-fields strong{display:block;font-size:11px;color:#667085;font-weight:600;margin-bottom:2px}
+      .importpro-page .ip-about-box{background:#fff;border:1px solid #e8edf3;border-radius:8px;padding:14px;margin-bottom:12px}
+      .importpro-page .ip-about-box h4{color:#0057b7;margin:0 0 8px;font-size:14px;font-weight:700}
+      .importpro-page .ip-about-box h4 .fa{margin-right:6px}
+      .importpro-page .ip-about-box p{margin:0 0 6px;color:#334155;line-height:1.5}
+      .importpro-page .ip-about-box ul{margin:6px 0 0 18px;color:#334155;line-height:1.5}
+      .importpro-page .ip-about-box ul li{margin-bottom:3px}
+      .importpro-page .ip-about-box ul li .fa{color:#198754;margin-right:6px;width:14px}
+      .importpro-page .ip-version-pill{display:inline-block;background:#0057b7;color:#fff;padding:2px 9px;border-radius:12px;font-size:11px;font-weight:700;margin-left:6px}
+      .importpro-page .ip-status-ok{color:#198754;font-weight:700}.importpro-page .ip-status-warn{color:#b7791f;font-weight:700}.importpro-page .ip-status-error{color:#dc3545;font-weight:700}.importpro-page .ip-author-link{font-weight:700;color:#0057b7}.importpro-page .ip-setting-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:12px}.importpro-page .mapping-samples{display:flex;flex-wrap:wrap;gap:4px;max-width:520px}.importpro-page .mapping-sample-chip{display:inline-block;max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#f8fbff;border:1px solid #dfe7f1;border-radius:12px;padding:3px 8px;font-size:12px;color:#344054}.importpro-page .mapping-type-badge{display:inline-block;margin-top:5px;background:#eef4ff;color:#0057b7;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700}.importpro-page .mapping-target-warning{display:none;margin-top:5px;color:#b42318;font-size:12px}.importpro-page .mapping-target-warning .fa{color:#b42318}
+      .importpro-page .ip-progress-panel{display:none;margin:12px 0;padding:12px;border:1px solid #d9e4f2;border-radius:10px;background:#f8fbff}.importpro-page .ip-progress-title{font-weight:700;color:#0f3660;margin-bottom:8px}.importpro-page .ip-progressbar{height:18px;background:#e9eef5;border-radius:999px;overflow:hidden}.importpro-page .ip-progressbar span{display:block;height:18px;width:0;background:#2b80d7;transition:width .2s ease}.importpro-page .ip-progress-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;color:#334155;font-size:12px}.importpro-page .ip-progress-meta b{color:#0f3660}.importpro-page .ip-progress-actions{margin-top:10px}
+      @media(max-width:1199px){.importpro-page .ip-grid,.importpro-page .ip-grid-3,.importpro-page .ip-grid-4,.importpro-page .export-field-groups{grid-template-columns:1fr}.importpro-page .ip-sticky-actions{position:static}.importpro-page .ip-cron-fields{grid-template-columns:repeat(2,1fr)}}
+    </style>
+
+    <div class="ip-toolbar">
+      <span class="ip-badge">PRO</span>
+      <span class="ip-pill"><i class="fa fa-cube"></i> ocStore/OpenCart 3.x</span>
+      <span class="ip-pill"><i class="fa fa-code"></i> PHP 7.4–8.5</span>
+      <span class="ip-pill"><i class="fa fa-shield"></i> OCMOD-only</span>
+      <span class="ip-pill"><i class="fa fa-tag"></i> v{{ module_version|e }}</span>
+      <span class="ip-pill"><i class="fa fa-user"></i> {{ text_author }}: <a class="ip-author-link" href="{{ author_url|replace({'&amp;':'&'})|e('html_attr') }}" target="_blank" rel="noopener">{{ author_name|e }}</a></span>
+    </div>
+
+    <div class="alert alert-warning"><i class="fa fa-shield"></i> {{ text_atomic_import_notice }}</div>
+
+    <ul class="nav nav-tabs" id="importpro-main-tabs">
+      <li class="active"><a href="#tab-settings" data-toggle="tab"><i class="fa fa-cog"></i> {{ tab_settings }}</a></li>
+      <li><a href="#tab-profile" data-toggle="tab"><i class="fa fa-list-alt"></i> {{ tab_profile }}</a></li>
+      <li><a href="#tab-fields" data-toggle="tab"><i class="fa fa-random"></i> {{ tab_fields }}</a></li>
+      <li><a href="#tab-rules" data-toggle="tab"><i class="fa fa-filter"></i> {{ tab_rules }}</a></li>
+      <li><a href="#tab-run" data-toggle="tab"><i class="fa fa-flask"></i> {{ tab_run }}</a></li>
+      <li><a href="#tab-export" data-toggle="tab"><i class="fa fa-download"></i> {{ tab_export }}</a></li>
+      <li><a href="#tab-logs" data-toggle="tab"><i class="fa fa-history"></i> {{ tab_logs }}</a></li>
+      <li><a href="#tab-diagnostics" data-toggle="tab"><i class="fa fa-stethoscope"></i> {{ tab_diagnostics }}</a></li>
+      <li><a href="#tab-cron" data-toggle="tab"><i class="fa fa-clock-o"></i> {{ tab_cron }}</a></li>
+      <li><a href="#tab-about" data-toggle="tab"><i class="fa fa-info-circle"></i> {{ tab_about }}</a></li>
+    </ul>
+
+    <div class="tab-content">
+      {# ============== TAB: SETTINGS ============== #}
+      <div class="tab-pane active" id="tab-settings">
+        <div class="ip-card">
+          <div class="ip-head"><h3 class="ip-title"><i class="fa fa-sliders"></i> {{ text_settings }}</h3></div>
+          <div class="ip-body">
+            <form action="{{ action|replace({'&amp;':'&'})|e('html_attr') }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
+              <input type="hidden" name="user_token" value="{{ user_token|e('html_attr') }}">
+              <div class="ip-grid">
+                <div class="ip-box">
+                  <h4><i class="fa fa-power-off"></i> {{ text_section_status }}</h4>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-toggle-on"></i> {{ entry_status }}</label>
+                    <select name="module_import_pro_status" class="form-control">
+                      <option value="0" {{ not module_import_pro_status ? 'selected' : '' }}>{{ text_disabled }}</option>
+                      <option value="1" {{ module_import_pro_status ? 'selected' : '' }}>{{ text_enabled }}</option>
+                    </select>
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ text_module_disabled_notice }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-key"></i> {{ entry_match_field }}</label>
+                    <select name="module_import_pro_default_match_field" class="form-control">
+                      {% for field in ['model','sku','ean','mpn','upc','jan','isbn'] %}<option value="{{ field|e('html_attr') }}" {{ module_import_pro_default_match_field == field ? 'selected' : '' }}>{{ field }}</option>{% endfor %}
+                    </select>
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_match_field }}</div>
+                  </div>
+                </div>
+                <div class="ip-box">
+                  <h4><i class="fa fa-picture-o"></i> {{ text_section_images }}</h4>
+                  <div class="checkbox"><label><input type="checkbox" name="module_import_pro_download_images" value="1" {{ module_import_pro_download_images ? 'checked="checked"' : '' }}> {{ entry_download_images }}</label></div>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-folder-open"></i> {{ entry_image_subdir }}</label>
+                    <input type="text" name="module_import_pro_image_subdir" value="{{ module_import_pro_image_subdir|e('html_attr') }}" class="form-control" placeholder="{{ placeholder_image_subdir|e('html_attr') }}">
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_image_subdir }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-sort-numeric-asc"></i> {{ entry_image_limit }}</label>
+                    <input type="number" min="1" max="100" name="module_import_pro_image_limit" value="{{ module_import_pro_image_limit|e('html_attr') }}" class="form-control" placeholder="10">
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_image_limit }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-clock-o"></i> {{ entry_url_timeout }}</label>
+                    <input type="text" name="module_import_pro_url_timeout" value="{{ module_import_pro_url_timeout|e('html_attr') }}" class="form-control" placeholder="60">
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_url_timeout }}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="ip-box" style="margin-top:12px;">
+                <h4><i class="fa fa-key"></i> {{ text_section_cron_token }}</h4>
+                <input type="text" name="module_import_pro_cron_token" value="{{ module_import_pro_cron_token|e('html_attr') }}" class="form-control">
+                <div class="ip-help"><i class="fa fa-shield"></i> {{ help_cron_token }}</div>
+              </div>
+              <div class="ip-box" style="margin-top:12px;">
+                <h4><i class="fa fa-trash"></i> {{ entry_uninstall_delete_data }}</h4>
+                <div class="checkbox"><label><input type="checkbox" name="module_import_pro_uninstall_delete_data" value="1" {{ module_import_pro_uninstall_delete_data ? 'checked="checked"' : '' }}> {{ entry_uninstall_delete_data }}</label></div>
+                <div class="ip-help"><i class="fa fa-exclamation-triangle"></i> {{ help_uninstall_delete_data }}</div>
+              </div>
+              <div class="ip-setting-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
+                <a href="{{ cancel|replace({'&amp;':'&'})|e('html_attr') }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_cancel }}</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      {# ============== TAB: PROFILE ============== #}
+      <div class="tab-pane" id="tab-profile">
+        <div class="ip-card">
+          <div class="ip-head"><h3 class="ip-title"><i class="fa fa-list-alt"></i> {{ text_profiles }}</h3><button type="button" class="btn btn-primary btn-sm" id="button-add-profile"><i class="fa fa-plus"></i> {{ button_add_profile }}</button></div>
+          <div class="ip-body"><div class="ip-profile-list" id="profiles-table"></div></div>
+        </div>
+        <div class="ip-card">
+          <div class="ip-head"><h3 class="ip-title"><i class="fa fa-pencil"></i> {{ text_section_source }}</h3></div>
+          <div class="ip-body">
+            <form id="profile-form" class="form-horizontal" onsubmit="return false;">
+              <input type="hidden" name="profile_id" value="0">
+              <input type="hidden" name="field_map_json" value="{}">
+              <div class="ip-grid">
+                <div class="ip-box">
+                  <h4><i class="fa fa-file-text-o"></i> {{ text_section_source }}</h4>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-tag"></i> {{ entry_profile_name }}</label>
+                    <input type="text" name="name" class="form-control" placeholder="{{ placeholder_profile_name|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_profile_name }}</div>
+                  </div>
+                  <div class="ip-grid">
+                    <div class="form-group"><label class="control-label"><i class="fa fa-files-o"></i> {{ entry_format }}</label><select name="format" class="form-control">{% for f in ['csv','xlsx','xml','yml','yaml','json','html'] %}<option value="{{ f }}">{{ f|upper }}</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_format }}</div></div>
+                    <div class="form-group"><label class="control-label"><i class="fa fa-exchange"></i> {{ entry_source_type }}</label><select name="source_type" class="form-control"><option value="file">{{ text_source_type_file }}</option><option value="url">{{ text_source_type_url }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_source_type }}</div></div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-link"></i> {{ entry_source_path }}</label>
+                    <input type="text" name="source_path" class="form-control" placeholder="{{ placeholder_source_path|e('html_attr') }}">
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_source_path }}</div>
+                    <div class="ip-help"><i class="fa fa-globe"></i> {{ help_source_url_example }}</div>
+                    <div class="ip-help"><i class="fa fa-folder-open"></i> {{ help_source_file_example }}</div>
+                  </div>
+                  <input type="file" id="upload-file" class="ip-hidden">
+                  <button type="button" class="btn btn-default" id="button-upload"><i class="fa fa-upload"></i> {{ button_upload }}</button>
+                </div>
+                <div class="ip-box">
+                  <h4><i class="fa fa-language"></i> {{ text_section_lang_auth }}</h4>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-flag"></i> {{ entry_default_language }}</label>
+                    <select name="default_language_id" class="form-control">{% for language in languages %}<option value="{{ language.language_id }}" {{ language.language_id == default_language_id ? 'selected' : '' }}>{{ language.name|e }} / {{ language.code|e }}</option>{% endfor %}</select>
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_default_language }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-key"></i> {{ entry_match_field }}</label>
+                    <select name="match_field" class="form-control">{% for field in ['model','sku','ean','mpn','upc','jan','isbn','product_id','name'] %}<option value="{{ field }}">{{ field }}</option>{% endfor %}</select>
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_match_field }}</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label"><i class="fa fa-folder"></i> {{ entry_image_subdir }}</label>
+                    <input type="text" name="image_subdir" class="form-control" placeholder="{{ placeholder_image_subdir|e('html_attr') }}">
+                    <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_image_subdir_profile }}</div>
+                  </div>
+                  <div class="ip-grid-3">
+                    <div class="form-group"><label class="control-label"><i class="fa fa-sort-numeric-asc"></i> {{ entry_image_limit }}</label><input type="number" min="1" max="100" name="image_limit" class="form-control" placeholder="10"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_image_limit }}</div></div>
+                    <div class="form-group"><label class="control-label"><i class="fa fa-picture-o"></i> {{ entry_image_update_mode }}</label><select name="image_update_mode" class="form-control"><option value="keep">{{ text_image_update_keep }}</option><option value="main">{{ text_image_update_main }}</option><option value="replace">{{ text_image_update_replace }}</option><option value="append">{{ text_image_update_append }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_image_update_mode }}</div></div>
+                    <div class="checkbox"><label><input type="checkbox" name="auto_split_images" value="1"> {{ entry_auto_split_images }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_auto_split_images }}</div></div>
+                  </div>
+                  <div class="ip-grid-3">
+                    <div class="form-group"><label class="control-label"><i class="fa fa-lock"></i> {{ entry_auth_type }}</label><select name="auth_type" class="form-control"><option value="none">{{ text_auth_none }}</option><option value="basic">{{ text_auth_basic }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_auth_type }}</div></div>
+                    <div class="form-group"><label class="control-label"><i class="fa fa-user"></i> {{ entry_auth_username }}</label><input type="text" name="auth_username" class="form-control" placeholder="user"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_auth_username }}</div></div>
+                    <div class="form-group"><label class="control-label"><i class="fa fa-key"></i> {{ entry_auth_password }}</label><input type="password" name="auth_password" class="form-control" placeholder="password" autocomplete="new-password"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_auth_password }}</div><div class="ip-help ip-auth-password-saved" style="display:none;"><i class="fa fa-check-circle"></i> {{ text_auth_password_saved }}</div></div>
+                  </div>
+                  <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_auth_basic }}</div>
+                </div>
+              </div>
+              <div class="ip-box" style="margin-top:12px;">
+                <h4><i class="fa fa-truck"></i> {{ text_section_supplier }}</h4>
+                <div class="checkbox"><label><input type="checkbox" name="supplier_mode" value="1"> {{ entry_supplier_mode }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_mode }}</div></div>
+                <div class="ip-grid-4">
+                  <div class="form-group"><label class="control-label"><i class="fa fa-id-card-o"></i> {{ entry_supplier_name }}</label><input type="text" name="supplier_name" class="form-control" placeholder="Supplier XML"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_name }}</div><div class="ip-help"><i class="fa fa-link"></i> {{ help_supplier_external_id }}</div></div>
+                  <div class="form-group"><label class="control-label"><i class="fa fa-code"></i> {{ entry_supplier_code }}</label><input type="text" name="supplier_code" class="form-control" placeholder="supplier_main"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_code }}</div></div>
+                  <div class="form-group"><label class="control-label"><i class="fa fa-percent"></i> {{ entry_supplier_markup_type }}</label><select name="supplier_markup_type" class="form-control"><option value="none">{{ text_supplier_markup_none }}</option><option value="percent">{{ text_supplier_markup_percent }}</option><option value="fixed">{{ text_supplier_markup_fixed }}</option><option value="percent_fixed">{{ text_supplier_markup_percent_fixed }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_markup_type }}</div></div>
+                  <div class="form-group"><label class="control-label">{{ entry_supplier_markup_value }}</label><input type="text" name="supplier_markup_value" class="form-control" placeholder="15"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_markup_value }}</div></div>
+                  <div class="form-group"><label class="control-label">{{ entry_supplier_fixed_markup }}</label><input type="text" name="supplier_fixed_markup" class="form-control" placeholder="0"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_fixed_markup }}</div></div>
+                </div>
+                <div class="ip-grid-4">
+                  <div class="form-group"><label class="control-label">{{ entry_supplier_price_rounding }}</label><input type="text" name="supplier_price_rounding" class="form-control" placeholder="1"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_markup }}</div></div>
+                  <div class="form-group"><label class="control-label">{{ entry_supplier_price_stock_source_type }}</label><select name="supplier_price_stock_source_type" class="form-control"><option value="">{{ text_supplier_source_same }}</option><option value="file">{{ text_source_type_file }}</option><option value="url">{{ text_source_type_url }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_source_type }}</div></div>
+                  <div class="form-group" style="grid-column:span 2;"><label class="control-label">{{ entry_supplier_price_stock_source_path }}</label><input type="text" name="supplier_price_stock_source_path" class="form-control" placeholder="https://supplier.example/price-stock.xml"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_price_stock_source }}</div></div>
+                </div>
+                <div class="ip-grid-3">
+                  <div class="checkbox"><label><input type="checkbox" name="supplier_auto_xml_params" value="1"> {{ entry_supplier_auto_xml_params }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_auto_xml_params }}</div></div>
+                  <div class="checkbox"><label><input type="checkbox" name="supplier_copy_attributes_to_languages" value="1"> {{ entry_supplier_copy_attributes_to_languages }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_copy_attributes }}</div></div>
+                </div>
+              </div>
+            </form>
+            <div class="ip-actions ip-sticky-actions">
+              <button type="button" class="btn btn-danger" id="button-delete-profile"><i class="fa fa-trash"></i> {{ button_delete }}</button>
+              <button type="button" class="btn btn-primary" id="button-save-profile"><i class="fa fa-save"></i> {{ button_save_profile }}</button>
+              <button type="button" class="btn btn-info" id="button-detect-fields-top"><i class="fa fa-magic"></i> {{ button_detect_fields }}</button>
+              <button type="button" class="btn btn-warning" id="button-dry-run-top"><i class="fa fa-flask"></i> {{ button_quick_test }}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ============== TAB: FIELDS ============== #}
+      <div class="tab-pane" id="tab-fields">
+        <div class="ip-card">
+          <div class="ip-head"><h3 class="ip-title"><i class="fa fa-random"></i> {{ text_mapping_legend }}</h3><button type="button" class="btn btn-info btn-sm" id="button-detect-fields"><i class="fa fa-magic"></i> {{ button_detect_fields }}</button></div>
+          <div class="ip-body">
+            <div class="alert alert-info"><i class="fa fa-language"></i> {{ help_json_example }}</div>
+            <div class="alert alert-warning"><i class="fa fa-link"></i> {{ help_field_map }}</div>
+            <div class="alert alert-info"><i class="fa fa-lightbulb-o"></i> {{ help_mapping_examples }}</div>
+            <div class="alert alert-info"><i class="fa fa-eye"></i> {{ help_mapping_samples }}</div>
+            <div id="mapping-builder-status" class="alert alert-warning"><i class="fa fa-info-circle"></i> {{ text_mapping_status_initial }}</div>
+            <div id="mapping-builder-table-wrap" class="ip-scroll ip-hidden">
+              <table class="table table-bordered table-hover ip-table-wide" id="mapping-builder-table">
+                <thead><tr><th><i class="fa fa-file-text-o"></i> {{ text_field_supplier }}</th><th><i class="fa fa-eye"></i> {{ text_field_samples }}</th><th><i class="fa fa-arrow-right"></i> {{ text_field_target }}</th></tr></thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <button type="button" class="btn btn-default" id="button-toggle-raw-map"><i class="fa fa-code"></i> {{ button_toggle_raw_map }}</button>
+            <div id="raw-map-wrap" class="ip-hidden" style="margin-top:10px;">
+              <textarea id="raw-field-map" class="form-control ip-code"></textarea>
+              <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_field_map }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ============== TAB: RULES ============== #}
+      <div class="tab-pane" id="tab-rules">
+        <div class="ip-card"><div class="ip-head"><h3 class="ip-title"><i class="fa fa-filter"></i> {{ tab_rules }}</h3></div>
+          <div class="ip-body">
+            <div class="ip-grid">
+              <div class="ip-box"><h4><i class="fa fa-table"></i> {{ text_section_parser }}</h4>
+                <div class="ip-grid-4">
+                  <div class="form-group"><label class="control-label">{{ entry_delimiter }}</label><input form="profile-form" type="text" name="delimiter" value="," class="form-control" placeholder=","></div>
+                  <div class="form-group"><label class="control-label">{{ entry_enclosure }}</label><input form="profile-form" type="text" name="enclosure" value='"' class="form-control" placeholder='"'></div>
+                  <div class="form-group"><label class="control-label">{{ entry_escape }}</label><input form="profile-form" type="text" name="escape" value="\\" class="form-control" placeholder="\\"></div>
+                  <div class="form-group"><label class="control-label">{{ entry_start_row }}</label><input form="profile-form" type="text" name="start_row" value="1" class="form-control" placeholder="1"></div>
+                </div>
+                <div class="ip-grid-4">
+                  <div class="form-group"><label class="control-label">{{ entry_sheet_name }}</label><input form="profile-form" type="text" name="sheet_name" class="form-control" placeholder="{{ placeholder_sheet_name|e('html_attr') }}"></div>
+                  <div class="form-group"><label class="control-label">{{ entry_root_node }}</label><input form="profile-form" type="text" name="root_node" class="form-control" placeholder="{{ placeholder_root_node|e('html_attr') }}"></div>
+                  <div class="form-group"><label class="control-label">{{ entry_item_node }}</label><input form="profile-form" type="text" name="item_node" value="item" class="form-control" placeholder="{{ placeholder_item_node|e('html_attr') }}"></div>
+                  <div class="form-group"><label class="control-label">{{ entry_url_timeout }}</label><input form="profile-form" type="text" name="url_timeout" value="60" class="form-control" placeholder="60"></div>
+                </div>
+                <div class="ip-grid-4">
+                  <div class="form-group"><label class="control-label">{{ entry_html_table_index }}</label><input form="profile-form" type="text" name="html_table_index" value="0" class="form-control" placeholder="0"></div>
+                  <div class="form-group"><label class="control-label">{{ entry_html_header_row }}</label><input form="profile-form" type="text" name="html_header_row" value="1" class="form-control" placeholder="1"></div>
+                </div>
+              </div>
+              <div class="ip-box"><h4><i class="fa fa-folder-open"></i> {{ text_section_categories }}</h4>
+                <div class="ip-grid-3">
+                  <div class="form-group"><label class="control-label">{{ entry_default_category }}</label><select form="profile-form" name="default_category" class="form-control"><option value="0">—</option>{% for category in categories %}<option value="{{ category.category_id }}">{{ category.name|e }}</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_default_category }}</div></div>
+                  <div class="form-group"><label class="control-label">{{ entry_category_mode }}</label><select form="profile-form" name="category_mode" class="form-control"><option value="file">{{ text_category_mode_file }}</option><option value="force">{{ text_category_mode_force }}</option><option value="both">{{ text_category_mode_both }}</option></select></div>
+                  <div class="form-group"><label class="control-label">{{ entry_force_category }}</label><select form="profile-form" name="force_category_id" class="form-control"><option value="0">—</option>{% for category in categories %}<option value="{{ category.category_id }}">{{ category.name|e }}</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_force_category }}</div></div>
+                </div>
+                <div class="ip-grid-3">
+                  <div class="form-group"><label class="control-label"><i class="fa fa-archive"></i> {{ entry_import_category_mode }}</label><select form="profile-form" name="import_category_mode" class="form-control"><option value="none">{{ text_import_category_none }}</option><option value="add">{{ text_import_category_add }}</option><option value="replace">{{ text_import_category_replace }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_import_category }}</div></div>
+                  <div class="form-group" style="grid-column:span 2;"><label class="control-label"><i class="fa fa-folder"></i> {{ entry_import_category_name }}</label><input form="profile-form" type="text" name="import_category_name" class="form-control" placeholder="Imported products"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_import_category_name }}</div></div>
+                </div>
+                <div class="checkbox"><label><input form="profile-form" type="checkbox" name="create_categories" value="1"> {{ entry_create_categories }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_create_categories }}</div></div>
+                <div class="checkbox"><label><input form="profile-form" type="checkbox" name="category_path_mode" value="1"> {{ text_quick_create_path }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_path_categories }}</div></div>
+              </div>
+            </div>
+            <div class="ip-grid" style="margin-top:12px;">
+              <div class="ip-box"><h4><i class="fa fa-refresh"></i> {{ text_section_updates }}</h4>
+                <div class="ip-grid-3">
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="create_new" value="1"> {{ entry_create_new }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_create_new }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_existing" value="1"> {{ entry_update_existing }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_existing }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_price" value="1"> {{ entry_update_price }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_price }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_quantity" value="1"> {{ entry_update_quantity }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_quantity }}</div></div>
+                  <div class="form-group"><label>{{ entry_in_stock_quantity }}</label><input form="profile-form" type="number" name="in_stock_quantity" min="0" max="2147483647" value="100" class="form-control"><div class="ip-help">{{ help_in_stock_quantity }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_images" value="1"> {{ entry_update_images }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_images }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_descriptions" value="1"> {{ entry_update_descriptions }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_descriptions }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_attributes" value="1"> {{ entry_update_attributes }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_attributes }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_seo" value="1"> {{ entry_update_seo }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_seo }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_specials" value="1"> {{ entry_update_specials }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_specials }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_options" value="1"> {{ entry_update_options }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_options }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="create_manufacturer" value="1"> {{ entry_create_manufacturer }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_create_manufacturer }}</div></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="download_images" value="1"> {{ entry_download_images }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_download_images_profile }}</div></div>
+                </div>
+                <div class="ip-grid" style="margin-top:10px;">
+                  <div class="form-group"><label class="control-label"><i class="fa fa-toggle-on"></i> {{ entry_import_product_status_mode }}</label><select form="profile-form" name="import_product_status_mode" class="form-control"><option value="file">{{ text_product_status_file }}</option><option value="enabled">{{ text_product_status_enabled }}</option><option value="disabled">{{ text_product_status_disabled }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_import_product_status_mode }}</div></div>
+                  <div class="form-group"><label class="control-label"><i class="fa fa-exclamation-triangle"></i> {{ entry_missing_product_action }}</label><select form="profile-form" name="missing_product_action" class="form-control"><option value="none">{{ text_missing_action_none }}</option><option value="disable">{{ text_missing_action_disable }}</option><option value="zero">{{ text_missing_action_zero }}</option><option value="delete">{{ text_missing_action_delete }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_missing_product_action }}</div></div>
+                </div>
+                <input form="profile-form" type="hidden" name="ignore_empty_fields" value="0">
+                <div class="checkbox"><label><input form="profile-form" type="checkbox" name="ignore_empty_fields" value="1"> {{ entry_ignore_empty_fields }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_ignore_empty_fields }}</div></div>
+                <div class="checkbox"><label><input form="profile-form" type="checkbox" name="sync_missing_confirm" value="1"> {{ entry_sync_missing_confirm }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_sync_missing_confirm }}</div></div>
+              </div>
+              <div class="ip-box"><h4><i class="fa fa-eraser"></i> {{ text_section_cleaning }}</h4><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_cleaning_group }}</div>
+                <div class="ip-grid-3">
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="clean_text_fields" value="1"> {{ entry_clean_text_fields }}</label></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="clean_description_html" value="1"> {{ entry_clean_description_html }}</label></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="decode_html_entities" value="1"> {{ entry_decode_html_entities }}</label></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="strip_invisible_chars" value="1"> {{ entry_strip_invisible_chars }}</label></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="strip_msword_markup" value="1"> {{ entry_strip_msword_markup }}</label></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="auto_generate_seo_keyword" value="1"> {{ entry_auto_generate_seo_keyword }}</label></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="fill_missing_languages" value="1"> {{ entry_fill_missing_languages }}</label></div>
+                  <div class="checkbox"><label><input form="profile-form" type="checkbox" name="filter_in_stock_only" value="1"> {{ text_quick_filter_in_stock }}</label></div>
+                </div>
+                <div class="ip-grid-3">
+                  <div class="form-group"><label class="control-label">{{ entry_filter_status_value }}</label><input form="profile-form" type="text" name="filter_status_value" class="form-control" placeholder="{{ placeholder_filter_status|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_filter_status }}</div></div>
+                  <div class="form-group"><label class="control-label">{{ entry_filter_manufacturer_contains }}</label><input form="profile-form" type="text" name="filter_manufacturer_contains" class="form-control" placeholder="{{ placeholder_filter_text|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_filter_text }}</div></div>
+                  <div class="form-group"><label class="control-label">{{ entry_filter_category_contains }}</label><input form="profile-form" type="text" name="filter_category_contains" class="form-control" placeholder="{{ placeholder_filter_category|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_filter_text }}</div></div>
+                </div>
+              </div>
+            <div class="ip-box" style="margin-top:12px;">
+                  <div class="ip-head"><h3 class="ip-title"><i class="fa fa-sliders"></i> {{ text_field_policy_title }}</h3></div>
+                  <div class="ip-body">
+              <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_field_policy_help }}</div>
+              {% set import_policy_fields = ['model','sku','upc','ean','jan','isbn','mpn','location','price','points','quantity','minimum','subtract','status','stock_status_id','shipping','tax_class_id','sort_order','date_available','name','description','tag','meta_title','meta_description','meta_h1','meta_keywords','manufacturer','manufacturer_id','categories','category_ids','main_category_id','google_product_category','image','additional_images','attributes','options','discounts','specials','rewards','recurring','seo_keyword','store_ids','filter_ids','download_ids','related_product_ids','related_article_ids','layouts','noindex','weight','weight_class_id','length','width','height','length_class_id'] %}
+              <div class="ip-grid-4">
+                {% for policy_field in import_policy_fields %}
+                <div class="form-group">
+                  <label class="control-label"><code>{{ policy_field }}</code></label>
+                  <select form="profile-form" name="field_rules[{{ policy_field }}]" class="form-control field-policy">
+                    <option value="">{{ text_policy_default }}</option>
+                    <option value="preserve">{{ text_policy_preserve }}</option>
+                    <option value="overwrite">{{ text_policy_overwrite }}</option>
+                    <option value="fill_empty">{{ text_policy_fill_empty }}</option>
+                    <option value="merge">{{ text_policy_merge }}</option>
+                    <option value="replace">{{ text_policy_replace }}</option>
+                    <option value="clear">{{ text_policy_clear }}</option>
+                  </select>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+
+            </div>
+          </div></div>
+      </div>
+
+      {# ============== TAB: RUN ============== #}
+      <div class="tab-pane" id="tab-run">
+        <div class="ip-card"><div class="ip-head"><h3 class="ip-title"><i class="fa fa-flask"></i> {{ tab_run }}</h3></div>
+          <div class="ip-body">
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_run_status_initial }}</div>
+            <div class="alert alert-warning"><i class="fa fa-line-chart"></i> {{ help_import_progress }}</div><div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ help_import_progress_total }}</div><div class="alert alert-info"><i class="fa fa-lightbulb-o"></i> {{ help_import_progress_examples }}</div>
+            <div id="import-progress-panel" class="ip-progress-panel">
+              <div class="ip-progress-title"><i class="fa fa-refresh fa-spin"></i> <span id="import-progress-title">{{ text_import_progress_title }}</span></div>
+              <div class="ip-progressbar"><span id="import-progress-bar"></span></div>
+              <div class="ip-progress-meta">
+                <span title="{{ help_import_progress_total|e('html_attr') }}">{{ text_import_progress_total }}: <b id="import-progress-total">0</b></span>
+                <span>{{ text_processed }}: <b id="import-progress-processed">0</b></span>
+                <span>{{ text_import_progress_success }}: <b id="import-progress-success">0</b></span>
+                <span>{{ text_created }}: <b id="import-progress-created">0</b></span>
+                <span>{{ text_updated }}: <b id="import-progress-updated">0</b></span>
+                <span>{{ text_skipped }}: <b id="import-progress-skipped">0</b></span>
+                <span>{{ text_errors }}: <b id="import-progress-errors">0</b></span>
+                <span>{{ text_import_progress_remaining }}: <b id="import-progress-remaining">0</b></span>
+                <span>{{ text_import_progress_percent }}: <b id="import-progress-percent">0%</b></span>
+              </div>
+              <div class="ip-progress-actions"><button type="button" class="btn btn-default btn-sm" id="button-stop-import"><i class="fa fa-stop"></i> {{ button_stop_import }}</button></div>
+            </div>
+            <div class="alert alert-success"><i class="fa fa-shield"></i> <strong>{{ text_safe_queue_title }}</strong><br>{{ text_safe_queue_help }}</div>
+            <div class="ip-grid-4">
+              <div class="form-group"><label class="control-label">{{ entry_preview_limit }}</label><input form="profile-form" type="text" name="preview_limit" value="20" class="form-control" placeholder="20"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_preview_limit }}</div></div>
+              <div class="form-group"><label class="control-label">{{ entry_run_limit }}</label><input form="profile-form" type="text" name="run_limit" value="0" class="form-control" placeholder="0"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_run_limit }}</div></div>
+              <div class="form-group"><label class="control-label">{{ entry_run_offset }}</label><input form="profile-form" type="text" name="run_offset" value="0" class="form-control" placeholder="0" readonly><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_run_offset }}</div></div>
+              <div class="form-group"><label class="control-label">{{ entry_run_mode }}</label><select form="profile-form" name="run_mode" class="form-control"><option value="full">{{ text_run_mode_full }}</option><option value="price_only">{{ text_run_mode_price_only }}</option><option value="quantity_only">{{ text_run_mode_quantity_only }}</option><option value="price_stock">{{ text_run_mode_price_stock }}</option><option value="new_only">{{ text_run_mode_new_only }}</option><option value="existing_only">{{ text_run_mode_existing_only }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_run_mode }}</div></div>
+            </div>
+            <div class="ip-actions">
+              <button type="button" class="btn btn-info" id="button-preview"><i class="fa fa-search"></i> {{ button_preview }}</button>
+              <button type="button" class="btn btn-warning" id="button-dry-run"><i class="fa fa-flask"></i> {{ button_safe_check }}</button>
+              <button type="button" class="btn btn-success" id="button-import" disabled><i class="fa fa-check"></i> {{ button_apply_selected }}</button>
+              <button type="button" class="btn btn-danger" id="button-retry-errors" disabled><i class="fa fa-repeat"></i> {{ button_retry_errors }}</button>
+              <button type="button" class="btn btn-default" id="button-recover-queue" disabled><i class="fa fa-life-ring"></i> {{ button_recover_queue }}</button>
+              <button type="button" class="btn btn-primary" id="button-download-report" disabled><i class="fa fa-download"></i> {{ button_download_report }}</button>
+            </div>
+            <div class="ip-actions" style="margin-top:8px;">
+              <button type="button" class="btn btn-default btn-sm button-safe-mode" data-mode="price_only"><i class="fa fa-money"></i> {{ text_run_mode_price_only }}</button>
+              <button type="button" class="btn btn-default btn-sm button-safe-mode" data-mode="quantity_only"><i class="fa fa-cubes"></i> {{ text_run_mode_quantity_only }}</button>
+              <button type="button" class="btn btn-default btn-sm button-safe-mode" data-mode="price_stock"><i class="fa fa-exchange"></i> {{ text_run_mode_price_stock }}</button>
+              <button type="button" class="btn btn-default btn-sm button-safe-mode" data-mode="new_only"><i class="fa fa-plus-circle"></i> {{ text_run_mode_new_only }}</button>
+              <button type="button" class="btn btn-default btn-sm button-safe-mode" data-mode="existing_only"><i class="fa fa-refresh"></i> {{ text_run_mode_existing_only }}</button>
+            </div>
+            <div id="preview-result" class="ip-result"></div>
+            <div id="import-result" class="ip-result"></div>
+            <div id="safe-review-panel" style="display:none;margin-top:12px;">
+              <div class="ip-grid-4">
+                <div class="form-group"><label class="control-label">{{ column_status }}</label><select id="safe-result-status" class="form-control"><option value="">{{ text_queue_filter_all }}</option><option value="review">{{ text_queue_review_status }}</option><option value="error">{{ text_queue_error }}</option><option value="created">{{ text_queue_created }}</option><option value="updated">{{ text_queue_updated }}</option><option value="skipped">{{ text_queue_skipped }}</option><option value="deleted">{{ text_queue_deleted }}</option></select></div>
+                <div class="form-group" style="grid-column:span 2;"><label class="control-label">{{ text_queue_search }}</label><input id="safe-result-search" type="text" class="form-control" placeholder="{{ text_queue_search|e('html_attr') }}"></div>
+                <div class="form-group"><label class="control-label">Batch ID</label><input id="safe-batch-id" type="text" class="form-control" readonly></div>
+              </div>
+              <div class="ip-actions">
+                <button type="button" class="btn btn-default btn-sm" id="button-safe-select-visible">{{ text_queue_select_visible }}</button>
+                <button type="button" class="btn btn-default btn-sm" id="button-safe-unselect-visible">{{ text_queue_unselect_visible }}</button>
+                <button type="button" class="btn btn-default btn-sm" id="button-safe-select-all">{{ text_queue_select_all_review }}</button>
+                <button type="button" class="btn btn-default btn-sm" id="button-safe-unselect-all">{{ text_queue_unselect_all_review }}</button>
+              </div>
+              <div id="safe-results" class="ip-result"></div>
+              <div class="ip-actions"><button type="button" class="btn btn-default btn-sm" id="safe-page-prev"><i class="fa fa-chevron-left"></i></button><span id="safe-page-info" class="btn btn-link disabled"></span><button type="button" class="btn btn-default btn-sm" id="safe-page-next"><i class="fa fa-chevron-right"></i></button></div>
+            </div>
+          </div></div>
+      </div>
+
+      {# ============== TAB: EXPORT ============== #}
+      <div class="tab-pane" id="tab-export">
+        <div class="ip-card"><div class="ip-head"><h3 class="ip-title"><i class="fa fa-download"></i> {{ text_export }}</h3></div>
+          <div class="ip-body">
+            <iframe name="importpro-export-frame" class="ip-hidden"></iframe>
+            <form id="export-form" class="form-horizontal" method="post" action="{{ export_url|replace({'&amp;':'&'})|e('html_attr') }}" target="importpro-export-frame">
+              <input type="hidden" name="user_token" value="{{ user_token|e('html_attr') }}">
+              <div class="export-presets">
+                <button type="button" class="btn btn-default btn-sm button-export-fields-preset" data-preset="minimal"><i class="fa fa-minus-circle"></i> {{ text_export_preset_minimal }}</button>
+                <button type="button" class="btn btn-default btn-sm button-export-fields-preset" data-preset="standard"><i class="fa fa-circle-o"></i> {{ text_export_preset_standard }}</button>
+                <button type="button" class="btn btn-default btn-sm button-export-fields-preset" data-preset="full"><i class="fa fa-check-circle"></i> {{ text_export_preset_full }}</button>
+                <button type="button" class="btn btn-default btn-sm button-export-fields-preset" data-preset="seo"><i class="fa fa-search"></i> {{ text_export_preset_seo }}</button>
+                <button type="button" class="btn btn-default btn-sm button-export-fields-preset" data-preset="stock"><i class="fa fa-cubes"></i> {{ text_export_preset_stock }}</button>
+              </div>
+              <div class="export-field-groups">
+                <div class="ip-box"><h4><i class="fa fa-cube"></i> {{ text_export_field_main }}</h4><div class="export-field-list">{% for field in ['product_id','model','sku','upc','ean','jan','isbn','mpn','location','manufacturer','manufacturer_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
+                <div class="ip-box"><h4><i class="fa fa-money"></i> {{ text_export_field_stock }}</h4><div class="export-field-list">{% for field in ['price','points','quantity','minimum','subtract','status','stock_status_id','shipping','tax_class_id','sort_order','date_available','noindex'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
+                <div class="ip-box"><h4><i class="fa fa-search"></i> {{ text_export_field_seo }}</h4><div class="export-field-list">{% for field in ['name','description','tag','meta_title','meta_description','meta_h1','meta_keywords','seo_keyword','product_url'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
+                <div class="ip-box"><h4><i class="fa fa-picture-o"></i> {{ text_export_field_media }}</h4><div class="export-field-list">{% for field in ['main_category_id','google_product_category','categories','category_ids','image','additional_images','attributes','options','weight','weight_class_id','length','width','height','length_class_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
+                <div class="ip-box"><h4><i class="fa fa-link"></i> {{ text_field_policy_title }}</h4><div class="export-field-list">{% for field in ['store_ids','filter_ids','download_ids','related_product_ids','related_article_ids','layouts','discounts','specials','rewards','recurring'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}"> {{ field }}</label>{% endfor %}</div></div>
+                <div class="ip-box"><h4><i class="fa fa-truck"></i> {{ text_export_field_supplier }}</h4><div class="export-field-list">{% for field in ['supplier_id','supplier_name','external_product_id','supplier_sku','supplier_price','supplier_quantity','supplier_last_seen','supplier_hash','external_category_id','external_parent_category_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}"> {{ field }}</label>{% endfor %}</div></div>
+              </div>
+              <div class="ip-grid-4" style="margin-top:12px;">
+                <div class="form-group"><label class="control-label">{{ entry_export_format }}</label><select name="format" id="export-format" class="form-control"><option value="csv">CSV</option><option value="xlsx">XLSX</option><option value="xml">XML</option><option value="json">JSON</option><option value="rozetka_yml">Rozetka XML/YML</option><option value="epicentr_xml">Epicentr XML</option><option value="hotline_xml">Hotline XML</option><option value="prom_yml">Prom.ua / Universal YML</option><option value="price_ua_yml">Price.ua / Universal YML</option><option value="facebook_csv">Facebook / Instagram (Meta) CSV</option><option value="pinterest_csv">Pinterest Catalog CSV</option><option value="tiktok_csv">TikTok Catalog CSV</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_format }}</div></div>
+                <div class="form-group"><label class="control-label">{{ entry_export_image_format }}</label><select name="image_format" id="export-image-format" class="form-control"><option value="relative">{{ text_export_image_relative }}</option><option value="url">{{ text_export_image_url }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_image_format }}</div></div>
+                <div class="form-group"><label class="control-label">{{ text_export_language }}</label><select name="language_id" id="export-language" class="form-control">{% for language in languages %}<option value="{{ language.language_id }}" {{ language.language_id == default_language_id ? 'selected' : '' }}>{{ language.name|e }}</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_language }}</div></div>
+                <div class="form-group"><label class="control-label">{{ entry_export_status_filter }}</label><select name="status" id="export-status" class="form-control"><option value="">—</option><option value="1">{{ text_enabled }}</option><option value="0">{{ text_disabled }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_status_filter }}</div></div>
+                <div class="form-group"><label class="control-label">{{ text_export_quick_mode }}</label><select id="export-preset" class="form-control"><option value="">{{ text_export_quick_none }}</option><option value="full">{{ text_export_quick_full }}</option><option value="test10">{{ text_export_quick_test10 }}</option><option value="stock">{{ text_export_quick_stock }}</option></select></div>
+              </div>
+              <div class="ip-grid-4">
+                <div class="form-group"><label class="control-label">{{ entry_export_category_filter }}</label><select name="category_id" id="export-category" class="form-control"><option value="0">{{ text_export_all_categories }}</option>{% for category in categories %}<option value="{{ category.category_id }}">{{ category.name|e }}</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_category_filter }}</div></div>
+                <div class="form-group"><label class="control-label">{{ entry_export_manufacturer_filter }}</label><select name="manufacturer_id" id="export-manufacturer" class="form-control"><option value="0">{{ text_export_all_manufacturers }}</option>{% for manufacturer in manufacturers %}<option value="{{ manufacturer.manufacturer_id }}">{{ manufacturer.name|e }}</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_manufacturer_filter }}</div></div>
+                <div class="form-group"><label class="control-label">{{ entry_export_supplier_filter }}</label><select name="supplier_id" id="export-supplier" class="form-control"><option value="0">{{ text_export_all_suppliers }}</option>{% for supplier in suppliers %}<option value="{{ supplier.supplier_id }}">{{ supplier.name|e }}{% if supplier.profile_name %} / {{ supplier.profile_name|e }}{% endif %} ({{ supplier.product_count }})</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_supplier_filter }}</div></div>
+                <div class="form-group"><label class="control-label">{{ entry_export_limit }}</label><input type="text" name="limit" id="export-limit" value="0" class="form-control" placeholder="{{ placeholder_export_limit|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_limit }}</div></div>
+                <div class="form-group"><label class="control-label">{{ entry_export_offset }}</label><input type="text" name="offset" id="export-offset" value="0" class="form-control" placeholder="{{ placeholder_export_offset|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_offset }}</div></div>
+              </div>
+              <div class="checkbox"><label><input type="checkbox" id="export-in-stock" name="in_stock_only" value="1"> {{ text_export_in_stock_only }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_in_stock }}</div></div>
+              <div class="ip-actions">
+                <button type="button" class="btn btn-default" id="button-export-reset"><i class="fa fa-undo"></i> {{ button_export_reset }}</button>
+                <button type="submit" class="btn btn-success" id="button-export-run"><i class="fa fa-download"></i> {{ button_export }}</button>
+              </div>
+            </form>
+          </div></div>
+      </div>
+
+      {# ============== TAB: LOGS ============== #}
+      <div class="tab-pane" id="tab-logs">
+        <div class="ip-card">
+          <div class="ip-head">
+            <h3 class="ip-title"><i class="fa fa-history"></i> {{ text_recent_runs }}</h3>
+            <button type="button" class="btn btn-default btn-sm" id="button-clear-log"><i class="fa fa-eraser"></i> {{ button_clear_log }}</button>
+          </div>
+          <div class="ip-body ip-scroll">
+            <table class="table table-bordered table-hover ip-table-wide">
+              <thead><tr><th>ID</th><th>{{ column_profile }}</th><th>{{ column_mode }}</th><th>{{ column_result }}</th><th>{{ column_date_added }}</th><th></th></tr></thead>
+              <tbody>
+                {% if recent_runs %}{% for run in recent_runs %}<tr><td>{{ run.run_id }}</td><td>{{ run.profile_name|e }}</td><td>{{ run.run_mode|e }}</td><td>{{ run.result_summary|e }}</td><td>{{ run.date_added|e }}</td><td class="text-right"><button type="button" class="btn btn-xs btn-default button-view-run" data-run-id="{{ run.run_id }}"><i class="fa fa-eye"></i> {{ button_view_log }}</button></td></tr>{% endfor %}
+                {% else %}<tr><td colspan="6" class="text-center">{{ text_no_results }}</td></tr>{% endif %}
+              </tbody>
+            </table>
+            <div id="run-log-result" class="ip-result"></div>
+          </div>
+        </div>
+      </div>
+
+      {# ============== TAB: DIAGNOSTICS ============== #}
+      <div class="tab-pane" id="tab-diagnostics">
+        <div class="ip-card">
+          <div class="ip-head">
+            <h3 class="ip-title"><i class="fa fa-stethoscope"></i> {{ text_diagnostics }}</h3>
+            <button type="button" class="btn btn-info btn-sm" id="button-run-diagnostics"><i class="fa fa-play"></i> {{ button_run_diagnostics }}</button>
+          </div>
+          <div class="ip-body">
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_diagnostics_help }}</div>
+            <div id="diagnostics-result">
+              <div class="alert alert-warning"><i class="fa fa-info-circle"></i> {{ text_diag_initial }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {# ============== TAB: CRON ============== #}
+      <div class="tab-pane" id="tab-cron">
+        <div class="ip-card"><div class="ip-head"><h3 class="ip-title"><i class="fa fa-clock-o"></i> {{ text_mirohost_cron_title }}</h3></div>
+          <div class="ip-body">
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_mirohost_cron_help }}</div>
+            <div class="ip-grid-3">
+              <div class="ip-box"><h4><i class="fa fa-play"></i> {{ text_cron_full }}</h4>
+                <div class="ip-cron-fields">
+                  <div><strong>{{ text_cron_field_minutes }}</strong>5</div>
+                  <div><strong>{{ text_cron_field_hours }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_days_month }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_months }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_days_week }}</strong>*</div>
+                </div>
+                <label class="control-label" style="font-size:11px;color:#667085;">{{ text_cron_field_command }}</label>
+                <input type="text" readonly id="cron-import-full" class="form-control">
+              </div>
+              <div class="ip-box"><h4><i class="fa fa-flask"></i> {{ text_cron_test }}</h4>
+                <div class="ip-cron-fields">
+                  <div><strong>{{ text_cron_field_minutes }}</strong>10</div>
+                  <div><strong>{{ text_cron_field_hours }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_days_month }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_months }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_days_week }}</strong>*</div>
+                </div>
+                <label class="control-label" style="font-size:11px;color:#667085;">{{ text_cron_field_command }}</label>
+                <input type="text" readonly id="cron-import-test" class="form-control">
+              </div>
+              <div class="ip-box"><h4><i class="fa fa-refresh"></i> {{ text_cron_priceqty }}</h4>
+                <div class="ip-cron-fields">
+                  <div><strong>{{ text_cron_field_minutes }}</strong>*/15</div>
+                  <div><strong>{{ text_cron_field_hours }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_days_month }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_months }}</strong>*</div>
+                  <div><strong>{{ text_cron_field_days_week }}</strong>*</div>
+                </div>
+                <label class="control-label" style="font-size:11px;color:#667085;">{{ text_cron_field_command }}</label>
+                <input type="text" readonly id="cron-import-priceqty" class="form-control">
+              </div>
+            </div>
+            <div class="alert alert-warning" style="margin-top:12px;"><i class="fa fa-shield"></i> {{ help_cron }}</div>
+          </div></div>
+      </div>
+
+      {# ============== TAB: ABOUT ============== #}
+      <div class="tab-pane" id="tab-about">
+        <div class="ip-card">
+          <div class="ip-head"><h3 class="ip-title"><i class="fa fa-info-circle"></i> {{ tab_about }} <span class="ip-version-pill">v{{ module_version|e }}</span></h3></div>
+          <div class="ip-body">
+            <div class="ip-about-box">
+              <h4><i class="fa fa-question-circle"></i> {{ text_about_what }}</h4>
+              <p>{{ text_about_what_text }}</p>
+            </div>
+
+            <div class="ip-grid">
+              <div class="ip-about-box">
+                <h4><i class="fa fa-star"></i> {{ text_about_features }}</h4>
+                <ul>
+                  <li><i class="fa fa-check"></i> CSV, XLSX, XML, JSON, HTML</li>
+                  <li><i class="fa fa-check"></i> {{ text_source_type_file }} / {{ text_source_type_url }} ({{ text_auth_basic }})</li>
+                  <li><i class="fa fa-check"></i> {{ entry_default_language }} + name:uk-ua, description:ru-ru…</li>
+                  <li><i class="fa fa-check"></i> {{ entry_create_categories }}, {{ entry_category_path_mode }}</li>
+                  <li><i class="fa fa-check"></i> {{ entry_download_images }}, {{ entry_update_images }}</li>
+                  <li><i class="fa fa-check"></i> {{ entry_update_attributes }}, {{ entry_update_options }}, {{ entry_update_specials }}</li>
+                  <li><i class="fa fa-check"></i> {{ entry_auto_generate_seo_keyword }}</li>
+                  <li><i class="fa fa-check"></i> {{ entry_clean_description_html }}, {{ entry_strip_msword_markup }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_run_mode_full }} / {{ text_run_mode_price_qty }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_export }}: CSV, XLSX, XML, JSON</li>
+                  <li><i class="fa fa-check"></i> Cron + Mirohost-friendly schedule</li>
+                  <li><i class="fa fa-check"></i> {{ text_recent_runs }} + {{ button_view_log }}</li>
+                </ul>
+              </div>
+              <div class="ip-about-box">
+                <h4><i class="fa fa-trophy"></i> {{ text_about_advantages }}</h4>
+                <ul>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_1 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_2 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_3 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_4 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_5 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_6 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_7 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_8 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_9 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_10 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_11 }}</li>
+                  <li><i class="fa fa-check"></i> {{ text_about_adv_12 }}</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="ip-about-box">
+              <h4><i class="fa fa-shield"></i> {{ text_about_safety }}</h4>
+              <p>{{ text_about_safety_text }}</p>
+            </div>
+
+            <div class="ip-about-box">
+              <h4><i class="fa fa-sitemap"></i> {{ text_about_arch }}</h4>
+              <p>{{ text_about_arch_text }}</p>
+            </div>
+
+            <div class="ip-about-box">
+              <h4><i class="fa fa-rocket"></i> {{ text_about_quickstart }}</h4>
+              <p>{{ text_about_quickstart_text }}</p>
+            </div>
+
+            <div class="ip-about-box">
+              <h4><i class="fa fa-user"></i> {{ text_author }}</h4>
+              <p>{{ text_author_site }} <a class="ip-author-link" href="{{ author_url|replace({'&amp;':'&'})|e('html_attr') }}" target="_blank" rel="noopener">{{ author_url|e }}</a></p>
+              <p>{{ text_support_site }} <a class="ip-author-link" href="{{ support_url|replace({'&amp;':'&'})|e('html_attr') }}" target="_blank" rel="noopener">{{ support_url|e }}</a></p>
+              <p><a href="{{ update_url|replace({'&amp;':'&'})|e('html_attr') }}" target="_blank" rel="noopener" class="btn btn-warning btn-sm"><i class="fa fa-download"></i> {{ button_upgrade_module }}</a> <span class="ip-help"><i class="fa fa-info-circle"></i> {{ text_manual_update_help }}</span></p>
+            </div>
+
+            <div class="ip-about-box">
+              <h4><i class="fa fa-picture-o"></i> {{ text_about_images_title }}</h4>
+              <p>{{ text_about_images_text }}</p>
+            </div>
+            <div class="ip-about-box">
+              <h4><i class="fa fa-refresh"></i> {{ text_about_import_status_title }}</h4>
+              <p>{{ text_about_import_status_text }}</p>
+            </div>
+            <div class="ip-about-box">
+              <h4><i class="fa fa-exclamation-triangle"></i> {{ text_about_safe_modes_title }}</h4>
+              <p>{{ text_about_safe_modes_text }}</p>
+            </div>
+            <div class="ip-about-box">
+              <h4><i class="fa fa-lightbulb-o"></i> {{ text_about_examples_title }}</h4>
+              <p>{{ text_about_examples_text }}</p>
+            </div>
+            <div class="alert alert-info" style="margin-top:12px;"><i class="fa fa-tag"></i> {{ text_about_version }}</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+var importProfiles  = {{ profiles_json|raw }};
+var detectFieldsUrl = '{{ detect_fields_url|replace({'&amp;':'&'})|e('js') }}';
+var saveProfileUrl  = '{{ save_profile_url|replace({'&amp;':'&'})|e('js') }}';
+var deleteProfileUrl= '{{ delete_profile_url|replace({'&amp;':'&'})|e('js') }}';
+var uploadUrl       = '{{ upload_url|replace({'&amp;':'&'})|e('js') }}';
+var previewUrl      = '{{ preview_url|replace({'&amp;':'&'})|e('js') }}';
+var safeStartUrl     = '{{ safe_start_url|replace({'&amp;':'&'})|e('js') }}';
+var safePrepareUrl   = '{{ safe_prepare_url|replace({'&amp;':'&'})|e('js') }}';
+var safeProcessUrl   = '{{ safe_process_url|replace({'&amp;':'&'})|e('js') }}';
+var safeSummaryUrl   = '{{ safe_summary_url|replace({'&amp;':'&'})|e('js') }}';
+var safeResultsUrl   = '{{ safe_results_url|replace({'&amp;':'&'})|e('js') }}';
+var safeSelectionUrl = '{{ safe_selection_url|replace({'&amp;':'&'})|e('js') }}';
+var safeApplyUrl     = '{{ safe_apply_url|replace({'&amp;':'&'})|e('js') }}';
+var safeRetryUrl     = '{{ safe_retry_url|replace({'&amp;':'&'})|e('js') }}';
+var safeCancelUrl    = '{{ safe_cancel_url|replace({'&amp;':'&'})|e('js') }}';
+var safeRecoverUrl   = '{{ safe_recover_url|replace({'&amp;':'&'})|e('js') }}';
+var safeReportUrl    = '{{ safe_report_url|replace({'&amp;':'&'})|e('js') }}';
+var getRunUrl       = '{{ get_run_url|replace({'&amp;':'&'})|e('js') }}';
+var clearLogUrl     = '{{ clear_log_url|replace({'&amp;':'&'})|e('js') }}';
+var diagnosticUrl   = '{{ diagnostic_url|replace({'&amp;':'&'})|e('js') }}';
+var cronBaseUrl     = '{{ cron_base_url|replace({'&amp;':'&'})|e('js') }}';
+var defaultImageSubdir = '{{ module_import_pro_image_subdir|e('js') }}';
+var diagnosticsStatusLabels = {ok:'{{ text_diag_ok|e('js') }}', warn:'{{ text_diag_warn|e('js') }}', error:'{{ text_diag_error|e('js') }}'};
+var importDefaultLang  = '{% for language in languages %}{% if language.language_id == default_language_id %}{{ language.code }}{% endif %}{% endfor %}' || 'uk-ua';
+
+function escapeHtml(str){return $('<div>').text(str===undefined||str===null?'':String(str)).html();}
+function decodeHtmlEntities(str){return $('<textarea/>').html(str===undefined||str===null?'':String(str)).text();}
+function showAjaxLoginError(xhr){var t=xhr&&xhr.responseText?String(xhr.responseText):'';if(/common\/login|login|пароль|password/i.test(t)){alert('{{ text_js_session_expired|e('js') }}');return true;}return false;}
+function findProfile(id){for(var i=0;i<importProfiles.length;i++){if(parseInt(importProfiles[i].profile_id)==parseInt(id))return importProfiles[i];}return null;}
+function getCurrentProfileId(){return parseInt($('#profile-form [name="profile_id"]').val()||'0');}
+function markActiveProfile(id){$('#profiles-table [data-profile-id]').removeClass('active-row');$('#profiles-table [data-profile-id="'+id+'"]').addClass('active-row');}
+function renderProfileList(){var wrap=$('#profiles-table');wrap.empty();if(!importProfiles.length){wrap.html('<div class="alert alert-warning" style="margin-bottom:0;">{{ text_no_results }}</div>');return;}importProfiles.forEach(function(p){wrap.append('<div class="ip-profile" data-profile-id="'+escapeHtml(p.profile_id)+'"><div class="ip-profile-title"><i class="fa fa-bookmark"></i> '+escapeHtml(p.name||'Profile')+'</div><div class="ip-profile-meta">'+escapeHtml((p.format||'').toUpperCase())+' / '+escapeHtml(p.source_type||'file')+'<br>'+escapeHtml(p.date_modified||'')+'</div></div>');});markActiveProfile(getCurrentProfileId());}
+
+function defaultProfileObject(){return {profile_id:0,name:'',format:'csv',source_type:'file',source_path:'',match_field:'model',default_language_id:'{{ default_language_id }}',settings:{delimiter:',',enclosure:'"',escape:'\\',start_row:1,item_node:'item',html_table_index:0,html_header_row:1,create_manufacturer:1,create_categories:1,update_existing:1,create_new:1,update_price:1,update_quantity:1,update_images:1,update_descriptions:1,update_attributes:1,update_seo:1,update_specials:1,update_options:1,download_images:1,image_limit:10,auto_split_images:1,image_update_mode:'replace',clean_text_fields:1,clean_description_html:1,decode_html_entities:1,strip_invisible_chars:1,strip_msword_markup:1,auto_generate_seo_keyword:1,category_path_mode:1,fill_missing_languages:1,import_category_mode:'none',import_category_name:'Imported products',import_product_status_mode:'file',missing_product_action:'none',supplier_code:'',sync_missing_confirm:0,ignore_empty_fields:1,field_rules:{},preview_limit:20,run_limit:0,run_mode:'full',url_timeout:60,image_subdir:defaultImageSubdir,supplier_mode:0,supplier_name:'',supplier_markup_type:'none',supplier_markup_value:0,supplier_fixed_markup:0,supplier_price_rounding:0,supplier_price_stock_source_type:'',supplier_price_stock_source_path:'',supplier_auto_xml_params:1,supplier_copy_attributes_to_languages:1},field_map:{}};}
+function fillProfile(profile){profile=profile||defaultProfileObject();var f=$('.importpro-page'),s=profile.settings||{};f.find('[name="profile_id"]').val(profile.profile_id||0);f.find('[name="name"]').val(profile.name||'');f.find('[name="format"]').val(profile.format||'csv');f.find('[name="source_type"]').val(profile.source_type||'file');f.find('[name="source_path"]').val(profile.source_path||'');f.find('[name="auth_type"]').val(s.auth_type||'none');f.find('[name="auth_username"]').val(s.auth_username||'');f.find('[name="auth_password"]').val(s.auth_password||'');f.find('[name="match_field"]').val(profile.match_field||'model');f.find('[name="default_language_id"]').val(profile.default_language_id||'{{ default_language_id }}');['delimiter','enclosure','escape','sheet_name','root_node','item_node','filter_status_value','filter_manufacturer_contains','filter_category_contains','supplier_name','supplier_code','supplier_markup_type','supplier_price_stock_source_type','supplier_price_stock_source_path','image_update_mode','import_category_mode','import_category_name','import_product_status_mode','missing_product_action'].forEach(function(k){var fallback=(k==='delimiter'?',':k==='enclosure'?'"':k==='escape'?'\\':k==='item_node'?'item':k==='supplier_markup_type'?'none':k==='image_update_mode'?'replace':k==='import_category_mode'?'none':k==='import_category_name'?'Imported products':k==='import_product_status_mode'?'file':k==='missing_product_action'?'none':'');f.find('[name="'+k+'"]').val(decodeHtmlEntities(s[k]!==undefined?s[k]:fallback));});['start_row','html_table_index','html_header_row','default_category','force_category_id','url_timeout','preview_limit','run_limit','image_limit','supplier_markup_value','supplier_fixed_markup','supplier_price_rounding'].forEach(function(k){f.find('[name="'+k+'"]').val(s[k]!==undefined?s[k]:(k==='start_row'||k==='html_header_row'?1:k==='url_timeout'?60:k==='preview_limit'?20:k==='image_limit'?10:0));});f.find('[name="run_offset"]').val(0);f.find('[name="run_mode"]').val(s.run_mode||'full');f.find('[name="category_mode"]').val(s.category_mode||'file');f.find('[name="image_subdir"]').val(s.image_subdir||defaultImageSubdir);['create_manufacturer','create_categories','update_existing','create_new','update_price','update_quantity','update_images','update_descriptions','update_attributes','update_seo','update_specials','update_options','download_images','auto_split_images','clean_text_fields','clean_description_html','decode_html_entities','strip_invisible_chars','strip_msword_markup','auto_generate_seo_keyword','category_path_mode','fill_missing_languages','filter_in_stock_only','supplier_mode','supplier_auto_xml_params','supplier_copy_attributes_to_languages','sync_missing_confirm','ignore_empty_fields'].forEach(function(k){f.find('[name="'+k+'"]').prop('checked',s[k]?true:false);});f.find('[name="field_map_json"]').val(JSON.stringify(profile.field_map||{},null,2));$('#raw-field-map').val(f.find('[name="field_map_json"]').val());f.find('.field-policy').val('');var fr=s.field_rules||{};Object.keys(fr).forEach(function(k){f.find('[name="field_rules['+k+']"]').val(fr[k]);});f.find('.ip-auth-password-saved').toggle(!!s.auth_password_set);markActiveProfile(profile.profile_id||0);updateCronCommands();}
+
+var importTargetFields=[{value:'',label:'{{ text_field_no_import }}'},{value:'model',label:'model'},{value:'sku',label:'sku'},{value:'upc',label:'upc'},{value:'ean',label:'ean'},{value:'jan',label:'jan'},{value:'isbn',label:'isbn'},{value:'mpn',label:'mpn'},{value:'location',label:'location'},{value:'price',label:'price'},{value:'points',label:'points'},{value:'quantity',label:'quantity'},{value:'minimum',label:'minimum'},{value:'subtract',label:'subtract'},{value:'status',label:'status'},{value:'stock_status_id',label:'stock_status_id'},{value:'manufacturer',label:'manufacturer'},{value:'manufacturer_id',label:'manufacturer_id'},{value:'image',label:'image'},{value:'additional_images',label:'additional_images'},{value:'categories',label:'categories'},{value:'category_ids',label:'category_ids'},{value:'main_category_id',label:'main_category_id'},{value:'google_product_category',label:'google_product_category'},{value:'attributes',label:'attributes'},{value:'specials',label:'specials'},{value:'discounts',label:'discounts'},{value:'rewards',label:'rewards'},{value:'recurring',label:'recurring'},{value:'options',label:'options'},{value:'store_ids',label:'store_ids'},{value:'filter_ids',label:'filter_ids'},{value:'download_ids',label:'download_ids'},{value:'related_product_ids',label:'related_product_ids'},{value:'related_article_ids',label:'related_article_ids'},{value:'layouts',label:'layouts'},{value:'noindex',label:'noindex'},{value:'tag',label:'tag (default lang)'},{value:'external_product_id',label:'external_product_id / offer id'},{value:'supplier_sku',label:'supplier_sku'},{value:'supplier_price',label:'supplier_price'},{value:'supplier_quantity',label:'supplier_quantity'},{value:'external_category_id',label:'external_category_id'},{value:'external_parent_category_id',label:'external_parent_category_id'},{value:'seo_keyword',label:'seo_keyword'},{value:'product_url',label:'product_url'},{value:'shipping',label:'shipping'},{value:'tax_class_id',label:'tax_class_id'},{value:'weight',label:'weight'},{value:'weight_class_id',label:'weight_class_id'},{value:'length',label:'length'},{value:'width',label:'width'},{value:'height',label:'height'},{value:'length_class_id',label:'length_class_id'},{value:'sort_order',label:'sort_order'},{value:'date_available',label:'date_available'},{value:'name',label:'name (default lang)'},{value:'description',label:'description (default lang)'},{value:'meta_title',label:'meta_title (default lang)'},{value:'meta_description',label:'meta_description (default lang)'},{value:'meta_h1',label:'meta_h1 (default lang)'},{value:'meta_keywords',label:'meta_keywords (default lang)'}{% for language in languages %},{value:'name:{{ language.code }}',label:'name:{{ language.code }}'},{value:'description:{{ language.code }}',label:'description:{{ language.code }}'},{value:'meta_title:{{ language.code }}',label:'meta_title:{{ language.code }}'},{value:'meta_description:{{ language.code }}',label:'meta_description:{{ language.code }}'},{value:'meta_h1:{{ language.code }}',label:'meta_h1:{{ language.code }}'},{value:'meta_keywords:{{ language.code }}',label:'meta_keywords:{{ language.code }}'},{value:'tag:{{ language.code }}',label:'tag:{{ language.code }}'}{% endfor %}];
+function parseFieldMapJson(){try{return JSON.parse($('#profile-form [name="field_map_json"]').val()||'{}');}catch(e){return {};}}
+function invertFieldMap(map){var inv={};$.each(map,function(target,source){if(source)inv[source]=target;});return inv;}
+function syncFieldMapFromBuilder(){if(!$('#mapping-builder-table tbody tr').length){return;}var map={};$('#mapping-builder-table tbody tr').each(function(){var source=$(this).data('source');var target=$(this).find('select').val();if(source&&target)map[target]=source;});$('#profile-form [name="field_map_json"]').val(JSON.stringify(map,null,2));$('#raw-field-map').val(JSON.stringify(map,null,2));}
+function syncRawMapToHidden(){if(!$('#raw-map-wrap').is(':visible')){return true;}try{var map=JSON.parse($('#raw-field-map').val()||'{}');$('#profile-form [name="field_map_json"]').val(JSON.stringify(map,null,2));return true;}catch(e){alert('{{ error_explain_field_map_json|e('js') }}');return false;}}
+function getProfilePayload(){var items=$('#profile-form').serializeArray().concat($('[form="profile-form"]').serializeArray());return $.param(items);}
+function autoSuggestTarget(header){
+  var h=(header||'').toLowerCase().trim();
+  if(/^(product_id|product.?id)$/.test(h))return 'product_id';
+  if(/^(@?id|offer.?id|external.?product.?id)$/.test(h))return 'external_product_id';
+  if(/supplier.?quantity|supplier.?stock|остат.*постав|залиш.*постач/.test(h))return 'supplier_quantity';
+  if(/supplier.?price|закуп|purchase|base.?price/.test(h))return 'supplier_price';
+  if(/additional.?images?|extra.?images?|gallery|галере|додатков.*зображ|дополн.*изображ/.test(h))return 'additional_images';
+  if(/main.?category.?id|головн.*категор.*id|главн.*категор.*id/.test(h))return 'main_category_id';
+  if(/category.?ids|categories.?ids|category_id_list/.test(h))return 'category_ids';
+  if(/external.?parent.?category.?id|parent.?external.?category.?id/.test(h))return 'external_parent_category_id';
+  if(/external.?category.?id/.test(h))return 'external_category_id';
+  if(/^category.?id$/.test(h))return 'category_ids';
+  if(/supplier.?sku|supplier.?code|артикул.*постав|код.*постав|артикул.*постач|код.*постач/.test(h))return 'supplier_sku';
+  if(/model|артикул|код.?товар|vendor.?code/.test(h))return 'model';
+  if(/sku/.test(h))return 'sku';
+  if(/ean/.test(h))return 'ean';
+  if(/upc/.test(h))return 'upc';
+  if(/jan/.test(h))return 'jan';
+  if(/isbn/.test(h))return 'isbn';
+  if(/mpn/.test(h))return 'mpn';
+  if(/price|цін|цена|cena|cost/.test(h))return 'price';
+  if(/points|балл|бонус/.test(h))return 'points';
+  if(/stock.?status/.test(h))return 'stock_status_id';
+  if(/qty|quantity|кільк|колич|залиш|остат|stock/.test(h))return 'quantity';
+  if(/manufacturer.?id|brand.?id/.test(h))return 'manufacturer_id';
+  if(/manufacturer|brand|виробник|производитель|бренд/.test(h))return 'manufacturer';
+  if(/image|photo|зображ|картин|фото/.test(h))return 'image';
+  if(/categor|категор/.test(h))return 'categories';
+  if(/attribute|характер/.test(h))return 'attributes';
+  if(/discount/.test(h))return 'discounts';
+  if(/special|акци|акцi|знижк|скидк/.test(h))return 'specials';
+  if(/reward/.test(h))return 'rewards';
+  if(/recurring|subscription/.test(h))return 'recurring';
+  if(/option|опци|опці/.test(h))return 'options';
+  if(/store.?ids?/.test(h))return 'store_ids';
+  if(/filter.?ids?/.test(h))return 'filter_ids';
+  if(/download.?ids?/.test(h))return 'download_ids';
+  if(/related.?article/.test(h))return 'related_article_ids';
+  if(/related.?product/.test(h))return 'related_product_ids';
+  if(/layout/.test(h))return 'layouts';
+  if(/noindex/.test(h))return 'noindex';
+  if(/^tag(s)?$|тег/.test(h))return 'tag:'+importDefaultLang;
+  if(/url|link|посилан|ссылк|seo.?url|keyword|slug/.test(h))return 'product_url';
+  if(/meta.?title|seo.?title/.test(h))return 'meta_title:'+importDefaultLang;
+  if(/meta.?description|seo.?description/.test(h))return 'meta_description:'+importDefaultLang;
+  if(/meta.?keyword/.test(h))return 'meta_keywords:'+importDefaultLang;
+  if(/meta.?h1|^h1$/.test(h))return 'meta_h1:'+importDefaultLang;
+  if(/description|опис/.test(h))return 'description:'+importDefaultLang;
+  if(/name|назва|название|title/.test(h))return 'name:'+importDefaultLang;
+  return '';
+}
+function normalizePreviewValue(value){if(value===undefined||value===null)return '';value=String(value).replace(/\s+/g,' ').trim();return value.length>180?value.substr(0,180)+'...':value;}
+function collectFieldSamples(rows,header){var out=[],seen={};(rows||[]).forEach(function(row){var value=normalizePreviewValue(row&&row[header]!==undefined?row[header]:'');if(!value||seen[value])return;seen[value]=1;out.push(value);});return out.slice(0,5);}
+function detectPreviewType(samples){var nonEmpty=(samples||[]).filter(function(v){return v!=='';});if(!nonEmpty.length)return '{{ text_field_type_empty|e('js') }}';var numeric=0,url=0,image=0,longText=0,date=0;nonEmpty.forEach(function(v){var t=String(v).trim();if(/^-?\d+([\.,]\d+)?$/.test(t))numeric++;if(/^https?:\/\//i.test(t))url++;if(/\.(jpg|jpeg|png|gif|webp|avif)(\?|$)/i.test(t))image++;if(t.length>90||/<[a-z][\s\S]*>/i.test(t))longText++;if(/^\d{4}-\d{2}-\d{2}/.test(t))date++;});if(image)return '{{ text_field_type_image|e('js') }}';if(url)return '{{ text_field_type_url|e('js') }}';if(numeric===nonEmpty.length)return '{{ text_field_type_number|e('js') }}';if(date)return '{{ text_field_type_date|e('js') }}';if(longText)return '{{ text_field_type_text_long|e('js') }}';return '{{ text_field_type_text_short|e('js') }}';}
+function mappingWarningForTarget(target,typeLabel){if(!target)return '';var numericTargets=['price','quantity','minimum','status','manufacturer_id','main_category_id','product_id','shipping','tax_class_id','weight','length','width','height','sort_order','supplier_price','supplier_quantity'];var textTargets=['name','description','meta_title','meta_description','meta_h1','meta_keywords','manufacturer','categories','attributes'];var baseTarget=String(target).split(':')[0];if(numericTargets.indexOf(baseTarget)>=0 && typeLabel.indexOf('{{ text_field_type_number|e('js') }}')<0){return '{{ text_mapping_warning_numeric|e('js') }}';}if(textTargets.indexOf(baseTarget)>=0 && typeLabel.indexOf('{{ text_field_type_number|e('js') }}')>=0){return '{{ text_mapping_warning_text|e('js') }}';}return '';}
+function refreshMappingWarnings(){ $('#mapping-builder-table tbody tr').each(function(){var type=$(this).data('type')||'';var target=$(this).find('select').val()||'';var msg=mappingWarningForTarget(target,type);var box=$(this).find('.mapping-target-warning');if(msg){box.html('<i class="fa fa-exclamation-triangle"></i> '+escapeHtml(msg)).show();}else{box.hide().empty();}}); }
+function renderMappingBuilder(headers,sampleRow,rows){var tbody=$('#mapping-builder-table tbody');tbody.empty();var existing=invertFieldMap(parseFieldMapJson());headers.forEach(function(header){var current=existing[header]||autoSuggestTarget(header);var opts=importTargetFields.map(function(it){return '<option value="'+escapeHtml(it.value)+'" '+(current===it.value?'selected':'')+'>'+escapeHtml(it.label)+'</option>';}).join('');var samples=collectFieldSamples(rows,header);if(!samples.length&&sampleRow&&sampleRow[header]!==undefined){samples=[normalizePreviewValue(sampleRow[header])];}var typeLabel=detectPreviewType(samples);var samplesHtml=samples.length?samples.map(function(sample){return '<span class="mapping-sample-chip" title="'+escapeHtml(sample)+'">'+escapeHtml(sample)+'</span>';}).join(''):'<span class="text-muted">—</span>';tbody.append('<tr data-source="'+escapeHtml(header)+'" data-type="'+escapeHtml(typeLabel)+'"><td><strong>'+escapeHtml(header)+'</strong></td><td><div class="mapping-samples">'+samplesHtml+'</div><div class="mapping-type-badge">'+escapeHtml(typeLabel)+'</div></td><td><select class="form-control mapping-target">'+opts+'</select><div class="mapping-target-warning"></div></td></tr>');});$('#mapping-builder-status').removeClass('alert-warning alert-danger').addClass('alert-success').html('<i class="fa fa-check-circle"></i> {{ text_mapping_detected|e('js') }}: '+headers.length);$('#mapping-builder-table-wrap').show();refreshMappingWarnings();syncFieldMapFromBuilder();}
+
+function saveProfile(callback,silent){if(!syncRawMapToHidden()){return;}syncFieldMapFromBuilder();$.ajax({url:saveProfileUrl,type:'post',data:getProfilePayload(),dataType:'json',success:function(json){if(json.error){alert(json.error);return;}if(json.profile_id){$('#profile-form [name="profile_id"]').val(json.profile_id);}if(json.profiles){importProfiles=json.profiles;renderProfileList();}updateCronCommands();if(!silent)alert(json.success||'OK');if(typeof callback==='function')callback(json);},error:function(xhr){if(showAjaxLoginError(xhr))return;alert('{{ text_js_profile_failed|e('js') }}');}});}
+function ensureSaved(callback){saveProfile(callback,true);}
+
+function detectFields(){if(!syncRawMapToHidden()){return;}$('#mapping-builder-status').removeClass('alert-success alert-danger').addClass('alert-warning').html('<i class="fa fa-spinner fa-spin"></i> ...');$.post(detectFieldsUrl,getProfilePayload(),function(json){if(json.error){$('#mapping-builder-status').removeClass('alert-success').addClass('alert-danger').html('<i class="fa fa-exclamation-circle"></i> '+escapeHtml(json.error));return;}renderMappingBuilder(json.headers||[],json.sample_row||{},json.rows||[]);},'json').fail(function(xhr){if(showAjaxLoginError(xhr))return;$('#mapping-builder-status').removeClass('alert-success').addClass('alert-danger').html('<i class="fa fa-exclamation-circle"></i> {{ text_js_detect_failed|e('js') }}');});}
+function previewProfile(){ensureSaved(function(){var profile_id=getCurrentProfileId();var limit=parseInt($('[name="preview_limit"]').val()||'20');$('#preview-result').html('<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> ...</div>');$.post(previewUrl,{profile_id:profile_id,limit:limit},function(json){if(json.error){$('#preview-result').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> '+escapeHtml(json.error)+'</div>');return;}var html='<h4><i class="fa fa-search"></i> {{ text_preview }}</h4><div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr>';(json.headers||[]).forEach(function(h){html+='<th>'+escapeHtml(h)+'</th>';});html+='</tr></thead><tbody>';(json.rows||[]).forEach(function(row){html+='<tr>';(json.headers||[]).forEach(function(h){html+='<td>'+escapeHtml(row[h]!==undefined?row[h]:'')+'</td>';});html+='</tr>';});html+='</tbody></table></div>';$('#preview-result').html(html);$('a[href="#tab-run"]').tab('show');},'json').fail(function(xhr){if(showAjaxLoginError(xhr))return;$('#preview-result').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ text_js_preview_failed|e('js') }}</div>');});});}
+function resetImportProgress(){$('#import-progress-panel').show();$('#import-progress-title').text('{{ text_import_progress_running|e('js') }}');$('#import-progress-bar').css('width','0%');$('#import-progress-total,#import-progress-processed,#import-progress-success,#import-progress-created,#import-progress-updated,#import-progress-skipped,#import-progress-errors,#import-progress-remaining').text('0');$('#import-progress-percent').text('0%');$('#button-stop-import').prop('disabled',false);}
+function updateImportProgress(state){var total=parseInt(state.total||0), processed=parseInt(state.processed||0);var created=parseInt(state.created||0), updated=parseInt(state.updated||0), skipped=parseInt(state.skipped||0), errors=parseInt(state.errors||0);var success=created+updated;var remaining=total>0?Math.max(0,total-processed):0;var pct=total>0?Math.min(100,Math.round((processed/total)*100)):0;$('#import-progress-total').text(total);$('#import-progress-processed').text(processed);$('#import-progress-success').text(success);$('#import-progress-created').text(created);$('#import-progress-updated').text(updated);$('#import-progress-skipped').text(skipped);$('#import-progress-errors').text(errors);$('#import-progress-remaining').text(remaining);$('#import-progress-percent').text(pct+'%');$('#import-progress-bar').css('width',pct+'%');}
+function renderImportLog(log){var html='';if(log&&log.length){html+='<div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th>{{ column_row }}</th><th>{{ column_status }}</th><th>{{ column_message }}</th><th>{{ column_product_id }}</th></tr></thead><tbody>';log.forEach(function(item){html+='<tr><td>'+escapeHtml(item.row||'')+'</td><td>'+escapeHtml(item.status||'')+'</td><td>'+escapeHtml(item.message||item.identifier||'')+'</td><td>'+escapeHtml(item.product_id||'')+'</td></tr>';});html+='</tbody></table></div>';}return html;}
+function renderChangePreview(r){var s=r.change_summary||{};var cards=[['{{ text_changed_products|e('js') }}',s.changed||0],['{{ text_unchanged_products|e('js') }}',s.unchanged||0],['{{ text_price_changed|e('js') }}',s.price_changed||0],['{{ text_quantity_changed|e('js') }}',s.quantity_changed||0],['{{ text_status_changed|e('js') }}',s.status_changed||0],['{{ text_supplier_price_changed|e('js') }}',s.supplier_price_changed||0],['{{ text_special_changed|e('js') }}',s.special_changed||0],['{{ text_not_found_products|e('js') }}',s.not_found||0],['{{ text_new_supplier_positions|e('js') }}',s.new_items||0],['{{ text_missing_from_supplier|e('js') }}',s.missing_from_supplier||0],['{{ text_cron_create_blocked|e('js') }}',s.cron_create_blocked||0]];var html='<div class="ip-card" style="margin-top:12px;"><div class="ip-head"><h3 class="ip-title"><i class="fa fa-shield"></i> {{ text_change_preview_title }}</h3></div><div class="ip-body"><div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_safe_cron_notice }}</div><div class="row">';cards.forEach(function(c){html+='<div class="col-sm-3"><div class="well well-sm" style="margin-bottom:8px;"><strong>'+escapeHtml(c[1])+'</strong><br><small>'+escapeHtml(c[0])+'</small></div></div>';});html+='</div>';var rows=r.change_rows||[];if(rows.length){html+='<h4><i class="fa fa-exchange"></i> {{ text_changed_products }}</h4><div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th>{{ column_row }}</th><th>{{ column_product_id }}</th><th>{{ text_column_identifier }}</th><th>{{ text_change_field }}</th><th>{{ text_change_old }}</th><th>{{ text_change_new }}</th></tr></thead><tbody>';rows.forEach(function(row){var changes=row.changes||[];if(!changes.length){changes=[{field:'',old:'',new:''}];}changes.forEach(function(ch,i){html+='<tr><td>'+escapeHtml(i===0?(row.row||''):'')+'</td><td>'+escapeHtml(i===0?(row.product_id||''):'')+'</td><td>'+escapeHtml(i===0?(row.identifier||row.model||row.sku||''):'')+'</td><td>'+escapeHtml(ch.field||'')+'</td><td>'+escapeHtml(ch.old!==undefined?ch.old:'')+'</td><td>'+escapeHtml(ch.new!==undefined?ch.new:'')+'</td></tr>';});});html+='</tbody></table></div>';}else{html+='<div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ text_no_change_rows }}</div>';}var newRows=r.new_rows||[];if(newRows.length){html+='<h4><i class="fa fa-plus-circle"></i> {{ text_new_supplier_positions }}</h4><div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th>{{ column_row }}</th><th>{{ text_column_identifier }}</th><th>{{ text_column_name }}</th><th>{{ text_column_price }}</th><th>{{ text_column_quantity }}</th></tr></thead><tbody>';newRows.forEach(function(row){html+='<tr><td>'+escapeHtml(row.row||'')+'</td><td>'+escapeHtml(row.identifier||'')+'</td><td>'+escapeHtml(row.name||'')+'</td><td>'+escapeHtml(row.price||'')+'</td><td>'+escapeHtml(row.quantity||'')+'</td></tr>';});html+='</tbody></table></div>';}var nfRows=r.not_found_rows||[];if(nfRows.length){html+='<h4><i class="fa fa-search-minus"></i> {{ text_not_found_products }}</h4><div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th>{{ column_row }}</th><th>{{ text_column_identifier }}</th><th>{{ text_column_reason }}</th></tr></thead><tbody>';nfRows.forEach(function(row){html+='<tr><td>'+escapeHtml(row.row||'')+'</td><td>'+escapeHtml(row.identifier||'')+'</td><td>'+escapeHtml(row.reason||'')+'</td></tr>';});html+='</tbody></table></div>';}var missRows=r.missing_rows||[];if(missRows.length){html+='<h4><i class="fa fa-eye-slash"></i> {{ text_missing_from_supplier }}</h4><div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th>{{ column_product_id }}</th><th>external_product_id</th><th>model</th><th>sku</th><th>supplier_sku</th><th>{{ text_column_price }}</th><th>{{ text_column_quantity }}</th></tr></thead><tbody>';missRows.forEach(function(row){html+='<tr><td>'+escapeHtml(row.product_id||'')+'</td><td>'+escapeHtml(row.external_product_id||'')+'</td><td>'+escapeHtml(row.model||'')+'</td><td>'+escapeHtml(row.sku||'')+'</td><td>'+escapeHtml(row.supplier_sku||'')+'</td><td>'+escapeHtml(row.last_price||'')+'</td><td>'+escapeHtml(row.last_quantity||'')+'</td></tr>';});html+='</tbody></table></div>';}if(parseInt(r.preview_rows_limit||0)>0){html+='<div class="ip-help"><i class="fa fa-info-circle"></i> {{ text_preview_limited }} '+escapeHtml(r.preview_rows_limit)+'</div>';}html+='</div></div>';return html;}
+
+
+var safeBatchId='';
+var safeResultPage=1;
+var safeResultPages=1;
+var safeLoopActive=false;
+var safeStopRequested=false;
+var safeBatchStorageKey='import_export_pro_safe_batch_v366';
+
+function safePersistBatch(){
+  if(!safeBatchId)return;
+  try{localStorage.setItem(safeBatchStorageKey,JSON.stringify({batch_id:safeBatchId,profile_id:getCurrentProfileId(),saved_at:Date.now()}));}catch(e){}
+}
+function safeForgetBatch(){
+  try{localStorage.removeItem(safeBatchStorageKey);}catch(e){}
+}
+function safeRestoreBatch(){
+  var saved=null;
+  try{saved=JSON.parse(localStorage.getItem(safeBatchStorageKey)||'null');}catch(e){saved=null;}
+  if(!saved||!saved.batch_id)return;
+  safeBatchId=String(saved.batch_id);$('#safe-batch-id').val(safeBatchId);$('#import-progress-panel').show();$('a[href="#tab-run"]').tab('show');
+  safeGetSummary(function(summary){safeLoadResults(1);});
+}
+
+function safePost(url,data,success){
+  $.post(url,data,function(json){
+    if(json&&json.error){safeLoopActive=false;$('#import-result').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> '+escapeHtml(json.error)+'</div>');return;}
+    success((json&&json.result)||{});
+  },'json').fail(function(xhr){safeLoopActive=false;if(showAjaxLoginError(xhr))return;$('#import-result').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ text_js_import_failed|e('js') }}</div>');});
+}
+function safeCounts(summary){return (summary&&summary.counts)||{};}
+function safeUpdateSummary(summary){
+  var c=safeCounts(summary), total=parseInt((summary.batch&&summary.batch.total_rows)||0), processed=0;
+  ['created','updated','skipped','deleted','error','review','warning','dry_run'].forEach(function(k){processed+=parseInt(c[k]||0);});
+  var success=parseInt(c.created||0)+parseInt(c.updated||0)+parseInt(c.deleted||0)+parseInt(c.review||0);
+  var remaining=parseInt(c.pending||0)+parseInt(c.processing||0);
+  var pct=total>0?Math.min(100,Math.round((processed/total)*100)):0;
+  $('#import-progress-total').text(total);$('#import-progress-processed').text(processed);$('#import-progress-success').text(success);$('#import-progress-created').text(c.created||0);$('#import-progress-updated').text(c.updated||0);$('#import-progress-skipped').text(c.skipped||0);$('#import-progress-errors').text(c.error||0);$('#import-progress-remaining').text(remaining);$('#import-progress-percent').text(pct+'%');$('#import-progress-bar').css('width',pct+'%');
+  var st=(summary.batch&&summary.batch.status)||'';
+  var title=st==='review'?'{{ text_queue_review|e('js') }}':(st==='finished'?'{{ text_queue_finished|e('js') }}':(st==='preparing'?'{{ text_queue_preparing|e('js') }}':'{{ text_queue_processing|e('js') }}'));
+  $('#import-progress-title').text(title);
+  $('#button-import').prop('disabled',!(st==='review'&&parseInt(c.selected||0)>0));
+  $('#button-retry-errors').prop('disabled',parseInt(c.error||0)===0);
+  $('#button-recover-queue,#button-download-report').prop('disabled',!safeBatchId);
+  $('#safe-review-panel').toggle(!!safeBatchId);
+  safePersistBatch();
+}
+function safeGetSummary(next){
+  if(!safeBatchId)return;
+  safePost(safeSummaryUrl,{batch_id:safeBatchId},function(summary){safeUpdateSummary(summary);if(next)next(summary);});
+}
+function safeStart(mode){
+  mode=mode||$('[name="run_mode"]').val()||'full';
+  $('[name="run_mode"]').val(mode);
+  ensureSaved(function(){
+    var profileId=getCurrentProfileId(); if(!profileId){alert('{{ error_profile|e('js') }}');return;}
+    safeStopRequested=false;safeLoopActive=true;resetImportProgress();$('#button-stop-import').prop('disabled',false);$('a[href="#tab-run"]').tab('show');
+    $('#import-result').html('<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> {{ text_queue_preparing }}</div>');
+    safePost(safeStartUrl,{profile_id:profileId,run_mode:mode},function(r){safeBatchId=r.batch_id||'';$('#safe-batch-id').val(safeBatchId);safePersistBatch();safeResultPage=1;safePrepareLoop();});
+  });
+}
+function safePrepareLoop(){
+  if(!safeLoopActive||safeStopRequested||!safeBatchId)return;
+  safePost(safePrepareUrl,{batch_id:safeBatchId,limit:250},function(r){safeGetSummary(function(){if(r.prepare_complete||r.finished){safeProcessLoop();}else{setTimeout(safePrepareLoop,120);}});});
+}
+function safeProcessLoop(){
+  if(!safeLoopActive||safeStopRequested||!safeBatchId)return;
+  safePost(safeProcessUrl,{batch_id:safeBatchId,limit:20},function(){safeGetSummary(function(summary){var c=safeCounts(summary);if(parseInt(c.pending||0)+parseInt(c.processing||0)>0){setTimeout(safeProcessLoop,120);}else{safeLoopActive=false;safeLoadResults(1);}});});
+}
+function safeRenderResults(r){
+  safeResultPage=parseInt(r.page||1);safeResultPages=parseInt(r.pages||1);$('#safe-page-info').text(safeResultPage+' / '+safeResultPages+' · '+parseInt(r.total||0));$('#safe-page-prev').prop('disabled',safeResultPage<=1);$('#safe-page-next').prop('disabled',safeResultPage>=safeResultPages);
+  var html='<div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th>{{ text_queue_selected }}</th><th>{{ column_row }}</th><th>{{ entry_match_field }}</th><th>{{ column_status }}</th><th>{{ text_queue_action }}</th><th>{{ column_message }}</th><th>{{ text_queue_attempts }}</th></tr></thead><tbody>';
+  (r.items||[]).forEach(function(it){var check=it.status==='review'?'<input type="checkbox" class="safe-row-select" value="'+parseInt(it.queue_id)+'" '+(parseInt(it.selected)?'checked':'')+'>':'';html+='<tr><td>'+check+'</td><td>'+escapeHtml(it.row||'')+'</td><td><code>'+escapeHtml(it.key_field||'')+'</code><br>'+escapeHtml(it.key_value||'')+'</td><td>'+escapeHtml(it.status||'')+'</td><td>'+escapeHtml(it.action||'')+'</td><td>'+escapeHtml(it.message||'')+(it.warnings?'<br><small>'+escapeHtml(it.warnings)+'</small>':'')+'</td><td>'+escapeHtml(it.attempts||0)+'</td></tr>';});
+  html+='</tbody></table></div>';$('#safe-results').html(html);safeGetSummary();
+}
+function safeLoadResults(page){if(!safeBatchId)return;safePost(safeResultsUrl,{batch_id:safeBatchId,status:$('#safe-result-status').val()||'',search:$('#safe-result-search').val()||'',page:page||1,limit:50},safeRenderResults);}
+function safeSetSelection(ids,selected,all){if(!safeBatchId)return;safePost(safeSelectionUrl,{batch_id:safeBatchId,queue_ids:JSON.stringify(ids||[]),selected:selected?1:0,all:all?1:0},function(){safeLoadResults(safeResultPage);});}
+function safeApply(){if(!safeBatchId||!confirm('{{ text_js_confirm_import|e('js') }}'))return;safePost(safeApplyUrl,{batch_id:safeBatchId},function(r){if(!parseInt(r.selected||0)){alert('{{ error_safe_apply_confirm|e('js') }}');return;}safeLoopActive=true;safeStopRequested=false;$('#button-stop-import').prop('disabled',false);safeProcessLoop();});}
+function safeRetry(){if(!safeBatchId)return;safePost(safeRetryUrl,{batch_id:safeBatchId},function(){safeLoopActive=true;safeStopRequested=false;safeProcessLoop();});}
+function safeCancel(){if(!safeBatchId)return;safeStopRequested=true;safePost(safeCancelUrl,{batch_id:safeBatchId},function(){safeLoopActive=false;safeGetSummary(function(){safeLoadResults(safeResultPage);});});}
+
+
+function runDiagnostics(){
+  $('#diagnostics-result').html('<div class="alert alert-info"><i class="fa fa-spinner fa-spin"></i> ...</div>');
+  $.get(diagnosticUrl,function(json){
+    if(json.error){$('#diagnostics-result').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> '+escapeHtml(json.error)+'</div>');return;}
+    var html='<div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th><i class="fa fa-check-square-o"></i> {{ column_check }}</th><th><i class="fa fa-flag"></i> {{ column_status }}</th><th><i class="fa fa-info-circle"></i> {{ column_message }}</th></tr></thead><tbody>';
+    (json.items||[]).forEach(function(item){
+      var st=item.status||'warn'; var icon=st==='ok'?'check-circle':(st==='error'?'times-circle':'exclamation-triangle');
+      html+='<tr><td>'+escapeHtml(item.check||'')+'</td><td class="ip-status-'+escapeHtml(st)+'"><i class="fa fa-'+icon+'"></i> '+escapeHtml(diagnosticsStatusLabels[st]||st.toUpperCase())+'</td><td>'+escapeHtml(item.message||'')+'</td></tr>';
+    });
+    html+='</tbody></table></div>';
+    $('#diagnostics-result').html(html);
+  },'json').fail(function(xhr){if(showAjaxLoginError(xhr))return;$('#diagnostics-result').html('<div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ text_js_diagnostics_failed|e('js') }}</div>');});
+}
+
+var exportFieldPresets={minimal:['model','name','price','points','quantity','manufacturer','categories','image'],standard:['product_id','model','sku','price','points','quantity','status','manufacturer','name','description','tag','meta_title','meta_description','meta_h1','seo_keyword','product_url','categories','image','additional_images','attributes'],full:['product_id','model','sku','upc','ean','jan','isbn','mpn','location','manufacturer','manufacturer_id','price','points','quantity','minimum','subtract','status','stock_status_id','shipping','tax_class_id','sort_order','date_available','name','description','tag','meta_title','meta_description','meta_h1','meta_keywords','seo_keyword','product_url','main_category_id','google_product_category','categories','category_ids','image','additional_images','attributes','options','weight','weight_class_id','length','width','height','length_class_id','store_ids','filter_ids','download_ids','related_product_ids','related_article_ids','layouts','discounts','specials','rewards','recurring','noindex','supplier_id','supplier_name','external_product_id','supplier_sku','supplier_price','supplier_quantity','supplier_last_seen','supplier_hash','external_category_id','external_parent_category_id'],seo:['product_id','model','name','description','tag','meta_title','meta_description','meta_h1','meta_keywords','seo_keyword','product_url','categories','manufacturer','image'],stock:['product_id','model','sku','price','points','quantity','status','manufacturer','supplier_name','external_product_id','supplier_sku','supplier_price','supplier_quantity']};
+function applyExportFieldsPreset(name){var preset=exportFieldPresets[name]||[];$('.export-field-checkbox').prop('checked',false);preset.forEach(function(f){$('.export-field-checkbox[value="'+f+'"]').prop('checked',true);});}
+function updateCronCommands(){var pid=getCurrentProfileId()||'PROFILE_ID';var base=cronBaseUrl+pid;var token=$('[name="module_import_pro_cron_token"]').val()||'';var header='wget -q -O - --header="X-CCP-Cron-Key: '+String(token).replace(/[^a-zA-Z0-9_-]/g,'')+'" ';$('#cron-import-full').val(header+'"'+base+'&run_mode=price_only"');$('#cron-import-test').val(header+'"'+base+'&run_mode=quantity_only"');$('#cron-import-priceqty').val(header+'"'+base+'&run_mode=price_stock"');}
+
+$('#profiles-table').on('click','[data-profile-id]',function(){var p=findProfile($(this).data('profile-id'));if(p){fillProfile(p);$('a[href="#tab-profile"]').tab('show');}});
+$('#button-add-profile').on('click',function(){var p=defaultProfileObject();p.name='Profile '+new Date().toISOString().slice(0,16).replace('T',' ');fillProfile(p);$('a[href="#tab-profile"]').tab('show');});
+$('#button-save-profile').on('click',function(){saveProfile(null,false);});
+$('#button-delete-profile').on('click',function(){var id=getCurrentProfileId();if(!id){return;}if(!confirm('{{ text_js_confirm_delete|e('js') }}'))return;$.post(deleteProfileUrl,{profile_id:id},function(json){if(json.error){alert(json.error);return;}location.reload();},'json').fail(function(xhr){if(showAjaxLoginError(xhr))return;alert('{{ text_js_delete_failed|e('js') }}');});});
+$('#button-upload').on('click',function(){$('#upload-file').trigger('click');});
+$('#upload-file').on('change',function(){if(!this.files.length)return;var fd=new FormData();fd.append('file',this.files[0]);$.ajax({url:uploadUrl,type:'post',data:fd,dataType:'json',cache:false,contentType:false,processData:false,success:function(json){if(json.error){alert(json.error);}else{$('#profile-form [name="source_path"]').val(json.path);$('#profile-form [name="source_type"]').val('file');alert(json.success||'OK');}},error:function(xhr){if(showAjaxLoginError(xhr))return;alert('{{ text_js_upload_failed|e('js') }}');}});});
+$('#button-detect-fields,#button-detect-fields-top').on('click',function(){detectFields();$('a[href="#tab-fields"]').tab('show');});
+$('#mapping-builder-table').on('change','select',function(){refreshMappingWarnings();syncFieldMapFromBuilder();});
+$('#button-toggle-raw-map').on('click',function(){$('#raw-map-wrap').toggle();$('#raw-field-map').val($('#profile-form [name="field_map_json"]').val());});
+$('#raw-field-map').on('change keyup',function(){try{$('#profile-form [name="field_map_json"]').val(JSON.stringify(JSON.parse($(this).val()||'{}'),null,2));}catch(e){}});
+$('#button-preview').on('click',previewProfile);
+$('#button-dry-run').on('click',function(){safeStart();});
+$('#button-dry-run-top').on('click',function(){safeStart($('[name="run_mode"]').val()||'full');});
+$('.button-safe-mode').on('click',function(){safeStart($(this).data('mode'));});
+$('#button-import').on('click',safeApply);
+$('#button-retry-errors').on('click',safeRetry);
+$('#button-recover-queue').on('click',function(){if(!safeBatchId)return;safePost(safeRecoverUrl,{batch_id:safeBatchId,minutes:30},function(){safeGetSummary(function(){safeLoadResults(safeResultPage);});});});
+$('#button-download-report').on('click',function(){if(safeBatchId)window.location=safeReportUrl+'&batch_id='+encodeURIComponent(safeBatchId);});
+$('#button-stop-import').on('click',safeCancel);
+$('#safe-result-status').on('change',function(){safeLoadResults(1);});
+var safeSearchTimer=null;$('#safe-result-search').on('input',function(){clearTimeout(safeSearchTimer);safeSearchTimer=setTimeout(function(){safeLoadResults(1);},300);});
+$('#safe-page-prev').on('click',function(){if(safeResultPage>1)safeLoadResults(safeResultPage-1);});
+$('#safe-page-next').on('click',function(){if(safeResultPage<safeResultPages)safeLoadResults(safeResultPage+1);});
+$('#button-safe-select-visible').on('click',function(){var ids=[];$('.safe-row-select').each(function(){ids.push(parseInt(this.value));});safeSetSelection(ids,1,0);});
+$('#button-safe-unselect-visible').on('click',function(){var ids=[];$('.safe-row-select').each(function(){ids.push(parseInt(this.value));});safeSetSelection(ids,0,0);});
+$('#button-safe-select-all').on('click',function(){safeSetSelection([],1,1);});
+$('#button-safe-unselect-all').on('click',function(){safeSetSelection([],0,1);});
+$('#safe-results').on('change','.safe-row-select',function(){safeSetSelection([parseInt(this.value)],this.checked?1:0,0);});
+$('#button-clear-log').on('click',function(){if(!confirm('{{ text_js_confirm_clear_logs|e('js') }}'))return;$.post(clearLogUrl,{},function(json){if(json.error){alert(json.error);return;}alert('{{ text_js_deleted|e('js') }}: '+(json.deleted||0));location.reload();},'json').fail(function(xhr){if(showAjaxLoginError(xhr))return;alert('{{ text_js_clear_failed|e('js') }}');});});
+$('#button-run-diagnostics').on('click',function(){runDiagnostics();});
+$('a[href="#tab-diagnostics"]').on('shown.bs.tab',function(){if($('#diagnostics-result table').length===0){runDiagnostics();}});
+$(document).on('click','.button-view-run',function(){var id=$(this).data('run-id');$.get(getRunUrl+'&run_id='+id,function(json){if(json.error){alert(json.error);return;}var html='<h4><i class="fa fa-history"></i> {{ text_run_id }} #'+escapeHtml(json.run.run_id)+'</h4><div class="ip-scroll"><table class="table table-bordered table-striped ip-table-wide"><thead><tr><th>{{ column_row }}</th><th>{{ column_status }}</th><th>{{ column_message }}</th><th>{{ column_product_id }}</th></tr></thead><tbody>';(json.run.log||[]).forEach(function(item){html+='<tr><td>'+escapeHtml(item.row||'')+'</td><td>'+escapeHtml(item.status||'')+'</td><td>'+escapeHtml(item.message||'')+'</td><td>'+escapeHtml(item.identifier||item.product_id||'')+'</td></tr>';});html+='</tbody></table></div>';$('#run-log-result').html(html);$('a[href="#tab-logs"]').tab('show');},'json').fail(function(xhr){if(showAjaxLoginError(xhr))return;alert('{{ text_js_open_log_failed|e('js') }}');});});
+$('.button-export-fields-preset').on('click',function(){applyExportFieldsPreset($(this).data('preset'));});
+$('#button-export-reset').on('click',function(){$('#export-format').val('csv');$('#export-image-format').val('relative');$('#export-language').val('{{ default_language_id }}');$('#export-status').val('');$('#export-category').val('0');$('#export-manufacturer').val('0');$('#export-supplier').val('0');$('#export-in-stock').prop('checked',false);$('#export-limit').val('0');$('#export-offset').val('0');$('#export-preset').val('');applyExportFieldsPreset('standard');});
+$('#export-preset').on('change',function(){var v=$(this).val();if(v==='full'){$('#export-limit').val('0');applyExportFieldsPreset('full');}else if(v==='test10'){$('#export-limit').val('10');applyExportFieldsPreset('minimal');}else if(v==='stock'){$('#export-status').val('1');$('#export-in-stock').prop('checked',true);applyExportFieldsPreset('stock');}});
+$('#export-form').on('submit',function(){$('#button-export-run').prop('disabled',true);setTimeout(function(){$('#button-export-run').prop('disabled',false);},3000);});
+
+
+renderProfileList();
+if(importProfiles.length){fillProfile(importProfiles[0]);}else{fillProfile(defaultProfileObject());}
+applyExportFieldsPreset('standard');
+safeRestoreBatch();
+</script>
+{{ footer }}

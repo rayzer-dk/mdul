@@ -1,0 +1,56 @@
+ImportXML Clean PRO v1.4.2 installation, update and removal guide
+Author: CodeCart PRO
+Author site: https://codecartpro.com
+Compatibility: CodeCart 3.0.5.2 / ocStore 3.0.4.1 / OpenCart 3.x / PHP 7.4–8.5
+
+Installation:
+1. Make a full backup of files and database.
+2. Open Extensions -> Installer.
+3. Upload ImportXML_Clean_Pro_v1.4.2.ocmod.zip.
+4. Open Extensions -> Modifications and click Refresh.
+5. Open Extensions -> Extensions -> Feeds / Каналы продвижения.
+6. Find ImportXML Clean PRO v1.4.2 and install it.
+7. Open module settings.
+8. Enable the module manually and save settings.
+9. Create supplier profile.
+10. Run preview without database writes first, then apply the import only after reviewing the report.
+
+Update:
+1. Make a full backup of files and database.
+2. Export module settings from the “Service tools” tab.
+3. Upload ImportXML_Clean_Pro_v1.4.2.ocmod.zip through Extensions -> Installer.
+4. Refresh Modifications.
+5. Open Extensions -> Extensions -> Feeds / Каналы продвижения.
+6. Open ImportXML Clean PRO v1.4.2 and save settings.
+7. Check supplier profiles and run a small preview/import test.
+
+Cron setup:
+Cron is optional and does not replace normal manual import.
+Use cron only after the first manual import has been checked.
+Recommended mode: prices, availability, stock and status of existing products.
+For Mirohost use separate fields:
+Minutes: */30
+Hours: *
+Days of month: *
+Months: *
+Days of week: *
+Command: copy the command from the module settings.
+Do not run cron more often than once every 5 minutes.
+For large XML files use nighttime execution.
+
+Removal:
+1. Open Extensions -> Extensions -> Feeds / Каналы продвижения.
+2. Uninstall ImportXML Clean PRO v1.4.2.
+3. Refresh Modifications.
+4. By default supplier profiles and product/category NIX fields are kept for safety.
+5. If you want to remove module data during uninstall, enable “Delete module data on uninstall” before uninstalling. Use this only after backup.
+
+Important safety notes:
+- The module is disabled by default after installation.
+- The option “Clear catalog” is dangerous and should not be used for regular updates.
+- Full cron import can be heavy. Use the safe price/availability/stock cron mode for regular updates.
+- Test on a staging copy before using on a production store with a large catalog.
+- For CSV/XLSX files the first row must contain field names such as id, name, model, sku/vendorCode, price, optPrice, special_price, quantity and categoryId.
+
+Update notes for v1.4.2:
+After uploading the archive through Extensions > Installer, refresh Modifications and clear theme/cache if your admin page was already open. Open the module using a fresh admin URL with valid user_token. Because service actions now validate user_token explicitly, stale admin tabs should be refreshed before using supplier save/delete, log cleanup, settings import or safe import.

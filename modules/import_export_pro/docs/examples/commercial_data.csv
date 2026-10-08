@@ -1,0 +1,2 @@
+sku;discounts;specials;rewards;recurring
+SKU-001;"[{""customer_group_id"":1,""quantity"":5,""priority"":1,""price"":900,""date_start"":""2026-01-01"",""date_end"":""2026-12-31""}]";"[{""customer_group_id"":1,""priority"":1,""price"":950,""date_start"":""2026-01-01"",""date_end"":""2026-02-01""}]";"[{""customer_group_id"":1,""points"":20}]";"[]"

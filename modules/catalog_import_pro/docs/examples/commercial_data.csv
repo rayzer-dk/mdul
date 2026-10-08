@@ -1,0 +1,2 @@
+_SKU_;_DISCOUNTS_;_SPECIALS_;_REWARDS_;_RECURRING_
+SUP-001;"[{""customer_group_id"":1,""quantity"":5,""priority"":1,""price"":90,""date_start"":""2026-01-01"",""date_end"":""2026-12-31""}]";"[{""customer_group_id"":1,""priority"":1,""price"":95,""date_start"":""2026-07-01"",""date_end"":""2026-07-31""}]";"[{""customer_group_id"":1,""points"":25}]";"[{""recurring_id"":1,""customer_group_id"":1}]"

@@ -1,0 +1,663 @@
+{{ header }}{{ column_left }}
+
+<div id="content" class="nix-pro-admin">
+<style type="text/css">
+#content.nix-pro-admin { min-width: 0; overflow-x: hidden; }
+.nix-pro-admin .page-header .pull-right { max-width: 100%; text-align: right; }
+.nix-pro-admin .page-header .pull-right .btn { margin-left: 6px; margin-bottom: 6px; }
+.nix-pro-admin .page-header h1 { line-height: 1.3; word-break: break-word; overflow-wrap: anywhere; }
+.nix-pro-admin .panel-body { padding: 16px; }
+.nix-pro-admin .nix-top-box { border: 1px solid #d9edf7; background: #eef8fc; border-radius: 6px; padding: 12px 14px; margin-bottom: 14px; display: table; width: 100%; }
+.nix-pro-admin .nix-top-box-icon { display: table-cell; width: 38px; vertical-align: top; color: #31708f; font-size: 22px; padding-top: 2px; }
+.nix-pro-admin .nix-top-box-body { display: table-cell; vertical-align: top; }
+.nix-pro-admin .nix-top-box-title { font-weight: 700; color: #245269; margin-bottom: 4px; }
+.nix-pro-admin .nix-top-box-text { color: #31708f; }
+.nix-pro-admin .nix-mode-nav { margin: 0 0 14px; }
+.nix-pro-admin .nix-mode-nav .btn { margin-right: 6px; margin-bottom: 6px; }
+.nix-pro-admin .nix-main-tabs { margin-bottom: 0; }
+.nix-pro-admin .nix-main-tabs > li > a { font-weight: 600; }
+.nix-pro-admin .nix-tab-content { border: 1px solid #ddd; border-top: 0; padding: 16px; background: #fff; border-radius: 0 0 6px 6px; }
+.nix-pro-admin .nix-tab-header { margin: 0 0 14px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+.nix-pro-admin .nix-tab-header h4 { margin: 0 0 5px; color: #0057b7; font-weight: 700; }
+.nix-pro-admin .nix-tab-header p { margin: 0; color: #666; }
+.nix-pro-admin .nix-card { border: 1px solid #e5e5e5; border-radius: 6px; padding: 14px; margin-bottom: 14px; background: #fff; }
+.nix-pro-admin .nix-card-title { margin: 0 0 10px; font-weight: 700; color: #333; }
+.nix-pro-admin .nix-service-answer { margin-top: 10px; }
+.nix-pro-admin .nix-service-actions .btn { margin-right: 6px; margin-bottom: 6px; }
+.nix-pro-admin .nix-import-settings-panel { display: none; margin-top: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #e5e5e5; border-radius: 4px; }
+.nix-pro-admin .nix-sortable-table th[data-sort] { cursor: pointer; user-select: none; white-space: nowrap; }
+.nix-pro-admin .nix-sortable-table th[data-sort]:after { content: " \f0dc"; font-family: FontAwesome; color: #999; font-size: 11px; }
+.nix-pro-admin .nix-sortable-table th.sort-asc:after { content: " \f0de"; color: #337ab7; }
+.nix-pro-admin .nix-sortable-table th.sort-desc:after { content: " \f0dd"; color: #337ab7; }
+.nix-pro-admin .nix-btn-row .btn { margin-right: 6px; margin-bottom: 6px; }
+.nix-pro-admin .input-group { max-width: 100%; }
+.nix-pro-admin .input-group .form-control { min-width: 0; }
+.nix-pro-admin input.form-control[readonly] { text-overflow: ellipsis; overflow: hidden; }
+.nix-pro-admin .table-responsive { margin-bottom: 0; border: 0; }
+.nix-pro-admin .help-block { max-width: 100%; overflow-wrap: anywhere; }
+.nix-pro-admin .alert { overflow-wrap: anywhere; }
+.nix-pro-admin .nix-diagnostics-list li { padding: 4px 0; }
+.nix-pro-admin .nix-mirohost-row .form-control { font-family: monospace; }
+@media (max-width: 991px) {
+  .nix-pro-admin .page-header .pull-right { float: none !important; text-align: left; margin-bottom: 10px; }
+  .nix-pro-admin .page-header .pull-right .btn { margin-left: 0; margin-right: 6px; }
+}
+@media (max-width: 767px) {
+  .nix-pro-admin .form-horizontal .control-label { text-align: left; }
+  .nix-pro-admin .modal-dialog { width: auto; margin: 10px; }
+  .nix-pro-admin .nix-top-box, .nix-pro-admin .nix-top-box-icon, .nix-pro-admin .nix-top-box-body { display: block; width: auto; }
+  .nix-pro-admin .nix-main-tabs > li { float: none; }
+  .nix-pro-admin .nix-main-tabs > li > a { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 4px; }
+  .nix-pro-admin .nix-tab-content { border-top: 1px solid #ddd; }
+}
+</style>
+ <div class="page-header">
+  <div class="container-fluid">
+   <div class="pull-right">
+    <button type="submit" form="form-nix" data-toggle="tooltip" title="{{ btn_save_settings }}" class="btn btn-primary"><i class="fa fa-save"></i> {{ btn_save_settings }}</button>
+    <a href="{{ update_link }}" target="_blank" rel="noopener" data-toggle="tooltip" title="{{ btn_check_update }}" class="btn btn-info"><i class="fa fa-refresh"></i> {{ btn_check_update }}</a>
+    <a href="{{ cancel }}" data-toggle="tooltip" title="{{ btn_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ btn_cancel }}</a>
+   </div>
+   <h1>{{ heading_title }}</h1>
+   <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+   </ul>
+  </div>
+ </div>
+ <div class="container-fluid">
+  {% if errors.warning %}
+  <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ errors.warning }}
+   <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+
+  {% if message_success %}
+  <div class="alert alert-success"><i class="fa fa-check-circle"></i> {{ message_success }}
+   <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+
+  <div class="panel panel-default">
+   <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-cogs"></i> {{ text_part_settings }}</h3>
+   </div>
+   <div class="panel-body">
+    <div class="nix-mode-nav">
+     <a class="btn btn-primary" href="{{ link_part_import }}"><i class="fa fa-upload"></i> {{ text_part_import }}</a>
+     <a class="btn btn-default active" href="{{ link_part_settings }}"><i class="fa fa-cogs"></i> {{ text_part_settings }}</a>
+    </div>
+
+    <div class="nix-top-box">
+     <div class="nix-top-box-icon"><i class="fa fa-info-circle"></i></div>
+     <div class="nix-top-box-body">
+      <div class="nix-top-box-title">{{ text_part_import }}</div>
+      <div class="nix-top-box-text">{{ text_manual_import_primary }}</div>
+     </div>
+    </div>
+
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-nix" class="form-horizontal">
+     <ul class="nav nav-tabs nix-main-tabs">
+      <li class="active"><a href="#tab-nix-main" data-toggle="tab"><i class="fa fa-sliders"></i> {{ text_settings_main }}</a></li>
+      <li><a href="#tab-nix-suppliers" data-toggle="tab"><i class="fa fa-truck"></i> {{ text_supplier_settings }}</a></li>
+      <li><a href="#tab-nix-cron" data-toggle="tab"><i class="fa fa-clock-o"></i> {{ text_cron_settings_short }}</a></li>
+      <li><a href="#tab-nix-service" data-toggle="tab"><i class="fa fa-wrench"></i> {{ text_service_tools }}</a></li>
+      <li><a href="#tab-nix-about" data-toggle="tab"><i class="fa fa-info-circle"></i> {{ text_about_module }}</a></li>
+     </ul>
+
+     <div class="tab-content nix-tab-content">
+      <div class="tab-pane active" id="tab-nix-main">
+       <div class="nix-tab-header">
+        <h4><i class="fa fa-sliders"></i> {{ text_settings_main }}</h4>
+        <p>{{ help_status }}</p>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-status">{{ entry_status }}</label>
+        <div class="col-sm-10">
+         <select name="feed_nix_status" id="input-status" class="form-control">
+          <option value="1"{% if nix_status %} selected="selected"{% endif %}>{{ text_enabled }}</option>
+          <option value="0"{% if not nix_status %} selected="selected"{% endif %}>{{ text_disabled }}</option>
+         </select>
+         <div class="help-block">{{ help_status }}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-delete-data-on-uninstall">{{ entry_delete_data_on_uninstall }}</label>
+        <div class="col-sm-10">
+         <label class="checkbox-inline"><input type="checkbox" name="feed_nix_delete_data_on_uninstall" id="input-delete-data-on-uninstall" value="1"{% if delete_data_on_uninstall %} checked="checked"{% endif %}> {{ text_enabled }}</label>
+         <div class="help-block text-warning">{{ help_delete_data_on_uninstall }}</div>
+        </div>
+       </div>
+      </div>
+
+      <div class="tab-pane" id="tab-nix-suppliers">
+       <div class="nix-tab-header">
+        <h4><i class="fa fa-truck"></i> {{ text_supplier_settings }}</h4>
+        <p>{{ help_supplier_settings }}</p>
+       </div>
+       <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ help_supplier_list }}</div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label">{{ entry_supplier_list }}</label>
+        <div class="col-sm-10">
+         <div class="table-responsive">
+          <table id="suppliers-list--wrapper" class="table table-bordered table-hover table-condensed nix-sortable-table">
+           <thead>
+            <tr>
+             <th class="text-right" data-sort="num">{{ column_supplier_id }}</th>
+             <th data-sort="text">{{ column_supplier_name }}</th>
+             <th class="text-right" data-sort="num">{{ column_supplier_markup }}</th>
+             <th class="text-right">{{ column_action }}</th>
+            </tr>
+           </thead>
+           <tbody>
+            {% for supplier in supplier_list %}
+            <tr data-supplier-id="{{ supplier.supplier_id }}">
+             <td class="text-right">{{ supplier.supplier_id }}</td>
+             <td><a href="#" data-supplier-id="{{ supplier.supplier_id }}" class="nix-modal-supplier--toggle--edit">{{ supplier.name|e }}</a></td>
+             <td class="text-right">{{ supplier.markup|default('0') }}</td>
+             <td class="text-right"><button type="button" class="btn btn-danger btn-xs nix-supplier--delete" data-toggle="tooltip" title="{{ text_confirm_supplier_delete }}"><i class="fa fa-trash"></i></button></td>
+            </tr>
+            {% else %}
+            <tr class="nix-empty-row"><td colspan="4" class="text-center text-muted">{{ text_no_suppliers }}</td></tr>
+            {% endfor %}
+           </tbody>
+          </table>
+         </div>
+         <div class="nix-btn-row">
+          <button type="button" id="nix-modal-supplier--toggle--add" class="btn btn-success" data-target="#nix-modal-supplier"><i class="fa fa-plus"></i> {{ btn_add_supplier }}</button>
+         </div>
+        </div>
+       </div>
+      </div>
+
+      <div class="tab-pane" id="tab-nix-cron">
+       <div class="nix-tab-header">
+        <h4><i class="fa fa-clock-o"></i> {{ text_cron_settings }}</h4>
+        <p>{{ help_cron_secondary_function }}</p>
+       </div>
+       <div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> {{ text_cron_performance_warning }}</div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-cron-status">{{ entry_cron_status }}</label>
+        <div class="col-sm-10">
+         <label class="checkbox-inline"><input type="checkbox" name="feed_nix_cron_status" id="input-cron-status" value="1"{% if cron_status %} checked="checked"{% endif %}> {{ text_enabled }}</label>
+         <div class="help-block">{{ help_cron_status }}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-cron-mode">{{ entry_cron_mode }}</label>
+        <div class="col-sm-10">
+         <select name="feed_nix_cron_mode" id="input-cron-mode" class="form-control">
+          <option value="price_stock"{% if cron_mode == 'price_stock' %} selected="selected"{% endif %}>{{ text_cron_mode_price_stock }}</option>
+          <option value="full"{% if cron_mode == 'full' %} selected="selected"{% endif %}>{{ text_cron_mode_full }}</option>
+         </select>
+         <div class="help-block">{{ help_cron_mode }}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-cron-token">{{ entry_cron_token }}</label>
+        <div class="col-sm-10">
+         <div class="input-group">
+          <input type="text" name="feed_nix_cron_token" value="{{ cron_token }}" id="input-cron-token" placeholder="{{ placeholder_cron_token }}" class="form-control">
+          <span class="input-group-btn"><button type="button" id="nix-generate-cron-token" class="btn btn-default"><i class="fa fa-key"></i> {{ btn_generate_token }}</button></span>
+         </div>
+         <div class="help-block">{{ help_cron_token }}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-cron-supplier">{{ entry_cron_supplier }}</label>
+        <div class="col-sm-10">
+         <select name="feed_nix_cron_supplier_id" id="input-cron-supplier" class="form-control">
+          <option value="0">{{ text_select_option }}</option>
+          {% for supplier in supplier_list %}
+          <option value="{{ supplier.supplier_id }}"{% if cron_supplier_id == supplier.supplier_id %} selected="selected"{% endif %}>{{ supplier.name|e }}</option>
+          {% endfor %}
+         </select>
+         <div class="help-block">{{ help_import_supplier_select }}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-cron-language">{{ entry_cron_language }}</label>
+        <div class="col-sm-10">
+         <select name="feed_nix_cron_language_id" id="input-cron-language" class="form-control">
+          <option value="0">{{ text_select_option }}</option>
+          {% for language in languages %}
+          <option value="{{ language.language_id }}"{% if cron_language_id == language.language_id %} selected="selected"{% endif %}>{{ language.name }}</option>
+          {% endfor %}
+         </select>
+         <div class="help-block">{{ text_cron_multilang_hint }}</div>
+        </div>
+       </div>
+       <div class="form-group nix-cron-full-options">
+        <label class="col-sm-2 control-label">{{ entry_cron_options }}</label>
+        <div class="col-sm-10">
+         <label class="checkbox-inline"><input type="checkbox" name="feed_nix_cron_update_if_exist" value="1"{% if cron_update_if_exist %} checked="checked"{% endif %}> {{ entry_cron_update_if_exist }}</label>
+         <label class="checkbox-inline"><input type="checkbox" name="feed_nix_cron_copy_description" value="1"{% if cron_copy_description %} checked="checked"{% endif %}> {{ entry_cron_copy_description }}</label>
+         <label class="checkbox-inline"><input type="checkbox" name="feed_nix_cron_copy_attributes" value="1"{% if cron_copy_attributes %} checked="checked"{% endif %}> {{ entry_cron_copy_attributes }}</label>
+         <div class="checkbox"><label><input type="checkbox" name="feed_nix_cron_delete_all" value="1"{% if cron_delete_all %} checked="checked"{% endif %}> <span class="text-danger">{{ entry_cron_delete_all }}</span></label></div>
+         <div class="help-block text-danger">{{ help_cron_delete_all }}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-cron-command">{{ entry_cron_command }}</label>
+        <div class="col-sm-10">
+         <div class="input-group">
+          <input type="text" id="input-cron-command" value="{{ cron_cli_command }}" class="form-control" readonly>
+          <span class="input-group-btn"><button type="button" class="btn btn-default nix-copy-field" data-copy-target="#input-cron-command"><i class="fa fa-copy"></i> {{ btn_copy_cron_command }}</button></span>
+         </div>
+         <div class="help-block">{{ help_cron_command }}</div>
+        </div>
+       </div>
+       <div class="form-group">
+        <label class="col-sm-2 control-label" for="input-cron-url">{{ entry_cron_url }}</label>
+        <div class="col-sm-10">
+         <div class="input-group">
+          <input type="text" id="input-cron-url" value="{{ cron_url }}" class="form-control" readonly>
+          <span class="input-group-btn"><button type="button" class="btn btn-default nix-copy-field" data-copy-target="#input-cron-url"><i class="fa fa-copy"></i> {{ btn_copy_cron_url }}</button></span>
+         </div>
+        </div>
+       </div>
+       <div class="form-group nix-mirohost-row">
+        <label class="col-sm-2 control-label">Mirohost</label>
+        <div class="col-sm-10">
+         <div class="row">
+          <div class="col-sm-2"><label class="small">{{ entry_mirohost_minutes }}</label><input type="text" value="*/30" class="form-control input-sm" readonly></div>
+          <div class="col-sm-2"><label class="small">{{ entry_mirohost_hours }}</label><input type="text" value="*" class="form-control input-sm" readonly></div>
+          <div class="col-sm-2"><label class="small">{{ entry_mirohost_days }}</label><input type="text" value="*" class="form-control input-sm" readonly></div>
+          <div class="col-sm-2"><label class="small">{{ entry_mirohost_months }}</label><input type="text" value="*" class="form-control input-sm" readonly></div>
+          <div class="col-sm-2"><label class="small">{{ entry_mirohost_weekdays }}</label><input type="text" value="*" class="form-control input-sm" readonly></div>
+         </div>
+         <div class="help-block">{{ help_mirohost_schedule }}</div>
+        </div>
+       </div>
+      </div>
+
+      <div class="tab-pane" id="tab-nix-service">
+       <div class="nix-tab-header">
+        <h4><i class="fa fa-wrench"></i> {{ text_service_tools }}</h4>
+        <p>{{ help_service_actions }}</p>
+       </div>
+       <div class="row">
+        <div class="col-sm-6">
+         <div class="nix-card">
+          <div class="nix-card-title"><i class="fa fa-heartbeat"></i> {{ text_diagnostics }}</div>
+          <ul class="list-unstyled nix-diagnostics-list">
+           {% for item in diagnostics %}
+           <li><i class="fa fa-circle text-{{ item.status }}"></i> {{ item.text }}</li>
+           {% endfor %}
+          </ul>
+         </div>
+        </div>
+        <div class="col-sm-6">
+         <div class="nix-card nix-service-actions">
+          <div class="nix-card-title"><i class="fa fa-wrench"></i> {{ text_service_tools }}</div>
+          <a href="{{ link_export_settings }}" class="btn btn-success btn-sm"><i class="fa fa-download"></i> {{ btn_export_settings }}</a>
+          <button type="button" class="btn btn-warning btn-sm" id="nix-import-settings-toggle"><i class="fa fa-upload"></i> {{ btn_import_settings }}</button>
+          <button type="button" class="btn btn-default btn-sm" id="nix-reset-settings"><i class="fa fa-undo"></i> {{ btn_reset_settings }}</button>
+          <button type="button" class="btn btn-danger btn-sm" id="nix-clear-logs"><i class="fa fa-trash"></i> {{ btn_clear_logs }}</button>
+          <div id="nix-import-settings-panel" class="nix-import-settings-panel">
+           <input type="file" name="nix_settings_file" id="nix-settings-file" accept="application/json,.json" class="form-control input-sm">
+           <div class="help-block">{{ help_import_settings }}</div>
+           <button type="button" class="btn btn-primary btn-sm" id="nix-import-settings-apply"><i class="fa fa-check"></i> {{ btn_apply_import_settings }}</button>
+          </div>
+          <div class="help-block">{{ help_service_actions }}</div>
+          <div id="nix-service-answer" class="nix-service-answer"></div>
+         </div>
+        </div>
+       </div>
+      </div>
+
+      <div class="tab-pane" id="tab-nix-about">
+       <div class="nix-tab-header">
+        <h4><i class="fa fa-info-circle"></i> {{ text_about_module }}</h4>
+        <p>{{ text_about_module_description }}</p>
+       </div>
+       <div class="nix-card">
+        <p>{{ text_about_module_benefit }}</p>
+        <p>{{ text_author }}: <a href="{{ author_link }}" target="_blank" rel="noopener">{{ author_name }}</a>.</p>
+        <p>{{ text_version }}: <b>{{ module_version }}</b>.</p>
+       </div>
+      </div>
+     </div>
+    </form>
+   </div>
+  </div>
+
+  <div class="row">
+   <div class="col-sm-12">{{ text_copyright }}</div>
+  </div>
+ </div>
+</div>
+
+<div id="nix-modal-supplier" class="modal fade" role="dialog">
+ <div class="modal-dialog modal-lg">
+  <div class="modal-content">
+   <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h4 class="modal-title">{{ supplier_modal_title }}</h4>
+   </div>
+   <div class="modal-body" id="nix-modal-supplier--body"></div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-success" id="nix-modal-supplier--btn"><i class="fa fa-save"></i> {{ btn_supplier_modal_save }}</button>
+   </div>
+  </div>
+ </div>
+</div>
+
+<script type="text/javascript"><!--
+(function($) {
+	var supplierRow = 0;
+	var itemChoosen = false;
+
+	function nixEscape(value) {
+		return $('<div>').text(value === undefined || value === null ? '' : value).html();
+	}
+
+	function nixShowServiceMessage(type, message) {
+		$('#nix-service-answer').html('<div class="alert alert-' + type + '">' + nixEscape(message) + '</div>');
+	}
+
+	function nixActivateHashTab() {
+		var hash = window.location.hash || '';
+		if (!hash) { return; }
+		var target = $('.nix-main-tabs a[href="' + hash + '"]');
+		if (target.length) {
+			target.tab('show');
+			return;
+		}
+		if (hash === '#nix-section-suppliers' || hash === '#tab-nix-suppliers') {
+			$('.nix-main-tabs a[href="#tab-nix-suppliers"]').tab('show');
+		} else if (hash === '#nix-section-cron' || hash === '#tab-nix-cron') {
+			$('.nix-main-tabs a[href="#tab-nix-cron"]').tab('show');
+		} else if (hash === '#nix-section-main' || hash === '#tab-nix-main') {
+			$('.nix-main-tabs a[href="#tab-nix-main"]').tab('show');
+		}
+	}
+
+	$('.nix-main-tabs a[data-toggle="tab"]').on('shown.bs.tab.nix', function(e) {
+		if (history.replaceState) {
+			history.replaceState(null, null, e.target.getAttribute('href'));
+		}
+	});
+
+	nixActivateHashTab();
+
+	$('#nix-modal-supplier--toggle--add').on('click.nix', function(e) {
+		e.preventDefault();
+		itemChoosen = false;
+		$('#nix-modal-supplier .modal-footer').show();
+		$.get('index.php?route=extension/feed/nix/supplierForm&user_token={{ user_token }}&row=' + supplierRow, function(data) {
+			$('#nix-modal-supplier--body').html(data);
+			$('#nix-modal-supplier').modal('show');
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 300) : '';
+			var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+			nixShowServiceMessage('danger', message);
+		});
+	});
+
+	$(document).off('click.nixProEdit', '.nix-modal-supplier--toggle--edit').on('click.nixProEdit', '.nix-modal-supplier--toggle--edit', function(e) {
+		e.preventDefault();
+		itemChoosen = $(this);
+		$('#nix-modal-supplier .modal-footer').show();
+		$.get('index.php?route=extension/feed/nix/supplierEdit&user_token={{ user_token }}&supplier_id=' + encodeURIComponent($(this).attr('data-supplier-id')), function(data) {
+			$('#nix-modal-supplier--body').html(data);
+			$('#nix-modal-supplier').modal('show');
+		}).fail(function(jqXHR, textStatus, errorThrown) {
+			var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 300) : '';
+			var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+			nixShowServiceMessage('danger', message);
+		});
+	});
+
+	$('#nix-modal-supplier--btn').on('click.nix', function(e) {
+		e.preventDefault();
+		$('#nix-modal-supplier--form .text-danger').remove();
+		$('#nix-modal-supplier--form .form-group').removeClass('has-error has-feedback');
+
+		var supplierForm = $('#nix-modal-supplier--form').serialize();
+		$.ajax({
+			url: 'index.php?route=extension/feed/nix/supplierSave&user_token={{ user_token }}',
+			type: 'POST',
+			dataType: 'json',
+			data: supplierForm,
+			success: function(json) {
+				if (json && json.status === 'OK') {
+					var supplierName = $('#input-name').val();
+					var supplierMarkup = $('#input-markup').val();
+					$('#nix-modal-supplier--answer').html('<div class="alert alert-success">' + nixEscape(json.msg) + '</div>');
+
+					if (typeof json.supplier_id !== 'undefined') {
+						var supplierId = parseInt(json.supplier_id, 10);
+						$('#suppliers-list--wrapper tbody .nix-empty-row').remove();
+						$('#suppliers-list--wrapper tbody').append('<tr data-supplier-id="' + supplierId + '"><td class="text-right">' + supplierId + '</td><td><a href="#" data-supplier-id="' + supplierId + '" class="nix-modal-supplier--toggle--edit">' + nixEscape(supplierName) + '</a></td><td class="text-right">' + nixEscape(supplierMarkup) + '</td><td class="text-right"><button type="button" class="btn btn-danger btn-xs nix-supplier--delete"><i class="fa fa-trash"></i></button></td></tr>');
+						$('#input-cron-supplier').append('<option value="' + supplierId + '">' + nixEscape(supplierName) + '</option>');
+					} else if (itemChoosen && itemChoosen.length) {
+						var editId = itemChoosen.attr('data-supplier-id');
+						itemChoosen.text(supplierName);
+						itemChoosen.closest('tr').find('td').eq(2).text(supplierMarkup);
+						$('#input-cron-supplier option[value="' + editId + '"]').text(supplierName);
+						itemChoosen = false;
+					}
+
+					$('#nix-modal-supplier--form').html('');
+					$('#nix-modal-supplier .modal-footer').hide();
+				} else {
+					$('#nix-modal-supplier--answer').html('<div class="alert alert-danger">' + nixEscape(json && json.msg ? json.msg : {{ msg_supplier_error|json_encode|raw }}) + '</div>');
+					if (json && json.errors) {
+						$.each(json.errors, function(key, value) {
+							var field = $('#input-' + key);
+							if (field.length) {
+								field.closest('.form-group').addClass('has-error has-feedback');
+								field.after('<div class="text-danger">' + nixEscape(value) + '</div>');
+							}
+						});
+					}
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 300) : '';
+				var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+				$('#nix-modal-supplier--answer').html('<div class="alert alert-danger">' + nixEscape(message) + '</div>');
+			}
+		});
+	});
+
+	$(document).off('click.nixProDelete', '.nix-supplier--delete').on('click.nixProDelete', '.nix-supplier--delete', function(e) {
+		e.preventDefault();
+		if (!confirm({{ text_confirm_supplier_delete|json_encode|raw }})) {
+			return;
+		}
+		var thisEl = $(this);
+		var supplierId = thisEl.closest('tr').find('.nix-modal-supplier--toggle--edit').attr('data-supplier-id');
+		$.ajax({
+			url: 'index.php?route=extension/feed/nix/supplierDelete&user_token={{ user_token }}',
+			type: 'POST',
+			dataType: 'json',
+			data: 'supplier_id=' + encodeURIComponent(supplierId),
+			success: function(json) {
+				if (json && json.status === 'OK') {
+					thisEl.closest('tr').remove();
+					$('#input-cron-supplier option[value="' + supplierId + '"]').remove();
+					if ($('#suppliers-list--wrapper tbody tr').length === 0) {
+						$('#suppliers-list--wrapper tbody').append('<tr class="nix-empty-row"><td colspan="4" class="text-center text-muted">' + nixEscape({{ text_no_suppliers|json_encode|raw }}) + '</td></tr>');
+					}
+					nixShowServiceMessage('success', json.msg || {{ msg_supplier_delete_success|json_encode|raw }});
+				} else {
+					nixShowServiceMessage('danger', json && json.msg ? json.msg : {{ msg_supplier_error|json_encode|raw }});
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 300) : '';
+				var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+				nixShowServiceMessage('danger', message);
+			}
+		});
+	});
+
+	$(document).off('click.nixProSort', '.nix-sortable-table th[data-sort]').on('click.nixProSort', '.nix-sortable-table th[data-sort]', function() {
+		var th = $(this);
+		var table = th.closest('table');
+		var tbody = table.find('tbody');
+		var index = th.index();
+		var type = th.data('sort');
+		var asc = !th.hasClass('sort-asc');
+		table.find('th').removeClass('sort-asc sort-desc');
+		th.addClass(asc ? 'sort-asc' : 'sort-desc');
+		var rows = tbody.find('tr').not('.nix-empty-row').get();
+		rows.sort(function(a, b) {
+			var av = $.trim($(a).children('td').eq(index).text());
+			var bv = $.trim($(b).children('td').eq(index).text());
+			if (type === 'num') { av = parseFloat(av) || 0; bv = parseFloat(bv) || 0; }
+			return av > bv ? (asc ? 1 : -1) : av < bv ? (asc ? -1 : 1) : 0;
+		});
+		$.each(rows, function(i, row) { tbody.append(row); });
+	});
+
+	var nixLastFocusedTagInput = null;
+	$(document).off('focus.nixProTagFocus', '#nix-modal-supplier--form input[type="text"], #nix-modal-supplier--form input[type="number"], #nix-modal-supplier--form textarea').on('focus.nixProTagFocus', '#nix-modal-supplier--form input[type="text"], #nix-modal-supplier--form input[type="number"], #nix-modal-supplier--form textarea', function() {
+		nixLastFocusedTagInput = this;
+	});
+
+	$(document).off('click.nixProTagToken', '.nix-tag-token').on('click.nixProTagToken', '.nix-tag-token', function(e) {
+		e.preventDefault();
+		var token = $(this).data('token') || '';
+		if (nixLastFocusedTagInput) {
+			$(nixLastFocusedTagInput).val(token).trigger('change').focus();
+		}
+	});
+
+	function nixRandomHex(length) {
+		var chars = 'abcdef0123456789';
+		var value = '';
+		if (window.crypto && window.crypto.getRandomValues) {
+			var bytes = new Uint8Array(length);
+			window.crypto.getRandomValues(bytes);
+			for (var i = 0; i < length; i++) { value += chars[bytes[i] % chars.length]; }
+		} else {
+			for (var j = 0; j < length; j++) { value += chars[Math.floor(Math.random() * chars.length)]; }
+		}
+		return value;
+	}
+
+	function nixRefreshCronFields() {
+		var token = $('#input-cron-token').val() || '';
+		var command = $('#input-cron-command').val() || '';
+		var url = $('#input-cron-url').val() || '';
+		if (command.indexOf('token=') !== -1) {
+			$('#input-cron-command').val(command.replace(/token=.*/, 'token=' + token));
+		}
+		if (url.indexOf('token=') !== -1) {
+			$('#input-cron-url').val(url.replace(/token=.*/, 'token=' + encodeURIComponent(token)));
+		}
+	}
+
+	function nixToggleCronModeOptions() {
+		var mode = $('#input-cron-mode').val() || 'price_stock';
+		if (mode === 'full') {
+			$('.nix-cron-full-options').show();
+		} else {
+			$('.nix-cron-full-options').hide();
+		}
+	}
+
+	$('#input-cron-mode').on('change.nix', nixToggleCronModeOptions);
+	nixToggleCronModeOptions();
+
+	$('#nix-generate-cron-token').on('click.nix', function(e) {
+		e.preventDefault();
+		$('#input-cron-token').val(nixRandomHex(48)).trigger('change');
+	});
+
+	$('#input-cron-token').on('input.nix keyup.nix change.nix', nixRefreshCronFields);
+
+	$(document).off('click.nixProCopy', '.nix-copy-field').on('click.nixProCopy', '.nix-copy-field', function(e) {
+		e.preventDefault();
+		var target = $($(this).data('copy-target'));
+		if (!target.length) { return; }
+		target.focus().select();
+		document.execCommand('copy');
+		nixShowServiceMessage('success', {{ text_copied|json_encode|raw }});
+	});
+
+	$('#nix-import-settings-toggle').on('click.nix', function(e) {
+		e.preventDefault();
+		$('#nix-import-settings-panel').slideToggle(120);
+	});
+
+	$('#nix-import-settings-apply').on('click.nix', function(e) {
+		e.preventDefault();
+		var input = document.getElementById('nix-settings-file');
+		var formData = new FormData();
+		if (input && input.files && input.files[0]) {
+			formData.append('nix_settings_file', input.files[0]);
+		}
+		$.ajax({
+			url: '{{ link_import_settings }}',
+			type: 'POST',
+			dataType: 'json',
+			data: formData,
+			processData: false,
+			contentType: false,
+			success: function(json) {
+				var cls = json.status === 'OK' ? 'success' : 'danger';
+				nixShowServiceMessage(cls, json.msg || '');
+				if (json.status === 'OK') {
+					setTimeout(function(){ window.location.reload(); }, 900);
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 300) : '';
+				var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+				nixShowServiceMessage('danger', message);
+			}
+		});
+	});
+
+	$('#nix-reset-settings').on('click.nix', function(e) {
+		e.preventDefault();
+		if (!confirm({{ text_confirm_reset_settings|json_encode|raw }})) {
+			return;
+		}
+		$.ajax({
+			url: '{{ link_reset_settings }}',
+			type: 'POST',
+			dataType: 'json',
+			success: function(json) {
+				var cls = json.status === 'OK' ? 'success' : 'danger';
+				nixShowServiceMessage(cls, json.msg || '');
+				if (json.status === 'OK') {
+					setTimeout(function(){ window.location.reload(); }, 800);
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 300) : '';
+				var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+				nixShowServiceMessage('danger', message);
+			}
+		});
+	});
+
+	$('#nix-clear-logs').on('click.nix', function(e) {
+		e.preventDefault();
+		if (!confirm({{ text_confirm_clear_logs|json_encode|raw }})) {
+			return;
+		}
+		$.ajax({
+			url: 'index.php?route=extension/feed/nix/clearLogs&user_token={{ user_token }}',
+			type: 'POST',
+			dataType: 'json',
+			success: function(json) {
+				var cls = json.status === 'OK' ? 'success' : 'danger';
+				nixShowServiceMessage(cls, json.msg || '');
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 300) : '';
+				var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+				nixShowServiceMessage('danger', message);
+			}
+		});
+	});
+})(jQuery);
+//--></script>
+{{ footer }}

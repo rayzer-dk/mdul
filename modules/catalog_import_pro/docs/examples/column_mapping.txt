@@ -1,0 +1,6 @@
+Артикул поставщика=_SKU_
+Цена продажи=_PRICE_
+Остаток=_QUANTITY_
+Бренд=_MANUFACTURER_
+Раздел=_CATEGORY_
+Фото=_IMAGE_

@@ -1,0 +1,540 @@
+{{ header }}{{ column_left }}
+
+<div id="content" class="nix-pro-admin">
+<style>
+	.nix-pro-import .has-error {
+		border-color: #ff0000;
+	}
+	
+	.nix-pro-admin .nix-pro-import-panel {
+		position: relative;
+	}
+	
+	.nix-pro-admin .nix-pro-import-panel.with-loader::before {
+		content: "";
+		position: absolute;
+		width: 100%;
+		height: 100%;
+		background: rgba(255, 255, 255, .5);
+		z-index: 3;
+	}
+	
+	.nix-pro-import .loader {
+		z-index: 9;
+		position: absolute;
+		display: none;
+		left: 45%;
+		top: 45%;
+		
+		width: 280px;
+		text-align: center;
+	}
+	
+	.nix-pro-import .loader-dialog {
+		color: #ff0000;
+	}
+	
+	.nix-pro-import .loader-stopwatch {
+		margin-bottom: 15px;
+	}
+	
+	.nix-pro-import .loader-icon {
+		display: inline-block;
+		width: 64px;
+		height: 64px;
+		
+    border: 5px solid #8c8d9a; /* bg */
+    border-top: 5px solid #fcb92b; /* primary */
+    border-radius: 50%;
+    
+    animation: nixProSpin 1s linear infinite;
+	}
+
+	@keyframes nixProSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+	}
+	
+
+#content.nix-pro-admin { min-width: 0; overflow-x: hidden; }
+.nix-pro-admin .page-header .pull-right { max-width: 100%; text-align: right; }
+.nix-pro-admin .page-header h1 { line-height: 1.3; word-break: break-word; overflow-wrap: anywhere; }
+.nix-pro-admin .input-group { max-width: 100%; }
+.nix-pro-admin .input-group .form-control { min-width: 0; }
+.nix-pro-admin input.form-control[readonly] { text-overflow: ellipsis; overflow: hidden; }
+.nix-pro-admin .table-responsive { margin-bottom: 0; border: 0; }
+.nix-pro-admin .help-block { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 991px) {
+  .nix-pro-admin .page-header .pull-right { float: none !important; text-align: left; margin-bottom: 10px; }
+  .nix-pro-admin .page-header .pull-right .btn { margin-left: 0; margin-right: 6px; }
+}
+@media (max-width: 767px) {
+  .nix-pro-admin .form-horizontal .control-label { text-align: left; }
+  .nix-pro-admin .modal-dialog { width: auto; margin: 10px; }
+}
+</style>
+ <div class="page-header">
+  <div class="container-fluid">
+   <div class="pull-right">
+    <a href="{{ cancel }}" data-toggle="tooltip" title="{{ btn_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ btn_cancel }}</a></div>
+   <h1>{{ heading_title }}</h1>
+   <ul class="breadcrumb">
+    {% for breadcrumb in breadcrumbs %}
+    <li><a href="{{ breadcrumb.href }}">{{ breadcrumb.text }}</a></li>
+    {% endfor %}
+   </ul>
+  </div>
+ </div>
+ <div class="container-fluid">
+  {% if errors.warning %}
+  <div class="alert alert-danger"><i class="fa fa-exclamation-circle"></i> {{ errors.warning }}
+   <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+
+  {% if message_success %}
+  <div class="alert alert-success"><i class="fa fa-exclamation-circle"></i> {{ message_success }}
+   <button type="button" class="close" data-dismiss="alert">&times;</button>
+  </div>
+  {% endif %}
+
+  <div class="panel panel-default">
+   <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-upload"></i> {{ text_edit_import }}</h3>
+   </div>
+   <div class="panel-body nix-pro-import nix-pro-import-panel">
+				{% if not nix_status %}<div class="alert alert-warning"><i class="fa fa-exclamation-triangle"></i> {{ error_module_disabled }}</div>{% endif %}
+					<div class="module-navigation">
+     <a class="btn btn-primary navbar-btn active" href="{{ link_part_import }}"><i class="fa fa-upload"></i> {{ text_part_import }}</a>
+     <a class="btn btn-default navbar-btn" href="{{ link_part_settings }}"><i class="fa fa-truck"></i> {{ text_part_settings }}</a>
+    </div>
+    <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_manual_import_primary }}</div>
+				<!-- Form . Begin -->
+    <form action="{{ action }}" method="post" enctype="multipart/form-data" id="nix-import--form" class="form-horizontal">
+					
+					<div id="nix-import--answer"></div>
+						<input type="hidden" name="nix_preview_token" id="nix-import--preview-token" value="">
+					
+					<!-- Loader -->
+					<div class="loader">
+						<div class="loader-dialog"></div>
+						<div class="loader-statistics"></div>
+						<div class="loader-stopwatch timerDisplay">00 : 00 : 00 : 000</div>
+						<div class="loader-icon"></div>
+					</div> 
+					
+					<!-- Delete All -->
+					<div class="form-group">
+						<label class="col-sm-2 control-label"></label>
+						<div class="col-sm-10">
+							<div class="checkbox">
+								<label><input type="checkbox" name="delete_all" value="1" {{ delete_all ? 'checked="checked"' : '' }}> {{ entry_delete_all }}</label>
+								<span class="help-block"><span class="text-warning bg-warning">{{ help_delete_all }}</span></span>
+							</div>
+						</div>
+					</div>
+					
+					<!-- Supplier -->
+					<div class="form-group required">
+						<label class="col-sm-2 control-label" for="input-supplier">{{ entry_supplier }}</label>
+						<div class="col-sm-10">
+							<select name="supplier_id" id="input-supplier" class="form-control">
+								<option value="*">{{ text_select_option }}</option>
+								{% for supplier in supplier_list %}
+        <option value="{{ supplier.supplier_id }}" {{ supplier_id == supplier.supplier_id ? 'selected="selected"' : '' }}>{{ supplier.name|e }}</option>
+								{% endfor %}
+       </select>
+							<div class="help-block">{{ help_import_supplier_select }}</div>
+							<a href="{{ link_part_settings }}#tab-nix-suppliers" class="btn btn-success btn-sm"><i class="fa fa-truck"></i> {{ btn_manage_suppliers }}</a>
+							{% if errors.supplier_id %}
+							<div class="text-danger">{{ errors.supplier_id }}</div>
+						{% endif %}
+						</div>
+					</div>
+					
+					<!-- XML File -->
+					<div class="form-group required">
+      <label class="col-sm-2 control-label" for="input-xmllink"><span data-toggle="tooltip" title="{{ help_file }} {{ help_file_formats }}">{{ entry_file }}</span></label>
+      <div class="col-sm-10">	
+							
+						{% for language in languages %}
+							{% if loop.index > 0 %}<hr style="border-style: dashed; border-color: #ccc; margin: 15px 0 0 0;">{% endif %}
+							
+							{% if is_multilingual %}
+							<div class="radio" style="margin-bottom: 10px;">
+								<label style="color: initial;"><input type="radio" name="language_id" value="{{ language.language_id }}" {{ language.language_id == language_id or (loop.first and language_id == 0) ? 'checked' : '' }}> <img src="{{ language.src }}" title="{{ language.name }}" /> {{ language.name }}{{ entry_language }}</label>
+							</div>
+							{% else %} 
+							<input type="hidden" name="language_id" value="{{ language.language_id }}" checked />
+							{% endif %}
+							
+							<!--<input type="text" name="xmllink[{{ language.language_id }}]" placeholder="{{ entry_xmllink }}" id="input-xmllink" class="form-control" />-->
+							
+							<!--<div>{{ xor }}</div>-->
+
+							<div class="input-group">
+								<label class="input-group-btn">
+									<input name="xmlfile[{{ language.language_id }}]" type="file" id="input-xmlfile-{{ language.language_id }}" accept=".xml,.yml,.yaml,.csv,.txt,.xlsx" style="display: none;" />
+									<div class="btn btn-info" style="border-radius: 3px 0 0 3px">{{ btn_file }}</div>
+								</label>
+								<input type="text" class="form-control" id="xmlfile-status-{{ language.language_id }}" value="..." readonly>
+							</div>
+							
+							{% if errors.xmlfile[language.language_id] %}
+							<div class="text-danger">{{ errors.xmlfile[language.language_id] }}</div>
+							{% endif %}
+							
+							<script>
+	function nixEscape(value) { return $('<div>').text(value === undefined || value === null ? '' : value).html(); }
+								$(document).ready(function () {
+									$('#input-xmlfile-{{ language.language_id }}').change(function () {
+										var f_name = [];
+										for (var i = 0; i < $(this).get(0).files.length; ++i) {
+											f_name.push(" " + $(this).get(0).files[i].name);
+										}
+										$('#xmlfile-status-{{ language.language_id }}').val(f_name.join(", "));
+									});
+								});
+							</script>
+							{% endfor %}
+
+      </div>							
+     </div>					
+				
+    <hr>
+				<!-- Import Options -->
+				<div class="form-group">
+					<label class="col-sm-2 control-label">{{ text_import_options }}</label>
+					<div class="col-sm-10">
+						<div class="checkbox">
+							<label><input type="checkbox" name="update_if_exist" value="1" {{ update_if_exist ? 'checked="checked"' : '' }}> {{ entry_update_if_exist }}</label>
+							<span class="help-block"><span class="text-primary">{{ help_update_if_exist }}</span></span>
+						</div>				
+						{% if is_multilingual %}
+						<hr>
+						<div class="checkbox">
+							<label><input type="checkbox" name="copy_description" id="copy-description" value="1" {{ copy_description ? 'checked="checked"' : '' }}> {{ entry_copy_description }}</label>
+						</div>
+						<hr>
+						<div class="checkbox">
+							<label><input type="checkbox" name="copy_attributes" id="copy-attributes" value="1" {{ copy_attributes ? 'checked="checked"' : '' }}> {{ entry_copy_attributes }}</label>
+							<span class="help-block"><span class="text-primary">{{ help_copy_attributes }}</span></span>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+				
+				
+				
+				
+				
+    <hr>
+				
+    <button type="submit" class="btn btn-info" id="nix-import--preview-btn" data-nix-action="preview"{% if not nix_status %} disabled="disabled"{% endif %}><i class="fa fa-search"></i> {{ btn_preview_import }}</button>
+    <button type="submit" class="btn btn-primary" id="nix-import--btn" data-nix-action="apply" disabled="disabled"><i class="fa fa-check"></i> {{ btn_apply_safe_import }}</button>
+    <div class="help-block">{{ help_safe_import_buttons }}</div>
+				
+    </form>
+				<!-- /Form . End-->
+				
+   </div>
+  </div>
+		
+		<div class="row">
+			<div class="col-sm-12">{{ text_copyright }}</div>
+		</div>
+		
+ </div>
+	
+</div>
+
+
+<script>
+	
+	function toggleCopuAttributes() {
+		if ($('#copy-description').is(':checked')) {
+			$('#copy-attributes').attr('disabled', false);
+			
+			$('#copy-attributes').parent('label').css('color', 'initial');
+			$('#copy-attributes').parent('label').next('.help-block').children('.text-primary').css('color', '#1e91cf');
+		} else {
+			$('#copy-attributes').attr('disabled', true);
+			
+			$('#copy-attributes').parent('label').css('color', '#ccc');
+			$('#copy-attributes').parent('label').next('.help-block').children('.text-primary').css('color', '#ccc');
+			
+			if ($('#copy-attributes').is(':checked')) {			
+				$('#copy-attributes').attr('checked', false);
+			}
+		}
+	}
+	
+	toggleCopuAttributes();
+	
+	$('#copy-description').change(function() {
+		toggleCopuAttributes();
+	});
+	
+
+	var nixImportAction = 'preview';
+	var nixPreviewReady = false;
+	$('#nix-import--preview-btn').on('click', function () { nixImportAction = 'preview'; });
+	$('#nix-import--btn').on('click', function () { nixImportAction = 'apply'; });
+	$('#nix-import--form').on('change', 'input, select, textarea', function () {
+		nixPreviewReady = false;
+		$('#nix-import--preview-token').val('');
+			$('#nix-import--btn').attr('disabled', true);
+	});
+
+	$('#nix-import--form').on('submit', function (e) {
+    e.preventDefault();
+		
+		if (nixImportAction === 'apply' && !nixPreviewReady) {
+			alert({{ text_run_preview_first|json_encode|raw }});
+			return;
+		}
+
+		if (nixImportAction === 'apply' && $('input[name="delete_all"]').is(':checked') && !confirm({{ text_confirm_delete_all_import|json_encode|raw }})) {
+			return;
+		}
+
+		if (nixImportAction === 'apply' && !confirm({{ text_confirm_apply_after_preview|json_encode|raw }})) {
+			return;
+		}
+		
+		var dataImport = new FormData(this); // to send files it is necessary FormData(), not serialize()
+		
+		dataImport.append('nix_new_submit', 1);
+		if (nixImportAction === 'preview') {
+			dataImport.append('nix_preview_only', 1);
+		} else {
+			dataImport.append('nix_apply_confirmed', 1);
+		}
+		
+		$.ajax({
+			url: 'index.php?route=extension/feed/nix/processingImportAjax&user_token={{ user_token }}',
+			type: 'POST',
+			dataType: 'json',
+			contentType: false, // to have regular post field with FormData() obj
+			cache: false,
+			processData: false, // to send a DOMDocument
+			data: dataImport,
+			beforeSend: function() {
+				$('#nix-import--form .form-control').removeClass('has-error');				
+				$('#nix-import--answer').html('');				
+				$('.loader-dialog').html({{ status_started|json_encode|raw }});
+				
+				// A! NOT only for this request!
+				loaderOn(); // contain other on start actions
+			},
+			success: function (json) {
+
+				if ('Preview' == json['status']) {
+
+					$('#nix-import--answer').html('<div class="alert alert-info">' + nixEscape(json['msg']) + '<br>' + nixEscape(json['statistics']) + '</div>' + (json['preview_html'] || ''));
+					$('#nix-import--preview-token').val(json['preview_token'] || '');
+						nixPreviewReady = !!json['preview_token'];
+					loaderOff();
+				
+				} else if ('Finish' == json['status']) {
+					
+					$('#nix-import--answer').html('<div class="alert alert-success">' + nixEscape(json['msg']) + nixEscape(json['statistics']) + '</div>');
+					
+					if (false != json['warnings']) {
+						$('#nix-import--answer').append('<div class="alert alert-warning">' + nixEscape(json['warnings']) + '</div>');
+					}
+					
+					loaderOff(); // contain other on stop actions
+					
+				} else if ('Continue' == json['status']) {
+					
+					$('.loader-statistics').html(json['statistics']);
+					
+					// !A Note 3:A
+					// Not off loader while loop not finished		
+					loopQueries();
+					
+				} else if ('Error' == json['status']) {
+
+					$('#nix-import--answer').html('<div class="alert alert-danger">' + nixEscape(json['msg']) + '</div>');
+
+					if ('undefined' !== typeof json['errors']['supplier_id']) {
+						$('#input-supplier').addClass('has-error');
+					}
+
+					if ('undefined' !== typeof json['errors']['xmlfile']) {
+						{% for language in languages %}
+						if ('undefined' !== typeof json['errors']['xmlfile'][{{ language.language_id }}]) {
+							$('#xmlfile-status-{{ language.language_id }}').addClass('has-error');
+						}
+						{% endfor %}
+					}
+					
+					// !A Note 3:B
+					//  If there are errors in the form - it is necessary to edit fields and send request again
+					loaderOff(); // contain other on stop actions
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 500) : '';
+				var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+				$('#nix-import--answer').html('<div class="alert alert-danger">' + nixEscape(message) + '</div>');
+				loaderOff();
+			}
+		});
+		
+	});
+	
+	var i = 1;
+	
+	async function loopQueries() {
+		var dataImport = $('#nix-import--form').serialize(); // Note-4:B -- not send files again
+			
+		await $.ajax({
+			url: 'index.php?route=extension/feed/nix/processingImportAjax&user_token={{ user_token }}',
+			type: 'POST',
+			dataType: 'json',
+			data: dataImport,
+			success: function (json) {
+
+				if ('Finish' == json['status']) {
+
+					$('#nix-import--answer').html('<div class="alert alert-success">' + nixEscape(json['msg']) + nixEscape(json['statistics']) + '</div>');
+					
+					if (false != json['warnings']) {
+						$('#nix-import--answer').append('<div class="alert alert-warning">' + nixEscape(json['warnings']) + '</div>');
+					}
+
+					// !A Note 3:C
+					// If import is finihed by the loop
+					loaderOff();					
+
+				} else if ('Continue' == json['status']) {
+					
+					$('.loader-statistics').html(json['statistics']);
+
+					i++;
+
+					loopQueries();
+				}
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				var responseText = jqXHR && jqXHR.responseText ? jqXHR.responseText.substring(0, 500) : '';
+				var message = {{ error_ajax_failed_detail|json_encode|raw }}.replace('%s', textStatus || 'unknown').replace('%s', responseText || errorThrown || 'empty response');
+				$('#nix-import--answer').html('<div class="alert alert-danger">' + nixEscape(message) + '</div>');
+				loaderOff();
+			}
+		});
+	}
+	
+	function loaderOn() {
+		$('.nix-pro-import-panel').addClass('with-loader');
+		$('.loader').show();
+		
+		$('#nix-import--btn, #nix-import--preview-btn').attr('disabled', true);
+		
+		startStopwatch();	
+	}
+	
+	function loaderOff() {
+		$('.loader').hide();
+		$('.nix-pro-import-panel').removeClass('with-loader');
+		
+		$('#nix-import--preview-btn').attr('disabled', false);
+		$('#nix-import--btn').attr('disabled', !nixPreviewReady);
+		
+		resetStopwatch();
+		
+		$('.loader-statistics').html('');
+	}
+	
+
+
+/* Time Counter
+ ---------------------------------------------------------------- */
+// Source: https://foolishdeveloper.com/create-a-simple-stopwatch-using-javascript-tutorial-code/
+// It's modified by ChatGPT to count time when switch the browser tab
+
+let timerWorker = null;
+let timerRef = document.querySelector('.timerDisplay');
+
+function startStopwatch() {
+	if (timerWorker === null) {
+		const workerCode = `
+			let [milliseconds, seconds, minutes, hours] = [0, 0, 0, 0];
+			let int = null;
+
+			function displayStopwatch() {
+				milliseconds += 10;
+				if (milliseconds == 1000) {
+					milliseconds = 0;
+					seconds++;
+					if (seconds == 60) {
+						seconds = 0;
+						minutes++;
+						if (minutes == 60) {
+							minutes = 0;
+							hours++;
+						}
+					}
+				}
+				let h = hours < 10 ? '0' + hours : hours;
+				let m = minutes < 10 ? '0' + minutes : minutes;
+				let s = seconds < 10 ? '0' + seconds : seconds;
+				let ms = milliseconds < 10 ? '00' + milliseconds : milliseconds < 100 ? '0' + milliseconds : milliseconds;
+
+				postMessage(\` \${h} : \${m} : \${s} : \${ms}\`); // Отправляем обновленное время основному потоку
+			}
+
+			function startTimer() {
+				if (int !== null) {
+					clearInterval(int);
+				}
+				int = setInterval(displayStopwatch, 10);
+			}
+
+			function stopTimer() {
+				clearInterval(int);
+				int = null;
+			}
+
+			onmessage = function(event) {
+				let command = event.data;
+
+				switch (command) {
+					case 'start':
+						startTimer();
+						break;
+					case 'stop':
+						stopTimer();
+						break;
+				}
+			};
+		`;
+
+		const blob = new Blob([workerCode], { type: 'application/javascript' });
+		const workerURL = URL.createObjectURL(blob);
+
+		timerWorker = new Worker(workerURL); // Создаем Web Worker
+		timerWorker.onmessage = function(event) {
+			timerRef.innerHTML = event.data; // Обновляем таймер на основной странице
+		};
+	}
+
+	timerWorker.postMessage('start'); // Запускаем таймер в Web Worker
+}
+
+function resetStopwatch() {
+	if (timerWorker !== null) {
+		timerWorker.terminate(); // Останавливаем Web Worker
+		timerWorker = null;
+	}
+
+	timerRef.innerHTML = '00 : 00 : 00 : 000 ';
+}
+
+
+</script>
+
+
+{{ footer }}

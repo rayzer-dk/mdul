@@ -1,0 +1,2 @@
+sku;options
+SKU-001;"[{""option_id"":0,""name"":""Цвет"",""type"":""select"",""value"":"""",""required"":1,""values"":[{""option_value_id"":0,""name"":""Красный"",""image"":"""",""sort_order"":0,""quantity"":10,""subtract"":1,""price"":0,""price_prefix"":""+"",""points"":0,""points_prefix"":""+"",""weight"":0,""weight_prefix"":""+""},{""option_value_id"":0,""name"":""Синий"",""image"":"""",""sort_order"":1,""quantity"":5,""subtract"":1,""price"":50,""price_prefix"":""+"",""points"":0,""points_prefix"":""+"",""weight"":0,""weight_prefix"":""+""}]}]"
