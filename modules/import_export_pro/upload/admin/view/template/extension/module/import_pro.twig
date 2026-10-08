@@ -1,5 +1,5 @@
 {{ header }}{{ column_left }}
-<div id="content">
+<div id="content" class="importpro-shell">
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
@@ -65,10 +65,19 @@
       .importpro-page .ip-status-ok{color:#198754;font-weight:700}.importpro-page .ip-status-warn{color:#b7791f;font-weight:700}.importpro-page .ip-status-error{color:#dc3545;font-weight:700}.importpro-page .ip-author-link{font-weight:700;color:#0057b7}.importpro-page .ip-setting-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:12px}.importpro-page .mapping-samples{display:flex;flex-wrap:wrap;gap:4px;max-width:520px}.importpro-page .mapping-sample-chip{display:inline-block;max-width:155px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:#f8fbff;border:1px solid #dfe7f1;border-radius:12px;padding:3px 8px;font-size:12px;color:#344054}.importpro-page .mapping-type-badge{display:inline-block;margin-top:5px;background:#eef4ff;color:#0057b7;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700}.importpro-page .mapping-target-warning{display:none;margin-top:5px;color:#b42318;font-size:12px}.importpro-page .mapping-target-warning .fa{color:#b42318}
       .importpro-page .ip-progress-panel{display:none;margin:12px 0;padding:12px;border:1px solid #d9e4f2;border-radius:10px;background:#f8fbff}.importpro-page .ip-progress-title{font-weight:700;color:#0f3660;margin-bottom:8px}.importpro-page .ip-progressbar{height:18px;background:#e9eef5;border-radius:999px;overflow:hidden}.importpro-page .ip-progressbar span{display:block;height:18px;width:0;background:#2b80d7;transition:width .2s ease}.importpro-page .ip-progress-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;color:#334155;font-size:12px}.importpro-page .ip-progress-meta b{color:#0f3660}.importpro-page .ip-progress-actions{margin-top:10px}
       @media(max-width:1199px){.importpro-page .ip-grid,.importpro-page .ip-grid-3,.importpro-page .ip-grid-4,.importpro-page .export-field-groups{grid-template-columns:1fr}.importpro-page .ip-sticky-actions{position:static}.importpro-page .ip-cron-fields{grid-template-columns:repeat(2,1fr)}}
+
+.importpro-shell .btn{border-radius:4px;box-shadow:none}.importpro-page .form-control{border-radius:4px}
+.importpro-page .ip-disclosure{display:block;min-width:0;margin-bottom:8px;border-radius:4px;padding:0}
+.importpro-page .ip-disclosure>summary{padding:10px 12px;background:#f8fafc;color:#1e4267;font-weight:600;cursor:pointer;list-style:disclosure-closed}
+.importpro-page .ip-disclosure[open]>summary{border-bottom:1px solid #e2e8f0;list-style:disclosure-open}
+.importpro-page .ip-disclosure>summary{list-style:none}.importpro-page .ip-disclosure>summary::-webkit-details-marker{display:none}.importpro-page .ip-disclosure>summary:after{content:"";float:right;width:7px;height:7px;border-right:2px solid #0057b7;border-bottom:2px solid #0057b7;transform:rotate(45deg);margin:3px 4px 0 10px}.importpro-page .ip-disclosure[open]>summary:after{transform:rotate(225deg);margin-top:7px}
+.importpro-page .ip-disclosure>summary~*{margin-left:12px;margin-right:12px}.importpro-page .ip-disclosure>summary~*:last-child{margin-bottom:12px}
+.importpro-page #form-module>.ip-grid,.importpro-page #profile-form>.ip-grid,.importpro-page #tab-rules .ip-body>.ip-grid{display:block}
+.importpro-page .nav-tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}.importpro-page .nav-tabs>li{float:none;flex:0 0 auto}.importpro-page .nav-tabs>li>a{white-space:nowrap;padding:9px 12px;border-radius:4px 4px 0 0;border-top:3px solid transparent}.importpro-page .nav-tabs>li.active>a{border-top-color:#0057b7;background:#f6faff}
+
     </style>
 
     <div class="ip-toolbar">
-      <span class="ip-badge">PRO</span>
       <span class="ip-pill"><i class="fa fa-cube"></i> ocStore/OpenCart 3.x</span>
       <span class="ip-pill"><i class="fa fa-code"></i> PHP 7.4–8.5</span>
       <span class="ip-pill"><i class="fa fa-shield"></i> OCMOD-only</span>
@@ -76,7 +85,7 @@
       <span class="ip-pill"><i class="fa fa-user"></i> {{ text_author }}: <a class="ip-author-link" href="{{ author_url|replace({'&amp;':'&'})|e('html_attr') }}" target="_blank" rel="noopener">{{ author_name|e }}</a></span>
     </div>
 
-    <div class="alert alert-warning"><i class="fa fa-shield"></i> {{ text_atomic_import_notice }}</div>
+    <details class="ip-box ip-disclosure" style="margin-bottom:12px"><summary><i class="fa fa-info-circle"></i> {{ text_import_details }}</summary><p class="ip-help">{{ text_atomic_import_notice }}</p></details>
 
     <ul class="nav nav-tabs" id="importpro-main-tabs">
       <li class="active"><a href="#tab-settings" data-toggle="tab"><i class="fa fa-cog"></i> {{ tab_settings }}</a></li>
@@ -100,8 +109,8 @@
             <form action="{{ action|replace({'&amp;':'&'})|e('html_attr') }}" method="post" enctype="multipart/form-data" id="form-module" class="form-horizontal">
               <input type="hidden" name="user_token" value="{{ user_token|e('html_attr') }}">
               <div class="ip-grid">
-                <div class="ip-box">
-                  <h4><i class="fa fa-power-off"></i> {{ text_section_status }}</h4>
+                <details class="ip-box ip-disclosure" open>
+                  <summary><i class="fa fa-power-off"></i> {{ text_section_status }}</summary>
                   <div class="form-group">
                     <label class="control-label"><i class="fa fa-toggle-on"></i> {{ entry_status }}</label>
                     <select name="module_import_pro_status" class="form-control">
@@ -117,9 +126,9 @@
                     </select>
                     <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_match_field }}</div>
                   </div>
-                </div>
-                <div class="ip-box">
-                  <h4><i class="fa fa-picture-o"></i> {{ text_section_images }}</h4>
+                </details>
+                <details class="ip-box ip-disclosure">
+                  <summary><i class="fa fa-picture-o"></i> {{ text_section_images }}</summary>
                   <div class="checkbox"><label><input type="checkbox" name="module_import_pro_download_images" value="1" {{ module_import_pro_download_images ? 'checked="checked"' : '' }}> {{ entry_download_images }}</label></div>
                   <div class="form-group">
                     <label class="control-label"><i class="fa fa-folder-open"></i> {{ entry_image_subdir }}</label>
@@ -136,22 +145,19 @@
                     <input type="text" name="module_import_pro_url_timeout" value="{{ module_import_pro_url_timeout|e('html_attr') }}" class="form-control" placeholder="60">
                     <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_url_timeout }}</div>
                   </div>
-                </div>
+                </details>
               </div>
-              <div class="ip-box" style="margin-top:12px;">
-                <h4><i class="fa fa-key"></i> {{ text_section_cron_token }}</h4>
+              <details class="ip-box ip-disclosure" style="margin-top:12px;">
+                <summary><i class="fa fa-key"></i> {{ text_section_cron_token }}</summary>
                 <input type="text" name="module_import_pro_cron_token" value="{{ module_import_pro_cron_token|e('html_attr') }}" class="form-control">
                 <div class="ip-help"><i class="fa fa-shield"></i> {{ help_cron_token }}</div>
-              </div>
-              <div class="ip-box" style="margin-top:12px;">
-                <h4><i class="fa fa-trash"></i> {{ entry_uninstall_delete_data }}</h4>
+              </details>
+              <details class="ip-box ip-disclosure" style="margin-top:12px;">
+                <summary><i class="fa fa-trash"></i> {{ entry_uninstall_delete_data }}</summary>
                 <div class="checkbox"><label><input type="checkbox" name="module_import_pro_uninstall_delete_data" value="1" {{ module_import_pro_uninstall_delete_data ? 'checked="checked"' : '' }}> {{ entry_uninstall_delete_data }}</label></div>
                 <div class="ip-help"><i class="fa fa-exclamation-triangle"></i> {{ help_uninstall_delete_data }}</div>
-              </div>
-              <div class="ip-setting-actions">
-                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button>
-                <a href="{{ cancel|replace({'&amp;':'&'})|e('html_attr') }}" class="btn btn-default"><i class="fa fa-reply"></i> {{ button_cancel }}</a>
-              </div>
+              </details>
+
             </form>
           </div>
         </div>
@@ -170,8 +176,8 @@
               <input type="hidden" name="profile_id" value="0">
               <input type="hidden" name="field_map_json" value="{}">
               <div class="ip-grid">
-                <div class="ip-box">
-                  <h4><i class="fa fa-file-text-o"></i> {{ text_section_source }}</h4>
+                <details class="ip-box ip-disclosure" open>
+                  <summary><i class="fa fa-file-text-o"></i> {{ text_section_source }}</summary>
                   <div class="form-group">
                     <label class="control-label"><i class="fa fa-tag"></i> {{ entry_profile_name }}</label>
                     <input type="text" name="name" class="form-control" placeholder="{{ placeholder_profile_name|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_profile_name }}</div>
@@ -189,9 +195,9 @@
                   </div>
                   <input type="file" id="upload-file" class="ip-hidden">
                   <button type="button" class="btn btn-default" id="button-upload"><i class="fa fa-upload"></i> {{ button_upload }}</button>
-                </div>
-                <div class="ip-box">
-                  <h4><i class="fa fa-language"></i> {{ text_section_lang_auth }}</h4>
+                </details>
+                <details class="ip-box ip-disclosure">
+                  <summary><i class="fa fa-language"></i> {{ text_section_lang_auth }}</summary>
                   <div class="form-group">
                     <label class="control-label"><i class="fa fa-flag"></i> {{ entry_default_language }}</label>
                     <select name="default_language_id" class="form-control">{% for language in languages %}<option value="{{ language.language_id }}" {{ language.language_id == default_language_id ? 'selected' : '' }}>{{ language.name|e }} / {{ language.code|e }}</option>{% endfor %}</select>
@@ -218,10 +224,10 @@
                     <div class="form-group"><label class="control-label"><i class="fa fa-key"></i> {{ entry_auth_password }}</label><input type="password" name="auth_password" class="form-control" placeholder="password" autocomplete="new-password"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_auth_password }}</div><div class="ip-help ip-auth-password-saved" style="display:none;"><i class="fa fa-check-circle"></i> {{ text_auth_password_saved }}</div></div>
                   </div>
                   <div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_auth_basic }}</div>
-                </div>
+                </details>
               </div>
-              <div class="ip-box" style="margin-top:12px;">
-                <h4><i class="fa fa-truck"></i> {{ text_section_supplier }}</h4>
+              <details class="ip-box ip-disclosure" style="margin-top:12px;">
+                <summary><i class="fa fa-truck"></i> {{ text_section_supplier }}</summary>
                 <div class="checkbox"><label><input type="checkbox" name="supplier_mode" value="1"> {{ entry_supplier_mode }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_mode }}</div></div>
                 <div class="ip-grid-4">
                   <div class="form-group"><label class="control-label"><i class="fa fa-id-card-o"></i> {{ entry_supplier_name }}</label><input type="text" name="supplier_name" class="form-control" placeholder="Supplier XML"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_name }}</div><div class="ip-help"><i class="fa fa-link"></i> {{ help_supplier_external_id }}</div></div>
@@ -233,13 +239,13 @@
                 <div class="ip-grid-4">
                   <div class="form-group"><label class="control-label">{{ entry_supplier_price_rounding }}</label><input type="text" name="supplier_price_rounding" class="form-control" placeholder="1"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_markup }}</div></div>
                   <div class="form-group"><label class="control-label">{{ entry_supplier_price_stock_source_type }}</label><select name="supplier_price_stock_source_type" class="form-control"><option value="">{{ text_supplier_source_same }}</option><option value="file">{{ text_source_type_file }}</option><option value="url">{{ text_source_type_url }}</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_source_type }}</div></div>
-                  <div class="form-group" style="grid-column:span 2;"><label class="control-label">{{ entry_supplier_price_stock_source_path }}</label><input type="text" name="supplier_price_stock_source_path" class="form-control" placeholder="https://supplier.example/price-stock.xml"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_price_stock_source }}</div></div>
+                  <div class="form-group" style="grid-column:span 2;"><label class="control-label">{{ entry_supplier_price_stock_source_path }}</label><input type="text" name="supplier_price_stock_source_path" class="form-control" ><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_price_stock_source }}</div></div>
                 </div>
                 <div class="ip-grid-3">
                   <div class="checkbox"><label><input type="checkbox" name="supplier_auto_xml_params" value="1"> {{ entry_supplier_auto_xml_params }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_auto_xml_params }}</div></div>
                   <div class="checkbox"><label><input type="checkbox" name="supplier_copy_attributes_to_languages" value="1"> {{ entry_supplier_copy_attributes_to_languages }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_supplier_copy_attributes }}</div></div>
                 </div>
-              </div>
+              </details>
             </form>
             <div class="ip-actions ip-sticky-actions">
               <button type="button" class="btn btn-danger" id="button-delete-profile"><i class="fa fa-trash"></i> {{ button_delete }}</button>
@@ -281,7 +287,7 @@
         <div class="ip-card"><div class="ip-head"><h3 class="ip-title"><i class="fa fa-filter"></i> {{ tab_rules }}</h3></div>
           <div class="ip-body">
             <div class="ip-grid">
-              <div class="ip-box"><h4><i class="fa fa-table"></i> {{ text_section_parser }}</h4>
+              <details class="ip-box ip-disclosure"><summary><i class="fa fa-table"></i> {{ text_section_parser }}</summary>
                 <div class="ip-grid-4">
                   <div class="form-group"><label class="control-label">{{ entry_delimiter }}</label><input form="profile-form" type="text" name="delimiter" value="," class="form-control" placeholder=","></div>
                   <div class="form-group"><label class="control-label">{{ entry_enclosure }}</label><input form="profile-form" type="text" name="enclosure" value='"' class="form-control" placeholder='"'></div>
@@ -298,8 +304,8 @@
                   <div class="form-group"><label class="control-label">{{ entry_html_table_index }}</label><input form="profile-form" type="text" name="html_table_index" value="0" class="form-control" placeholder="0"></div>
                   <div class="form-group"><label class="control-label">{{ entry_html_header_row }}</label><input form="profile-form" type="text" name="html_header_row" value="1" class="form-control" placeholder="1"></div>
                 </div>
-              </div>
-              <div class="ip-box"><h4><i class="fa fa-folder-open"></i> {{ text_section_categories }}</h4>
+              </details>
+              <details class="ip-box ip-disclosure"><summary><i class="fa fa-folder-open"></i> {{ text_section_categories }}</summary>
                 <div class="ip-grid-3">
                   <div class="form-group"><label class="control-label">{{ entry_default_category }}</label><select form="profile-form" name="default_category" class="form-control"><option value="0">—</option>{% for category in categories %}<option value="{{ category.category_id }}">{{ category.name|e }}</option>{% endfor %}</select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_default_category }}</div></div>
                   <div class="form-group"><label class="control-label">{{ entry_category_mode }}</label><select form="profile-form" name="category_mode" class="form-control"><option value="file">{{ text_category_mode_file }}</option><option value="force">{{ text_category_mode_force }}</option><option value="both">{{ text_category_mode_both }}</option></select></div>
@@ -311,10 +317,10 @@
                 </div>
                 <div class="checkbox"><label><input form="profile-form" type="checkbox" name="create_categories" value="1"> {{ entry_create_categories }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_create_categories }}</div></div>
                 <div class="checkbox"><label><input form="profile-form" type="checkbox" name="category_path_mode" value="1"> {{ text_quick_create_path }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_path_categories }}</div></div>
-              </div>
+              </details>
             </div>
             <div class="ip-grid" style="margin-top:12px;">
-              <div class="ip-box"><h4><i class="fa fa-refresh"></i> {{ text_section_updates }}</h4>
+              <details class="ip-box ip-disclosure"><summary><i class="fa fa-refresh"></i> {{ text_section_updates }}</summary>
                 <div class="ip-grid-3">
                   <div class="checkbox"><label><input form="profile-form" type="checkbox" name="create_new" value="1"> {{ entry_create_new }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_create_new }}</div></div>
                   <div class="checkbox"><label><input form="profile-form" type="checkbox" name="update_existing" value="1"> {{ entry_update_existing }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_update_existing }}</div></div>
@@ -337,8 +343,8 @@
                 <input form="profile-form" type="hidden" name="ignore_empty_fields" value="0">
                 <div class="checkbox"><label><input form="profile-form" type="checkbox" name="ignore_empty_fields" value="1"> {{ entry_ignore_empty_fields }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_ignore_empty_fields }}</div></div>
                 <div class="checkbox"><label><input form="profile-form" type="checkbox" name="sync_missing_confirm" value="1"> {{ entry_sync_missing_confirm }}</label><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_sync_missing_confirm }}</div></div>
-              </div>
-              <div class="ip-box"><h4><i class="fa fa-eraser"></i> {{ text_section_cleaning }}</h4><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_cleaning_group }}</div>
+              </details>
+              <details class="ip-box ip-disclosure"><summary><i class="fa fa-eraser"></i> {{ text_section_cleaning }}</summary><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_cleaning_group }}</div>
                 <div class="ip-grid-3">
                   <div class="checkbox"><label><input form="profile-form" type="checkbox" name="clean_text_fields" value="1"> {{ entry_clean_text_fields }}</label></div>
                   <div class="checkbox"><label><input form="profile-form" type="checkbox" name="clean_description_html" value="1"> {{ entry_clean_description_html }}</label></div>
@@ -354,7 +360,7 @@
                   <div class="form-group"><label class="control-label">{{ entry_filter_manufacturer_contains }}</label><input form="profile-form" type="text" name="filter_manufacturer_contains" class="form-control" placeholder="{{ placeholder_filter_text|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_filter_text }}</div></div>
                   <div class="form-group"><label class="control-label">{{ entry_filter_category_contains }}</label><input form="profile-form" type="text" name="filter_category_contains" class="form-control" placeholder="{{ placeholder_filter_category|e('html_attr') }}"><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_filter_text }}</div></div>
                 </div>
-              </div>
+              </details>
             <div class="ip-box" style="margin-top:12px;">
                   <div class="ip-head"><h3 class="ip-title"><i class="fa fa-sliders"></i> {{ text_field_policy_title }}</h3></div>
                   <div class="ip-body">
@@ -462,12 +468,12 @@
                 <button type="button" class="btn btn-default btn-sm button-export-fields-preset" data-preset="stock"><i class="fa fa-cubes"></i> {{ text_export_preset_stock }}</button>
               </div>
               <div class="export-field-groups">
-                <div class="ip-box"><h4><i class="fa fa-cube"></i> {{ text_export_field_main }}</h4><div class="export-field-list">{% for field in ['product_id','model','sku','upc','ean','jan','isbn','mpn','location','manufacturer','manufacturer_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
-                <div class="ip-box"><h4><i class="fa fa-money"></i> {{ text_export_field_stock }}</h4><div class="export-field-list">{% for field in ['price','points','quantity','minimum','subtract','status','stock_status_id','shipping','tax_class_id','sort_order','date_available','noindex'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
-                <div class="ip-box"><h4><i class="fa fa-search"></i> {{ text_export_field_seo }}</h4><div class="export-field-list">{% for field in ['name','description','tag','meta_title','meta_description','meta_h1','meta_keywords','seo_keyword','product_url'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
-                <div class="ip-box"><h4><i class="fa fa-picture-o"></i> {{ text_export_field_media }}</h4><div class="export-field-list">{% for field in ['main_category_id','google_product_category','categories','category_ids','image','additional_images','attributes','options','weight','weight_class_id','length','width','height','length_class_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></div>
-                <div class="ip-box"><h4><i class="fa fa-link"></i> {{ text_field_policy_title }}</h4><div class="export-field-list">{% for field in ['store_ids','filter_ids','download_ids','related_product_ids','related_article_ids','layouts','discounts','specials','rewards','recurring'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}"> {{ field }}</label>{% endfor %}</div></div>
-                <div class="ip-box"><h4><i class="fa fa-truck"></i> {{ text_export_field_supplier }}</h4><div class="export-field-list">{% for field in ['supplier_id','supplier_name','external_product_id','supplier_sku','supplier_price','supplier_quantity','supplier_last_seen','supplier_hash','external_category_id','external_parent_category_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}"> {{ field }}</label>{% endfor %}</div></div>
+                <details class="ip-box ip-disclosure"><summary><i class="fa fa-cube"></i> {{ text_export_field_main }}</summary><div class="export-field-list">{% for field in ['product_id','model','sku','upc','ean','jan','isbn','mpn','location','manufacturer','manufacturer_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></details>
+                <details class="ip-box ip-disclosure"><summary><i class="fa fa-money"></i> {{ text_export_field_stock }}</summary><div class="export-field-list">{% for field in ['price','points','quantity','minimum','subtract','status','stock_status_id','shipping','tax_class_id','sort_order','date_available','noindex'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></details>
+                <details class="ip-box ip-disclosure"><summary><i class="fa fa-search"></i> {{ text_export_field_seo }}</summary><div class="export-field-list">{% for field in ['name','description','tag','meta_title','meta_description','meta_h1','meta_keywords','seo_keyword','product_url'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></details>
+                <details class="ip-box ip-disclosure"><summary><i class="fa fa-picture-o"></i> {{ text_export_field_media }}</summary><div class="export-field-list">{% for field in ['main_category_id','google_product_category','categories','category_ids','image','additional_images','attributes','options','weight','weight_class_id','length','width','height','length_class_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}" checked> {{ field }}</label>{% endfor %}</div></details>
+                <details class="ip-box ip-disclosure"><summary><i class="fa fa-link"></i> {{ text_field_policy_title }}</summary><div class="export-field-list">{% for field in ['store_ids','filter_ids','download_ids','related_product_ids','related_article_ids','layouts','discounts','specials','rewards','recurring'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}"> {{ field }}</label>{% endfor %}</div></details>
+                <details class="ip-box ip-disclosure"><summary><i class="fa fa-truck"></i> {{ text_export_field_supplier }}</summary><div class="export-field-list">{% for field in ['supplier_id','supplier_name','external_product_id','supplier_sku','supplier_price','supplier_quantity','supplier_last_seen','supplier_hash','external_category_id','external_parent_category_id'] %}<label><input type="checkbox" class="export-field-checkbox" name="fields[]" value="{{ field }}"> {{ field }}</label>{% endfor %}</div></details>
               </div>
               <div class="ip-grid-4" style="margin-top:12px;">
                 <div class="form-group"><label class="control-label">{{ entry_export_format }}</label><select name="format" id="export-format" class="form-control"><option value="csv">CSV</option><option value="xlsx">XLSX</option><option value="xml">XML</option><option value="json">JSON</option><option value="rozetka_yml">Rozetka XML/YML</option><option value="epicentr_xml">Epicentr XML</option><option value="hotline_xml">Hotline XML</option><option value="prom_yml">Prom.ua / Universal YML</option><option value="price_ua_yml">Price.ua / Universal YML</option><option value="facebook_csv">Facebook / Instagram (Meta) CSV</option><option value="pinterest_csv">Pinterest Catalog CSV</option><option value="tiktok_csv">TikTok Catalog CSV</option></select><div class="ip-help"><i class="fa fa-info-circle"></i> {{ help_export_format }}</div></div>
@@ -534,7 +540,7 @@
           <div class="ip-body">
             <div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_mirohost_cron_help }}</div>
             <div class="ip-grid-3">
-              <div class="ip-box"><h4><i class="fa fa-play"></i> {{ text_cron_full }}</h4>
+              <details class="ip-box ip-disclosure"><summary><i class="fa fa-play"></i> {{ text_cron_full }}</summary>
                 <div class="ip-cron-fields">
                   <div><strong>{{ text_cron_field_minutes }}</strong>5</div>
                   <div><strong>{{ text_cron_field_hours }}</strong>*</div>
@@ -544,8 +550,8 @@
                 </div>
                 <label class="control-label" style="font-size:11px;color:#667085;">{{ text_cron_field_command }}</label>
                 <input type="text" readonly id="cron-import-full" class="form-control">
-              </div>
-              <div class="ip-box"><h4><i class="fa fa-flask"></i> {{ text_cron_test }}</h4>
+              </details>
+              <details class="ip-box ip-disclosure"><summary><i class="fa fa-flask"></i> {{ text_cron_test }}</summary>
                 <div class="ip-cron-fields">
                   <div><strong>{{ text_cron_field_minutes }}</strong>10</div>
                   <div><strong>{{ text_cron_field_hours }}</strong>*</div>
@@ -555,8 +561,8 @@
                 </div>
                 <label class="control-label" style="font-size:11px;color:#667085;">{{ text_cron_field_command }}</label>
                 <input type="text" readonly id="cron-import-test" class="form-control">
-              </div>
-              <div class="ip-box"><h4><i class="fa fa-refresh"></i> {{ text_cron_priceqty }}</h4>
+              </details>
+              <details class="ip-box ip-disclosure"><summary><i class="fa fa-refresh"></i> {{ text_cron_priceqty }}</summary>
                 <div class="ip-cron-fields">
                   <div><strong>{{ text_cron_field_minutes }}</strong>*/15</div>
                   <div><strong>{{ text_cron_field_hours }}</strong>*</div>
@@ -566,7 +572,7 @@
                 </div>
                 <label class="control-label" style="font-size:11px;color:#667085;">{{ text_cron_field_command }}</label>
                 <input type="text" readonly id="cron-import-priceqty" class="form-control">
-              </div>
+              </details>
             </div>
             <div class="alert alert-warning" style="margin-top:12px;"><i class="fa fa-shield"></i> {{ help_cron }}</div>
           </div></div>

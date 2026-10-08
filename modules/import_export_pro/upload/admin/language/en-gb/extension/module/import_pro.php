@@ -1,5 +1,5 @@
 <?php
-// Import Pro Professional Hardened v3.6.9 — en-gb
+// Import Pro Professional Hardened v3.7.0 — en-gb
 
 $_['heading_title'] = '<span style="color:#0057b7;font-weight:700;">Import Export Pro</span> <span style="display:inline-block;background:#ffd700;color:#0057b7;border-radius:12px;padding:2px 10px;font-size:12px;line-height:1.2;vertical-align:middle;font-weight:700;margin-left:6px;">PRO</span>';
 
@@ -153,7 +153,7 @@ $_['text_cron_url']              = 'Cron URL';
 $_['text_export']                = 'Export products';
 
 $_['help_source_path']         = 'For files, click Upload or use a path inside DIR_DOWNLOAD/import_pro/. Arbitrary system paths are blocked.';
-$_['help_source_url_example']  = 'URL example: https://supplier.com/feed.xml';
+$_['help_source_url_example'] = 'Enter a direct link to the supplier file.';
 $_['help_source_file_example'] = 'Path example: ' . (defined('DIR_DOWNLOAD') ? DIR_DOWNLOAD : '<DIR_DOWNLOAD>/') . 'import_pro/feed.xlsx';
 $_['help_field_map']           = 'JSON: {"model":"SKU","price":"Price","name:en-gb":"Name EN","categories":"Category","google_product_category":"Google Category ID"}';
 $_['help_json_example']        = 'Language targets: name:uk-ua, description:ru-ru, meta_title:en-gb etc.';
@@ -188,7 +188,7 @@ $_['help_update_existing'] = 'Enable when matched products should be updated by 
 $_['help_category_path_mode']  = 'Allows importing category hierarchy from a single string field.';
 
 $_['placeholder_profile_name']    = 'e.g.: Agro supplier XLSX feed';
-$_['placeholder_source_path']     = 'catalog/import_pro/feed.xlsx or https://supplier.com/feed.xml';
+$_['placeholder_source_path'] = 'catalog/import_pro/feed.xlsx or file URL';
 $_['placeholder_image_subdir']    = 'catalog/import_pro/supplier_1/';
 $_['placeholder_filter_status']   = 'e.g.: 1 or yes or in stock';
 $_['placeholder_filter_text']     = 'Acme, Bosch, Makita';
@@ -257,7 +257,7 @@ $_['text_about_arch']      = 'Architecture';
 $_['text_about_arch_text'] = 'The module never injects fields into the standard product or category form, and never uses brittle OCMOD search/replace. All settings and profiles live in dedicated module tables. After uninstall, only imported products and images remain on disk.';
 $_['text_about_quickstart'] = 'Quick start';
 $_['text_about_quickstart_text'] = '1) Create a profile on the Profile tab. 2) Upload a file or set a supplier URL. 3) Click Detect fields and review the mapping on Fields & languages. 4) Run "Test 10 rows" on Test & import. 5) Check the journal on Logs. 6) Only after a successful test, run the real import. 7) Set up cron on the Cron tab if needed.';
-$_['text_about_version']   = 'Version 3.6.9 — compatibility release for CodeCart 3.0.5.2, ocStore 3.0.4.1 and OpenCart 3.x on PHP 7.4–8.5.';
+$_['text_about_version']   = 'Version 3.7.0 — compatibility release for CodeCart 3.0.5.2, ocStore 3.0.4.1 and OpenCart 3.x on PHP 7.4–8.5.';
 
 // About tab: advantages (12 items)
 $_['text_about_adv_1']  = 'OCMOD-only, no core edits';
@@ -315,7 +315,7 @@ $_['entry_force_category_id'] = 'Forced category ID';
 $_['help_strip_msword'] = 'Cleans descriptions saved as HTML from Word/Excel.';
 
 
-// CodeCart PRO / update / disabled mode / diagnostics v3.6.9
+// CodeCart PRO / update / disabled mode / diagnostics v3.7.0
 $_['button_upgrade_module'] = 'Download update manually';
 $_['button_check_update'] = 'Open author website';
 $_['text_author'] = 'Author';
@@ -367,7 +367,7 @@ $_['diag_msg_cron_warn'] = 'Token is shorter than recommended. Save module setti
 $_['diag_msg_module_enabled'] = 'Enabled.';
 $_['diag_msg_module_disabled'] = 'Disabled. Import and cron are blocked until the module is enabled and settings are saved.';
 
-// Supplier XML Feed Manager v3.6.9
+// Supplier XML Feed Manager v3.7.0
 $_['text_section_supplier'] = 'Supplier and XML feed';
 $_['entry_supplier_mode'] = 'Enable supplier mode';
 $_['entry_supplier_name'] = 'Supplier name';
@@ -393,7 +393,7 @@ $_['help_supplier_external_id'] = 'Map external_product_id to offer id or anothe
 $_['text_manual_update_help'] = 'Updates are downloaded from the author website and installed manually after a full backup.';
 
 
-// Image limit, export image format and safe update rules v3.6.9
+// Image limit, export image format and safe update rules v3.7.0
 $_['entry_image_limit'] = 'Maximum product photos';
 $_['entry_auto_split_images'] = 'First XML photo as main image, the rest as gallery';
 $_['entry_image_update_mode'] = 'Image update mode';
@@ -441,7 +441,7 @@ $_['text_about_import_status_title'] = 'Live import status';
 $_['text_about_import_status_text'] = 'Manual import can run in batches and after each AJAX batch shows product-based counters: products found in the file, processed products, new imported products, updated products, skipped products, products with errors and remaining products. This is clearer for clients than technical source-row counters.';
 $_['text_about_safe_modes_title'] = 'Recommended safe modes';
 $_['text_about_safe_modes_text'] = 'Use Dry run before a real import. For missing supplier products, the safest commercial mode is Disable, not Delete. Use Delete only after a full backup and only when the supplier feed is complete.';
-$_['help_profile_name'] = 'Example: Rozetka XML, Kyiv Supplier CSV, Bosch Stock. The name is visible only in admin and helps distinguish profiles.';
+$_['help_profile_name'] = 'Example: XML price list, CSV supplier, Stock. The name is visible only in admin and helps distinguish profiles.';
 $_['help_format'] = 'Select the source file format. Supplier YML/XML usually uses XML, Excel uses XLSX, plain tables often use CSV.';
 $_['help_source_type'] = 'File means an uploaded price list in DIR_DOWNLOAD/import_pro/. URL means a supplier link that can be run manually or by cron.';
 $_['help_auth_type'] = 'Keep “No authorization” for public feeds. Basic is only for links protected by supplier login and password.';
@@ -545,14 +545,14 @@ $_['log_truncated'] = 'Run log was truncated to 500 entries to protect database 
 $_['log_missing_action'] = 'Missing products action';
 $_['log_affected'] = 'affected';
 
-// v3.6.9 safety and access hardening
+// v3.7.0 safety and access hardening
 $_['entry_uninstall_delete_data'] = 'Delete module data on uninstall';
 $_['help_uninstall_delete_data'] = 'Disabled by default. Enable only if you intentionally want to drop Import Export Pro profiles, run history and supplier mapping tables during uninstall. Imported products and imported images are not deleted.';
 $_['error_post_required'] = 'This action must be sent by POST. Refresh the admin page and try again.';
 $_['text_access_denied_title'] = 'Access denied';
 $_['text_access_denied_help'] = 'Your admin account does not have permission to view Import Export Pro. Check System > Users > User Groups and enable access/modify rights for extension/module/import_pro.';
 
-// v3.6.9 supplier safe change preview
+// v3.7.0 supplier safe change preview
 $_['text_change_preview_title'] = 'Safe change preview';
 $_['text_changed_products'] = 'Products with changes';
 $_['text_unchanged_products'] = 'No changes';
@@ -578,7 +578,7 @@ $_['text_column_quantity'] = 'Quantity';
 $_['text_safe_cron_notice'] = 'Dry-run shows changes before writing to the database. Cron price/qty mode updates existing products only and never creates new positions.';
 $_['log_price_qty_create_blocked'] = 'Price/quantity mode never creates new products. New supplier row was skipped.';
 
-// v3.6.9 safe queue, field policies and supplier synchronization
+// v3.7.0 safe queue, field policies and supplier synchronization
 $_['text_run_mode_price_only'] = 'Prices only';
 $_['text_run_mode_quantity_only'] = 'Stock only';
 $_['text_run_mode_price_stock'] = 'Prices and stock';
@@ -637,3 +637,5 @@ $_['error_invalid_batch_id'] = 'Invalid queue identifier.';
 
 $_['entry_in_stock_quantity'] = 'Quantity for “in stock”';
 $_['help_in_stock_quantity'] = 'Used only when the supplier provides no number. This is your assumed quantity, for example 100.';
+
+$_['text_import_details'] = 'More about import';

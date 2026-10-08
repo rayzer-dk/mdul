@@ -11,9 +11,9 @@ from xml.etree import ElementTree
 
 ROOT = Path(__file__).resolve().parents[1]
 RELEASES = {
-    'import_export_pro': ('Import_Export_Pro', '3.6.9'),
-    'supplier_sync_parser_pro': ('Supplier_Sync_Parser_Pro', '1.6.3'),
-    'importxml_clean_pro': ('ImportXML_Clean_Pro', '1.4.2')
+    'import_export_pro': ('Import_Export_Pro', '3.7.0'),
+    'supplier_sync_parser_pro': ('Supplier_Sync_Parser_Pro', '1.6.4'),
+    'importxml_clean_pro': ('ImportXML_Clean_Pro', '1.4.3')
 }
 
 

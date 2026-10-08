@@ -50,6 +50,7 @@
   .nix-pro-admin .nix-main-tabs > li > a { border: 1px solid #ddd; border-radius: 4px; margin-bottom: 4px; }
   .nix-pro-admin .nix-tab-content { border-top: 1px solid #ddd; }
 }
+.nix-pro-admin .btn{border-radius:4px;box-shadow:none}.nix-pro-admin .form-control{border-radius:4px}.nix-pro-admin .nav-tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}.nix-pro-admin .nav-tabs>li{float:none;flex:0 0 auto}.nix-pro-admin .nav-tabs>li>a{white-space:nowrap;border-radius:4px 4px 0 0;border-top:3px solid transparent}.nix-pro-admin .nav-tabs>li.active>a{border-top-color:#0057b7;background:#f6faff}
 </style>
  <div class="page-header">
   <div class="container-fluid">
@@ -89,13 +90,12 @@
      <a class="btn btn-default active" href="{{ link_part_settings }}"><i class="fa fa-cogs"></i> {{ text_part_settings }}</a>
     </div>
 
-    <div class="nix-top-box">
-     <div class="nix-top-box-icon"><i class="fa fa-info-circle"></i></div>
+    <details class="nix-top-box">
+     <summary class="nix-top-box-title"><i class="fa fa-info-circle"></i> {{ text_part_import }}</summary>
      <div class="nix-top-box-body">
-      <div class="nix-top-box-title">{{ text_part_import }}</div>
       <div class="nix-top-box-text">{{ text_manual_import_primary }}</div>
      </div>
-    </div>
+    </details>
 
     <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-nix" class="form-horizontal">
      <ul class="nav nav-tabs nix-main-tabs">

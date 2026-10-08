@@ -2,7 +2,7 @@
 
 /**
  * @category   OpenCart
- * @package    ImportXML Clean PRO v1.4.2
+ * @package    ImportXML Clean PRO v1.4.3
  * @author     CodeCart PRO
  * @link       https://codecartpro.com
  * @copyright  CodeCart PRO
@@ -16,7 +16,7 @@ if (!class_exists('StdeLog') && is_file(DIR_SYSTEM . 'library/stdelog.php')) {
 	require_once DIR_SYSTEM . 'library/stdelog.php';
 }
 
-define('NIX_VERSION', '1.4.2');
+define('NIX_VERSION', '1.4.3');
 define('NIX_AUTHOR', 'CodeCart PRO');
 define('NIX_AUTHOR_LINK', 'https://codecartpro.com');
 define('NIX_UPDATE_LINK', 'https://codecartpro.com');
@@ -45,7 +45,7 @@ class ControllerExtensionFeedNix extends Controller {
 		
 		// StdE Require
 		if (!class_exists('StdE') || !class_exists('StdeLog')) {
-			throw new Exception('ImportXML Clean PRO v1.4.2: required library StdE/StdeLog is not loaded. Reinstall module package.');
+			throw new Exception('ImportXML Clean PRO v1.4.3: required library StdE/StdeLog is not loaded. Reinstall module package.');
 		}
 
 		$this->stde = new StdE($registry);
@@ -137,7 +137,7 @@ class ControllerExtensionFeedNix extends Controller {
 			$data[$key] = $value;
 		}
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		$this->document->setTitle(strip_tags($this->language->get('heading_title')));
 
 		if (!$this->user->hasPermission('access', 'extension/feed/nix')) {
 			return $this->permissionDenied($data);
@@ -466,7 +466,7 @@ class ControllerExtensionFeedNix extends Controller {
 			$data[$key] = $value;
 		}
 
-		$this->document->setTitle($this->language->get('heading_title'));
+		$this->document->setTitle(strip_tags($this->language->get('heading_title')));
 
 		if (!$this->user->hasPermission('access', 'extension/feed/nix')) {
 			return $this->permissionDenied($data);

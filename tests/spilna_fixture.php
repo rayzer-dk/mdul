@@ -19,7 +19,10 @@ class FixtureParser extends CodecartSupplierSyncParser {
     protected function getCurrencyRate($currency) { return 1; }
     protected function checkExclusionRules($data, $supplier, $url) { return array('excluded'=>false); }
 }
-$supplier = json_decode(file_get_contents(dirname(__DIR__).'/modules/supplier_sync_parser_pro/upload/system/library/codecart/presets/spilna_meta.json'), true);
+$supplier = json_decode(file_get_contents(dirname(__DIR__).'/modules/supplier_sync_parser_pro/upload/system/library/codecart/presets/prom_classic.json'), true);
+$supplier['base_url'] = 'https://spilna-meta.com.ua';
+$supplier['currency_code'] = 'UAH';
+$supplier['source_language_code'] = 'uk-ua';
 $supplier['settings'] = json_encode($supplier['settings']);
 $supplier += array('supplier_id'=>1, 'default_stock_status_id'=>5, 'default_category_id'=>0, 'discount_percent'=>0, 'markup_percent'=>0, 'rounding_mode'=>'two', 'manufacturer_xpath'=>'', 'target_language_id'=>1);
 $parser = new FixtureParser(new FixtureRegistry());

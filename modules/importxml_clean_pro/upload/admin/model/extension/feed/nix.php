@@ -2,7 +2,7 @@
 
 /**
  * @category   OpenCart
- * @package    ImportXML Clean PRO v1.4.2
+ * @package    ImportXML Clean PRO v1.4.3
  * @author     CodeCart PRO
  * @link       https://codecartpro.com
  * @copyright  CodeCart PRO
@@ -1347,7 +1347,7 @@ class ModelExtensionFeedNix extends Model {
 		}
 
 		return [
-			'module' => 'ImportXML Clean PRO v1.4.2',
+			'module' => 'ImportXML Clean PRO v1.4.3',
 			'author' => 'CodeCart PRO',
 			'site' => 'https://codecartpro.com',
 			'exported_at' => date('c'),

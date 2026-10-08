@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.6.9
+## 3.7.0
 
 - Certified runtime syntax/API compatibility for PHP 7.4–8.5.
 - Removed three PHP 8.5 deprecated curl_close() calls.

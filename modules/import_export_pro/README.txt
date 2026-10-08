@@ -1,4 +1,4 @@
-Import Export Pro 3.6.9 by CodeCart PRO
+Import Export Pro 3.7.0 by CodeCart PRO
 https://codecartpro.com
 
 Полная документация находится в README.md.

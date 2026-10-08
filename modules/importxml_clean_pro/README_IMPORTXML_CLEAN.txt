@@ -1,4 +1,4 @@
-ImportXML Clean PRO v1.4.2
+ImportXML Clean PRO v1.4.3
 Author: CodeCart PRO
 Author site: https://codecartpro.com
 Compatibility: CodeCart 3.0.5.2 / ocStore 3.0.4.1 / OpenCart 3.x / PHP 7.4–8.5
@@ -44,7 +44,7 @@ Advantages:
 - Supports UTF-8 without BOM, InnoDB and utf8mb4.
 - Includes diagnostics, service tools, settings export/import, reset defaults and log cleanup.
 
-v1.4.2 compatibility and hardening notes:
+v1.4.3 compatibility and hardening notes:
 - Added explicit server-side user_token checks for admin AJAX/service actions.
 - Added 30-minute lifetime for the safe import preview token.
 - Added write-failure handling for temporary import files.
@@ -56,4 +56,4 @@ v1.4.2 compatibility and hardening notes:
 - Declared StdE registry properties to remove PHP 8.2+ dynamic-property deprecations.
 - Added whitelist validation for dynamic table/column/index identifiers used by schema diagnostics and migration helpers.
 - Removed duplicate language keys in en-gb, ru-ru and uk-ua.
-- Normalized the invalid legacy 1.3.17 version to the valid 1.4.2 release scheme.
+- Normalized the invalid legacy 1.3.17 version to the valid 1.4.3 release scheme.

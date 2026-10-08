@@ -1,7 +1,7 @@
 <?php
 class ControllerExtensionModuleSupplierSyncParserPro extends Controller {
     private $error = array();
-    private $version = '1.6.3';
+    private $version = '1.6.4';
     private $route = 'extension/module/supplier_sync_parser_pro';
 
     public function index() {
@@ -30,7 +30,7 @@ class ControllerExtensionModuleSupplierSyncParserPro extends Controller {
             }
             if (isset($this->request->post['save_supplier'])) {
                 $supplier_data = $this->request->post;
-                if (empty($supplier_data['supplier_id']) && isset($supplier_data['source_preset']) && in_array($supplier_data['source_preset'], array('spilna_meta','sazagro','rewolt'), true)) {
+                if (empty($supplier_data['supplier_id']) && isset($supplier_data['source_preset']) && in_array($supplier_data['source_preset'], array('prom_classic','prom_modern','opencart_html'), true)) {
                     $preset_path = DIR_SYSTEM . 'library/codecart/presets/' . $supplier_data['source_preset'] . '.json';
                     $preset = is_file($preset_path) ? json_decode(file_get_contents($preset_path), true) : array();
                     if (is_array($preset)) {
@@ -106,7 +106,7 @@ class ControllerExtensionModuleSupplierSyncParserPro extends Controller {
             $supplier_id = (int)$this->session->data['ccp_ssp_active_supplier_id'];
         }
         $supplier = $supplier_id ? $this->model_extension_module_supplier_sync_parser_pro->getSupplier($supplier_id) : array();
-        if (!$supplier && isset($this->request->get['preset']) && in_array($this->request->get['preset'], array('spilna_meta','sazagro','rewolt'), true) && $this->user->hasPermission('access', $this->route)) {
+        if (!$supplier && isset($this->request->get['preset']) && in_array($this->request->get['preset'], array('prom_classic','prom_modern','opencart_html'), true) && $this->user->hasPermission('access', $this->route)) {
             $preset_path = DIR_SYSTEM . 'library/codecart/presets/' . $this->request->get['preset'] . '.json';
             $preset = is_file($preset_path) ? json_decode(file_get_contents($preset_path), true) : array();
             if (is_array($preset)) {
@@ -115,12 +115,12 @@ class ControllerExtensionModuleSupplierSyncParserPro extends Controller {
             }
         }
         $data['supplier'] = $this->normalizeSupplier($supplier);
-        $data['source_preset'] = !$supplier_id && isset($this->request->get['preset']) && in_array($this->request->get['preset'], array('spilna_meta','sazagro','rewolt'), true) ? $this->request->get['preset'] : '';
+        $data['source_preset'] = !$supplier_id && isset($this->request->get['preset']) && in_array($this->request->get['preset'], array('prom_classic','prom_modern','opencart_html'), true) ? $this->request->get['preset'] : '';
         $data['preset_urls'] = array();
-        foreach (array('spilna_meta'=>'Spilna Meta','sazagro'=>'Sazagro','rewolt'=>'Rewolt') as $code=>$name) {
-            $data['preset_urls'][] = array('name'=>$name, 'url'=>$this->url->link($this->route, 'user_token=' . $this->session->data['user_token'] . '&supplier_id=0&preset=' . $code . '&active_tab=suppliers', true));
+        foreach (array('prom_classic'=>'text_preset_prom_classic','prom_modern'=>'text_preset_prom_modern','opencart_html'=>'text_preset_opencart') as $code=>$name) {
+            $data['preset_urls'][] = array('name'=>$this->language->get($name), 'url'=>$this->url->link($this->route, 'user_token=' . $this->session->data['user_token'] . '&supplier_id=0&preset=' . $code . '&active_tab=suppliers', true));
         }
-        foreach (array('entry_in_stock_quantity', 'help_in_stock_quantity', 'entry_unknown_stock_policy', 'text_stock_keep', 'text_stock_zero', 'text_stock_available', 'text_stock_unavailable', 'entry_update_stock_status', 'help_update_stock_status', 'entry_new_category_name', 'help_new_category_name', 'entry_match_source', 'entry_match_target', 'help_match_mapping', 'text_match_auto', 'entry_jan_xpath', 'entry_isbn_xpath', 'entry_cron_enabled', 'entry_cron_interval_minutes', 'help_cron_profile') as $key) {
+        foreach (array('button_save_module', 'text_section_price', 'text_section_matching', 'text_section_stock', 'text_section_new_products', 'text_section_content', 'text_section_automation', 'text_section_feed', 'entry_in_stock_quantity', 'help_in_stock_quantity', 'entry_unknown_stock_policy', 'text_stock_keep', 'text_stock_zero', 'text_stock_available', 'text_stock_unavailable', 'entry_update_stock_status', 'help_update_stock_status', 'entry_new_category_name', 'help_new_category_name', 'entry_match_source', 'entry_match_target', 'help_match_mapping', 'text_match_auto', 'entry_jan_xpath', 'entry_isbn_xpath', 'entry_cron_enabled', 'entry_cron_interval_minutes', 'help_cron_profile') as $key) {
             $data[$key] = $this->language->get($key);
         }
         $data['supplier'] = $this->formatSupplierNumericFieldsForForm($data['supplier']);

@@ -1,9 +1,9 @@
 {
-  "name": "Rewolt",
+  "name": "HTML / OpenCart",
   "status": 0,
-  "base_url": "https://rewolt.com.ua",
+  "base_url": "",
   "source_type": "html",
-  "list_urls": "https://rewolt.com.ua/ua/mini_azs/",
+  "list_urls": "",
   "product_url_xpath": "//div[contains(@class,'product-thumb')]//h4/a",
   "product_url_attr": "href",
   "next_page_xpath": "//a[@rel='next'] | //ul[contains(@class,'pagination')]//a[normalize-space(.)='>']",
@@ -21,8 +21,8 @@
   "attribute_row_xpath": "//*[@itemprop='additionalProperty']",
   "attribute_name_xpath": ".//*[@itemprop='name']",
   "attribute_value_xpath": ".//*[@itemprop='value']",
-  "currency_code": "UAH",
-  "source_language_code": "uk-ua",
+  "currency_code": "",
+  "source_language_code": "",
   "create_new": 1,
   "create_new_status": 0,
   "auto_apply_existing": 0,
@@ -39,6 +39,6 @@
     "in_stock_quantity": 100,
     "unknown_stock_policy": "keep",
     "update_stock_status": 1,
-    "new_category_name": "Нові товари Rewolt"
+    "new_category_name": ""
   }
 }

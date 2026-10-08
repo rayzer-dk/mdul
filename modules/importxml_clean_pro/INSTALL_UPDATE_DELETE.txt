@@ -1,4 +1,4 @@
-ImportXML Clean PRO v1.4.2 installation, update and removal guide
+ImportXML Clean PRO v1.4.3 installation, update and removal guide
 Author: CodeCart PRO
 Author site: https://codecartpro.com
 Compatibility: CodeCart 3.0.5.2 / ocStore 3.0.4.1 / OpenCart 3.x / PHP 7.4–8.5
@@ -6,10 +6,10 @@ Compatibility: CodeCart 3.0.5.2 / ocStore 3.0.4.1 / OpenCart 3.x / PHP 7.4–8.5
 Installation:
 1. Make a full backup of files and database.
 2. Open Extensions -> Installer.
-3. Upload ImportXML_Clean_Pro_v1.4.2.ocmod.zip.
+3. Upload ImportXML_Clean_Pro_v1.4.3.ocmod.zip.
 4. Open Extensions -> Modifications and click Refresh.
 5. Open Extensions -> Extensions -> Feeds / Каналы продвижения.
-6. Find ImportXML Clean PRO v1.4.2 and install it.
+6. Find ImportXML Clean PRO v1.4.3 and install it.
 7. Open module settings.
 8. Enable the module manually and save settings.
 9. Create supplier profile.
@@ -18,10 +18,10 @@ Installation:
 Update:
 1. Make a full backup of files and database.
 2. Export module settings from the “Service tools” tab.
-3. Upload ImportXML_Clean_Pro_v1.4.2.ocmod.zip through Extensions -> Installer.
+3. Upload ImportXML_Clean_Pro_v1.4.3.ocmod.zip through Extensions -> Installer.
 4. Refresh Modifications.
 5. Open Extensions -> Extensions -> Feeds / Каналы продвижения.
-6. Open ImportXML Clean PRO v1.4.2 and save settings.
+6. Open ImportXML Clean PRO v1.4.3 and save settings.
 7. Check supplier profiles and run a small preview/import test.
 
 Cron setup:
@@ -40,7 +40,7 @@ For large XML files use nighttime execution.
 
 Removal:
 1. Open Extensions -> Extensions -> Feeds / Каналы продвижения.
-2. Uninstall ImportXML Clean PRO v1.4.2.
+2. Uninstall ImportXML Clean PRO v1.4.3.
 3. Refresh Modifications.
 4. By default supplier profiles and product/category NIX fields are kept for safety.
 5. If you want to remove module data during uninstall, enable “Delete module data on uninstall” before uninstalling. Use this only after backup.
@@ -52,5 +52,5 @@ Important safety notes:
 - Test on a staging copy before using on a production store with a large catalog.
 - For CSV/XLSX files the first row must contain field names such as id, name, model, sku/vendorCode, price, optPrice, special_price, quantity and categoryId.
 
-Update notes for v1.4.2:
+Update notes for v1.4.3:
 After uploading the archive through Extensions > Installer, refresh Modifications and clear theme/cache if your admin page was already open. Open the module using a fresh admin URL with valid user_token. Because service actions now validate user_token explicitly, stale admin tabs should be refreshed before using supplier save/delete, log cleanup, settings import or safe import.

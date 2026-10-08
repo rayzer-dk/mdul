@@ -1,6 +1,6 @@
 ВАЖНО: перед установкой или обновлением сделайте полную резервную копию файлов сайта и базы данных.
 
-Supplier Sync Parser PRO v1.6.3
+Supplier Sync Parser PRO v1.6.4
 Author: CodeCart PRO
 Site: https://codecartpro.com
 Compatibility: CodeCart 3.0.5.2 / OpenCart 3.x / ocStore 3.0.4.1, PHP 7.4–8.5
@@ -9,7 +9,7 @@ IMPORTANT BACKUP WARNING
 Before installation, update or first mass synchronization, create a full backup of site files and database.
 This module can update prices, stock and create products, therefore testing on a small supplier set is mandatory before production use.
 
-VERSION 1.6.3 CHANGES
+VERSION 1.6.4 CHANGES
 - Expanded the supported PHP target to PHP 7.4–8.5 and removed PHP 8.5-deprecated curl_close().
 - Declared parser service properties explicitly to avoid dynamic-property deprecations on PHP 8.2+.
 - Cron authentication now prefers the X-CCP-Cron-Key header so the secret is not exposed in URLs; the old ?token= form remains a compatibility fallback.

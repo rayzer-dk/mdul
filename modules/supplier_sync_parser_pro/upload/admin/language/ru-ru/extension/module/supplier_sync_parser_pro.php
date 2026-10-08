@@ -810,3 +810,15 @@ $_['help_cron_profile'] = 'Cron проверяет связанные товар
 
 $_['text_stock_available'] = 'В наличии';
 $_['text_stock_unavailable'] = 'Нет в наличии';
+
+$_['button_save_module'] = 'Сохранить настройки модуля';
+$_['text_section_price'] = 'Цена и формула';
+$_['text_section_matching'] = 'Сопоставление товаров';
+$_['text_section_stock'] = 'Наличие';
+$_['text_section_new_products'] = 'Новые товары и категории';
+$_['text_section_content'] = 'Описание, фото и языки';
+$_['text_section_automation'] = 'Cron и автоматизация';
+$_['text_section_feed'] = 'Файл и соответствие полей';
+$_['text_preset_prom_classic'] = 'HTML: классический шаблон';
+$_['text_preset_prom_modern'] = 'HTML: современный шаблон';
+$_['text_preset_opencart'] = 'HTML: структура OpenCart';

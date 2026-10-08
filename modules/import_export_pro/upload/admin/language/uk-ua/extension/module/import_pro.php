@@ -1,5 +1,5 @@
 <?php
-// Import Pro Professional Hardened v3.6.9 — uk-ua
+// Import Pro Professional Hardened v3.7.0 — uk-ua
 
 $_['heading_title'] = '<span style="color:#0057b7;font-weight:700;">Import Export Pro</span> <span style="display:inline-block;background:#ffd700;color:#0057b7;border-radius:12px;padding:2px 10px;font-size:12px;line-height:1.2;vertical-align:middle;font-weight:700;margin-left:6px;">PRO</span>';
 
@@ -153,7 +153,7 @@ $_['text_cron_url']              = 'Cron URL';
 $_['text_export']                = 'Експорт товарів';
 
 $_['help_source_path']         = 'Для файлу натисніть «Завантажити файл» або вкажіть шлях у DIR_DOWNLOAD/import_pro/. Довільні системні шляхи недоступні.';
-$_['help_source_url_example']  = 'Приклад URL: https://supplier.com/feed.xml';
+$_['help_source_url_example'] = 'Вкажіть пряме посилання на файл постачальника.';
 $_['help_source_file_example'] = 'Приклад шляху: ' . (defined('DIR_DOWNLOAD') ? DIR_DOWNLOAD : '<DIR_DOWNLOAD>/') . 'import_pro/feed.xlsx';
 $_['help_field_map']           = 'JSON: {"model":"Артикул","price":"Ціна","name:uk-ua":"Назва UA","categories":"Категорія","google_product_category":"Google Category ID"}';
 $_['help_json_example']        = 'Мовні цілі: name:uk-ua, description:ru-ru, meta_title:en-gb тощо.';
@@ -188,7 +188,7 @@ $_['help_update_existing'] = 'Увімкніть, якщо знайдені то
 $_['help_category_path_mode']  = 'Дозволяє імпортувати ієрархію категорій з рядка.';
 
 $_['placeholder_profile_name']    = 'Наприклад: Прайс постачальника Agro XLSX';
-$_['placeholder_source_path']     = 'catalog/import_pro/feed.xlsx або https://supplier.com/feed.xml';
+$_['placeholder_source_path'] = 'catalog/import_pro/feed.xlsx або URL файлу';
 $_['placeholder_image_subdir']    = 'catalog/import_pro/supplier_1/';
 $_['placeholder_filter_status']   = 'Наприклад: 1 або yes або в наявності';
 $_['placeholder_filter_text']     = 'Acme, Bosch, Makita';
@@ -257,7 +257,7 @@ $_['text_about_arch']      = 'Архітектура';
 $_['text_about_arch_text'] = 'Модуль не втручається в картку товару та категорії — жодних нових полів у стандартних формах, жодних крихких OCMOD search/replace. Усі налаштування та профілі зберігаються у власних таблицях модуля. Після видалення залишаються лише імпортовані товари та картинки.';
 $_['text_about_quickstart'] = 'Швидкий старт';
 $_['text_about_quickstart_text'] = '1) Створіть профіль на вкладці «Профіль». 2) Завантажте файл або вкажіть URL постачальника. 3) Натисніть «Визначити поля» та перевірте зіставлення на вкладці «Поля та мови». 4) Запустіть «Тест 10 рядків» на вкладці «Тест та імпорт». 5) Перевірте журнал на вкладці «Логи». 6) Лише після успішного тесту запускайте реальний імпорт. 7) За потреби налаштуйте cron на вкладці «Cron».';
-$_['text_about_version']   = 'Версія 3.6.9 — реліз сумісності для CodeCart 3.0.5.2, ocStore 3.0.4.1 та OpenCart 3.x на PHP 7.4–8.5.';
+$_['text_about_version']   = 'Версія 3.7.0 — реліз сумісності для CodeCart 3.0.5.2, ocStore 3.0.4.1 та OpenCart 3.x на PHP 7.4–8.5.';
 
 // About-tab: переваги (12 пунктів)
 $_['text_about_adv_1']  = 'OCMOD-only, без правок ядра';
@@ -315,7 +315,7 @@ $_['entry_force_category_id'] = 'ID примусової категорії';
 $_['help_strip_msword'] = 'Чистить описи, згенеровані «Зберегти як HTML» з Word/Excel.';
 
 
-// CodeCart PRO / оновлення / вимкнений режим / діагностика v3.6.9
+// CodeCart PRO / оновлення / вимкнений режим / діагностика v3.7.0
 $_['button_upgrade_module'] = 'Завантажити оновлення вручну';
 $_['button_check_update'] = 'Відкрити сайт автора';
 $_['text_author'] = 'Автор';
@@ -367,7 +367,7 @@ $_['diag_msg_cron_warn'] = 'Токен коротший за рекомендо�
 $_['diag_msg_module_enabled'] = 'Увімкнено.';
 $_['diag_msg_module_disabled'] = 'Вимкнено. Імпорт і cron заблоковані до ввімкнення модуля та збереження налаштувань.';
 
-// Supplier XML Feed Manager v3.6.9
+// Supplier XML Feed Manager v3.7.0
 $_['text_section_supplier'] = 'Постачальник і XML-прайс';
 $_['entry_supplier_mode'] = 'Увімкнути режим постачальника';
 $_['entry_supplier_name'] = 'Назва постачальника';
@@ -393,7 +393,7 @@ $_['help_supplier_external_id'] = 'У карті полів вкажіть exter
 $_['text_manual_update_help'] = 'Оновлення завантажуються з сайту автора та встановлюються вручну після повного бекапу.';
 
 
-// Ліміт фото, формат експорту фото та безпечні правила оновлення v3.6.9
+// Ліміт фото, формат експорту фото та безпечні правила оновлення v3.7.0
 $_['entry_image_limit'] = 'Максимум фото товару';
 $_['entry_auto_split_images'] = 'Перше XML-фото як головне, решта в галерею';
 $_['entry_image_update_mode'] = 'Режим оновлення фото';
@@ -441,7 +441,7 @@ $_['text_about_import_status_title'] = 'Статус імпорту в реал�
 $_['text_about_import_status_text'] = 'Ручний імпорт може виконуватися пакетами і після кожного AJAX-пакета показує зрозумілі лічильники за товарами: скільки товарів знайдено у файлі, скільки оброблено, скільки завантажено нових, скільки оновлено, скільки пропущено, скільки товарів з помилками і скільки залишилося. Це зрозуміліше для клієнта, ніж технічний лічильник рядків джерела.';
 $_['text_about_safe_modes_title'] = 'Рекомендовані безпечні режими';
 $_['text_about_safe_modes_text'] = 'Перед реальним імпортом використовуйте тестовий dry-run. Для товарів постачальника, яких більше немає в прайсі, найбезпечніший комерційний режим — вимикати, а не видаляти. Видалення використовуйте тільки після повного бекапу і тільки для повного прайса постачальника.';
-$_['help_profile_name'] = 'Приклад: Rozetka XML, Постачальник Київ CSV, Залишки Bosch. Назва видима тільки в адмінці й допомагає не переплутати профілі.';
+$_['help_profile_name'] = 'Приклад: Прайс XML, Постачальник CSV, Залишки. Назва видима тільки в адмінці й допомагає розрізняти профілі.';
 $_['help_format'] = 'Виберіть формат вихідного файлу. Для YML/XML постачальника зазвичай XML, для Excel — XLSX, для таблиці — CSV.';
 $_['help_source_type'] = 'Файл — завантажений прайс у DIR_DOWNLOAD/import_pro/. URL — посилання постачальника, яке можна запускати вручну або через cron.';
 $_['help_auth_type'] = 'Залиште «Без авторизації», якщо фід відкритий. Basic потрібен тільки для посилань, які постачальник захищає логіном і паролем.';
@@ -545,14 +545,14 @@ $_['log_truncated'] = 'Журнал запуску скорочено до 500 �
 $_['log_missing_action'] = 'Дія для відсутніх товарів';
 $_['log_affected'] = 'зачеплено';
 
-// v3.6.9 safety and access hardening
+// v3.7.0 safety and access hardening
 $_['entry_uninstall_delete_data'] = 'Видаляти дані модуля під час видалення';
 $_['help_uninstall_delete_data'] = 'За замовчуванням вимкнено. Увімкніть лише якщо справді потрібно видалити профілі Import Export Pro, історію запусків і таблиці зіставлення постачальників під час видалення модуля. Імпортовані товари та зображення не видаляються.';
 $_['error_post_required'] = 'Цю дію потрібно виконувати через POST. Оновіть сторінку адмінки та повторіть дію.';
 $_['text_access_denied_title'] = 'Доступ заборонено';
 $_['text_access_denied_help'] = 'Ваш обліковий запис адміністратора не має прав на перегляд Import Export Pro. Перевірте System > Users > User Groups і увімкніть access/modify для extension/module/import_pro.';
 
-// v3.6.9 supplier safe change preview
+// v3.7.0 supplier safe change preview
 $_['text_change_preview_title'] = 'Безпечний попередній перегляд змін';
 $_['text_changed_products'] = 'Товарів зі змінами';
 $_['text_unchanged_products'] = 'Без змін';
@@ -578,7 +578,7 @@ $_['text_column_quantity'] = 'Залишок';
 $_['text_safe_cron_notice'] = 'Dry-run показує зміни до запису в базу. Режим price/qty для cron оновлює тільки наявні товари і не створює нові позиції.';
 $_['log_price_qty_create_blocked'] = 'Режим ціна/залишок не створює нові товари. Новий рядок постачальника пропущено.';
 
-// v3.6.9 safe queue, field policies and supplier synchronization
+// v3.7.0 safe queue, field policies and supplier synchronization
 $_['text_run_mode_price_only'] = 'Тільки ціни';
 $_['text_run_mode_quantity_only'] = 'Тільки залишки';
 $_['text_run_mode_price_stock'] = 'Ціни та залишки';
@@ -637,3 +637,5 @@ $_['error_invalid_batch_id'] = 'Некоректний ідентифікато�
 
 $_['entry_in_stock_quantity'] = 'Залишок для «в наявності»';
 $_['help_in_stock_quantity'] = 'Лише якщо постачальник не вказав число. Це ваш умовний залишок, наприклад 100.';
+
+$_['text_import_details'] = 'Докладніше про імпорт';

@@ -1,4 +1,4 @@
-Supplier Sync Parser PRO v1.6.3
+Supplier Sync Parser PRO v1.6.4
 Installation / Update / Uninstall
 
 RU: Важно перед установкой
@@ -7,14 +7,14 @@ RU: Важно перед установкой
 
 RU: Установка
 1. В админке OpenCart откройте Расширения -> Установка расширений.
-2. Загрузите архив Supplier_Sync_Parser_Pro_v1.6.3.ocmod.zip.
+2. Загрузите архив Supplier_Sync_Parser_Pro_v1.6.4.ocmod.zip.
 3. Откройте Расширения -> Модификаторы и нажмите Обновить.
 4. Откройте Система -> Пользователи -> Группы пользователей и выдайте права access/modify для extension/module/supplier_sync_parser_pro.
 5. Откройте Расширения -> Модули -> Supplier Sync Parser PRO.
 6. Включите модуль, задайте cron token, batch limit и сохраните настройки.
 7. Создайте поставщика, настройте XPath и выполните тест URL перед массовым запуском.
 
-v1.6.3 update note
+v1.6.4 update note
 RU: Рекомендуется заменить cron-команду на вариант с заголовком X-CCP-Cron-Key. Старый ?token= продолжает работать только для обратной совместимости.
 EN: Replace the cron command with the X-CCP-Cron-Key header form when practical. The old ?token= form remains only for backward compatibility.
 
@@ -48,7 +48,7 @@ Install and test the module on a staging copy first.
 
 EN: Installation
 1. In OpenCart admin open Extensions -> Installer.
-2. Upload Supplier_Sync_Parser_Pro_v1.6.3.ocmod.zip.
+2. Upload Supplier_Sync_Parser_Pro_v1.6.4.ocmod.zip.
 3. Open Extensions -> Modifications and click Refresh.
 4. Open System -> Users -> User Groups and grant access/modify permissions for extension/module/supplier_sync_parser_pro.
 5. Open Extensions -> Modules -> Supplier Sync Parser PRO.

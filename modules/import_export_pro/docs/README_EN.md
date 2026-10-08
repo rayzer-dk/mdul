@@ -1,4 +1,4 @@
-# Import Export Pro 3.6.9
+# Import Export Pro 3.7.0
 
 Import/export and supplier synchronization module for CodeCart 3.0.5.2 / ocStore 3.0.4.1 and OpenCart 3.x, PHP 7.4–8.5.
 

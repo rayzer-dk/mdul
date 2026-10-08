@@ -1,6 +1,6 @@
-Supplier Sync Parser PRO v1.6.3
+Supplier Sync Parser PRO v1.6.4
 
-VERSION 1.6.3
+VERSION 1.6.4
 RU: Совместимость расширена до PHP 7.4–8.5. Устранены dynamic-property deprecation PHP 8.2+, curl_close deprecation PHP 8.5, cron-секрет перенесён из URL в HTTP-заголовок, запись изображений сделана атомарной.
 EN: Compatibility expanded to PHP 7.4–8.5. Fixed PHP 8.2+ dynamic-property deprecations, PHP 8.5 curl_close deprecation, moved the cron secret from URL to an HTTP header, and made image writes atomic.
 CodeCart PRO

@@ -1,6 +1,6 @@
 <?php
 /**
- * Import Pro Professional Commercial UI Diagnostics Production v3.6.9
+ * Import Pro Professional Commercial UI Diagnostics Production v3.7.0
  *
  * Admin controller. Fixes vs v2.7.0:
  *  - Heading title now ships in two flavours: plain text for <title>/breadcrumbs and
@@ -79,18 +79,18 @@ class ControllerExtensionModuleImportPro extends Controller {
         $this->load->model('localisation/language');
         $this->load->model('setting/setting');
 
-        if (($this->request->server['REQUEST_METHOD'] !== 'POST') && (string)$this->config->get('module_import_pro_version') !== '3.6.9') {
+        if (($this->request->server['REQUEST_METHOD'] !== 'POST') && (string)$this->config->get('module_import_pro_version') !== '3.7.0') {
             // Idempotent schema migration for upgrades from an already installed module.
             $this->model_extension_module_import_pro->install();
             $upgrade_settings = $this->model_setting_setting->getSetting('module_import_pro');
             $upgrade_settings['module_import_pro_status'] = 0;
-            $upgrade_settings['module_import_pro_version'] = '3.6.9';
+            $upgrade_settings['module_import_pro_version'] = '3.7.0';
             if (empty($upgrade_settings['module_import_pro_cron_token']) || strlen((string)$upgrade_settings['module_import_pro_cron_token']) < 16) {
                 $upgrade_settings['module_import_pro_cron_token'] = bin2hex(random_bytes(16));
             }
             $this->model_setting_setting->editSetting('module_import_pro', $upgrade_settings);
             $this->config->set('module_import_pro_status', 0);
-            $this->config->set('module_import_pro_version', '3.6.9');
+            $this->config->set('module_import_pro_version', '3.7.0');
             $this->config->set('module_import_pro_cron_token', $upgrade_settings['module_import_pro_cron_token']);
         }
 
@@ -135,7 +135,7 @@ class ControllerExtensionModuleImportPro extends Controller {
                 'module_import_pro_download_images'     => !empty($this->request->post['module_import_pro_download_images']) ? 1 : 0,
                 'module_import_pro_image_limit'         => $image_limit,
                 'module_import_pro_uninstall_delete_data' => !empty($this->request->post['module_import_pro_uninstall_delete_data']) ? 1 : 0,
-                'module_import_pro_version'             => '3.6.9',
+                'module_import_pro_version'             => '3.7.0',
             );
 
             $this->model_setting_setting->editSetting('module_import_pro', $setting);
@@ -149,7 +149,7 @@ class ControllerExtensionModuleImportPro extends Controller {
         $data['heading_title']      = $heading_plain;
         $data['heading_title_html'] = $heading_html;
         $data['module_name']        = 'Import Export Pro';
-        $data['module_version']     = '3.6.9';
+        $data['module_version']     = '3.7.0';
         $data['author_name']        = 'CodeCart PRO';
         $data['author_url']         = 'https://codecartpro.com';
         $data['support_url']        = 'https://codecartpro.com';
@@ -180,7 +180,7 @@ class ControllerExtensionModuleImportPro extends Controller {
             'entry_strip_invisible_chars','entry_strip_msword_markup','entry_auto_generate_seo_keyword',
             'entry_category_path_mode','help_clean_description_html','help_category_path_mode',
             'text_mirohost_cron_title','text_mirohost_cron_help','text_mirohost_cron_every_30',
-            'text_atomic_import_notice','text_compact_ui_notice',
+            'text_atomic_import_notice','text_import_details','text_compact_ui_notice',
             'tab_settings','tab_profile','tab_fields','tab_rules','tab_run','tab_export','tab_logs','tab_diagnostics','tab_cron','tab_about',
             'text_diagnostics','text_diagnostics_help','button_run_diagnostics','column_check','column_status','column_message',
             'text_diag_ok','text_diag_warn','text_diag_error','text_diag_initial',

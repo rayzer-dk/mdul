@@ -1,6 +1,6 @@
 <?php
 class ModelExtensionModuleSupplierSyncParserPro extends Model {
-    public function install($schema_version = '1.6.3') {
+    public function install($schema_version = '1.6.4') {
         $charset = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
 
         $this->db->query("CREATE TABLE IF NOT EXISTS `" . DB_PREFIX . "ccp_ssp_supplier` (
@@ -378,7 +378,7 @@ class ModelExtensionModuleSupplierSyncParserPro extends Model {
             'module_supplier_sync_parser_pro_review_retention_days' => (int)$this->config->get('module_supplier_sync_parser_pro_review_retention_days'),
             'module_supplier_sync_parser_pro_log_retention_days' => (int)$this->config->get('module_supplier_sync_parser_pro_log_retention_days'),
             'module_supplier_sync_parser_pro_history_retention_days' => (int)$this->config->get('module_supplier_sync_parser_pro_history_retention_days'),
-            'module_supplier_sync_parser_pro_schema_version' => $this->config->get('module_supplier_sync_parser_pro_schema_version') ?: '1.6.3'
+            'module_supplier_sync_parser_pro_schema_version' => $this->config->get('module_supplier_sync_parser_pro_schema_version') ?: '1.6.4'
         ));
     }
 
@@ -393,7 +393,7 @@ class ModelExtensionModuleSupplierSyncParserPro extends Model {
             'module_supplier_sync_parser_pro_review_retention_days' => max(1, min(365, (int)(isset($data['module_supplier_sync_parser_pro_review_retention_days']) ? $data['module_supplier_sync_parser_pro_review_retention_days'] : 14))),
             'module_supplier_sync_parser_pro_log_retention_days' => max(1, min(365, (int)(isset($data['module_supplier_sync_parser_pro_log_retention_days']) ? $data['module_supplier_sync_parser_pro_log_retention_days'] : 60))),
             'module_supplier_sync_parser_pro_history_retention_days' => max(1, min(1095, (int)(isset($data['module_supplier_sync_parser_pro_history_retention_days']) ? $data['module_supplier_sync_parser_pro_history_retention_days'] : 180))),
-            'module_supplier_sync_parser_pro_schema_version' => $this->config->get('module_supplier_sync_parser_pro_schema_version') ?: '1.6.3'
+            'module_supplier_sync_parser_pro_schema_version' => $this->config->get('module_supplier_sync_parser_pro_schema_version') ?: '1.6.4'
         );
         $this->model_setting_setting->editSetting('module_supplier_sync_parser_pro', $settings);
     }

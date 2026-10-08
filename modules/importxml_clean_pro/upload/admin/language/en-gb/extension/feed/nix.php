@@ -2,12 +2,12 @@
 
 /**
  * @category   OpenCart
- * @package    ImportXML Clean PRO v1.4.2
+ * @package    ImportXML Clean PRO v1.4.3
  * @copyright  CodeCart PRO, https://codecartpro.com
  */
 
 // Header
-$_['heading_title'] = '<span style="color:#0057b7;font-weight:700;">ImportXML Clean</span> <span style="display:inline-block;background:#ffd700;color:#0057b7;border-radius:12px;padding:2px 10px;font-size:12px;line-height:1.2;vertical-align:middle;font-weight:700;margin-left:6px;">PRO</span> <span style="display:inline-block;background:#eef3f8;color:#445;border-radius:10px;padding:2px 8px;font-size:11px;line-height:1.2;vertical-align:middle;margin-left:5px;">v1.4.2</span>';
+$_['heading_title'] = '<span style="color:#0057b7;font-weight:700;">ImportXML Clean</span> <span style="display:inline-block;background:#ffd700;color:#0057b7;border-radius:12px;padding:2px 10px;font-size:12px;line-height:1.2;vertical-align:middle;font-weight:700;margin-left:6px;">PRO</span> <span style="display:inline-block;background:#eef3f8;color:#445;border-radius:10px;padding:2px 8px;font-size:11px;line-height:1.2;vertical-align:middle;margin-left:5px;">v1.4.3</span>';
 
 // Text
 $_['text_success']	 = 'Module settings updated!';
@@ -206,12 +206,12 @@ $_['error_cron_disabled'] = 'Cron is disabled or the extension is disabled.';
 $_['error_cron_empty_link'] = 'The selected supplier has no XML link for cron.';
 $_['error_cron_download'] = 'Failed to download XML: %s';
 $_['error_cron_write_file'] = 'Failed to write temporary XML file: %s';
-$_['text_cron_multilang_hint'] = 'For multiple XML files, enter supplier links line by line as language_id=https://example.com/file.xml. A single link is used for the main language.';
+$_['text_cron_multilang_hint'] = 'For multiple XML files, enter links line by line: language_id=XML_URL. A single link is used for the main language.';
 $_['text_cron_performance_warning'] = 'Warning: cron can be a heavy operation. The default safe mode updates prices, availability, quantity/stock, stock status and product status for existing products. Full cron import can download XML, create categories, update images, descriptions and SEO, so do not run it during peak hours.';
 
-$_['placeholder_supplier_link_price'] = 'Example: https://example.com/feed.xml or 3=https://example.com/ua.xml';
+$_['placeholder_supplier_link_price'] = 'XML URL or language_id=XML_URL';
 
-$_['help_supplier_link_price'] = 'Used by cron. Enter one XML URL or one URL per language on separate lines, for example: 3=https://example.com/ua.xml.';
+$_['help_supplier_link_price'] = 'For cron: one XML URL or a separate language_id=XML_URL line for each language.';
 
 $_['text_quick_xml_tags'] = 'Quick XML tag examples';
 
@@ -228,7 +228,7 @@ $_['text_copied'] = 'Copied.';
 $_['placeholder_cron_token'] = 'Example: 48 random hexadecimal characters';
 
 $_['error_ajax_failed_detail'] = 'AJAX request failed. HTTP status: %s. Server response: %s';
-// CodeCart PRO production additions v1.4.2
+// CodeCart PRO production additions v1.4.3
 $_['btn_export_settings'] = 'Export settings';
 $_['btn_reset_settings'] = 'Reset settings';
 $_['help_service_actions'] = 'Export saves settings and supplier profiles to JSON. Reset returns system settings to safe defaults, but does not remove supplier profiles.';
@@ -251,7 +251,7 @@ $_['entry_mirohost_days'] = 'Mirohost: days of month';
 $_['entry_mirohost_months'] = 'Mirohost: months';
 $_['entry_mirohost_weekdays'] = 'Mirohost: weekdays';
 $_['help_mirohost_schedule'] = 'Recommended safe Mirohost example: minutes */30, hours *, days of month *, months *, weekdays *. Do not schedule more often than once every 5 minutes.';
-// CodeCart PRO import/export additions v1.4.2
+// CodeCart PRO import/export additions v1.4.3
 $_['btn_import_settings'] = 'Import settings';
 $_['help_import_settings'] = 'Choose a JSON file created by Export settings. Import replaces system settings and supplier profiles. Make a backup before importing.';
 $_['error_import_settings_failed'] = 'Settings import failed. Check file format and permissions.';
@@ -264,11 +264,11 @@ $_['diag_field_product_supplier_id'] = 'product.nix_supplier_id field for linkin
 $_['diag_field_product_supplier_product_id'] = 'product.nix_supplier_product_id field for supplier external product ID.';
 $_['diag_google_category'] = 'Google Product Category ID through category.google_product_category_id or googleshopping_category.';
 
-// CodeCart PRO v1.4.2 UI and warning additions
+// CodeCart PRO v1.4.3 UI and warning additions
 $_['warning_offer_without_id'] = 'Warning: XML contains an offer without the id attribute. The item was skipped.';
 $_['warning_offer_missing_tag'] = 'Warning: offer ID %s was skipped because required tag %s is missing.';
 $_['warning_offer_missing_required_tags'] = 'Warning: offer ID %s was skipped because required tags for full import are missing.';
-// CodeCart PRO service UI additions v1.4.2
+// CodeCart PRO service UI additions v1.4.3
 $_['text_service_tools'] = 'Service tools';
 $_['btn_apply_import_settings'] = 'Apply import';
 
@@ -286,7 +286,7 @@ $_['help_cron_mode'] = 'The recommended cron mode updates prices, available attr
 
 $_['help_cron_secondary_function'] = 'Cron does not replace normal import. First run a manual XML import, check products, categories and mapped fields, then use cron later for regular price and availability updates.';
 
-// CodeCart PRO v1.4.2 supplier UI corrections
+// CodeCart PRO v1.4.3 supplier UI corrections
 $_['text_settings_main'] = 'Main settings';
 $_['text_supplier_settings'] = 'Supplier profiles';
 $_['text_cron_settings_short'] = 'Cron update';
@@ -296,7 +296,7 @@ $_['btn_manage_suppliers'] = 'Configure suppliers';
 $_['help_import_supplier_select'] = 'If the required supplier is missing, create a supplier profile in settings first. The profile defines XML tags for product fields, prices, availability, categories, SEO and the cron link.';
 
 
-// CodeCart PRO v1.4.2 safe supplier import additions
+// CodeCart PRO v1.4.3 safe supplier import additions
 $_['btn_preview_import'] = 'Check changes without writing';
 $_['btn_apply_safe_import'] = 'Apply import after preview';
 $_['help_safe_import_buttons'] = 'Run the check first. The module will show what will be updated, created, skipped and which supplier products are missing. Apply the import only after reviewing the report.';
@@ -323,7 +323,7 @@ $_['text_run_preview_first'] = 'Run the no-write preview first. After a successf
 
 $_['error_preview_token'] = 'Safe import error: run the preview without writing first and do not change the file or settings before applying.';
 
-// CodeCart PRO production fixes v1.4.2
+// CodeCart PRO production fixes v1.4.3
 $_['error_file'] = 'Select an XML, YML/YAML, CSV/TXT or XLSX import file.';
 $_['error_file_upload_code'] = 'The file was not uploaded. PHP upload error code: %s. Check file size and upload_max_filesize/post_max_size settings.';
 $_['error_file_extension'] = 'Invalid file format. Allowed formats: %s.';

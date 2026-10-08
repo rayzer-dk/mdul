@@ -2683,7 +2683,7 @@ class CodecartSupplierSyncParser {
             return array('ok' => false, 'message' => 'Invalid URL', 'http_code' => 0);
         }
 
-        $user_agent = !empty($supplier['user_agent']) ? trim((string)$supplier['user_agent']) : 'Mozilla/5.0 SupplierSyncParserPro/1.6.3';
+        $user_agent = !empty($supplier['user_agent']) ? trim((string)$supplier['user_agent']) : 'Mozilla/5.0 SupplierSyncParserPro/1.6.4';
         $current_url = $url;
         $redirects = 0;
 

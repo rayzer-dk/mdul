@@ -1,6 +1,6 @@
 <?php
 class ModelExtensionModuleImportProQueue extends Model {
-    const VERSION = '3.6.9';
+    const VERSION = '3.7.0';
     const BATCH_TABLE = 'import_pro_batch';
     const QUEUE_TABLE = 'import_pro_queue';
     const LOG_TABLE = 'import_pro_queue_log';

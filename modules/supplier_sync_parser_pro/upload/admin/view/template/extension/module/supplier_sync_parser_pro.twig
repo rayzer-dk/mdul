@@ -1,9 +1,8 @@
 {{ header }}{{ column_left }}
-<div id="content">
+<div id="content" class="ccp-ssp-page">
   <div class="page-header">
     <div class="container-fluid">
       <div class="pull-right">
-        <button type="submit" form="form-settings" data-toggle="tooltip" title="{{ button_save }}" class="btn btn-primary"><i class="fa fa-save"></i></button>
         <a href="{{ cancel }}" data-toggle="tooltip" title="{{ button_cancel }}" class="btn btn-default"><i class="fa fa-reply"></i></a>
       </div>
       <h1>{{ heading_title }}</h1>
@@ -27,13 +26,11 @@
 
     <div class="ccp-topbar">
       <div>
-        <div class="ccp-title">{{ heading_title_text }} <span class="ccp-badge">PRO</span> <span class="ccp-version">v{{ version }}</span></div>
-        <div class="ccp-meta">{{ text_author }} CodeCart PRO · {{ text_compatibility }} ocStore 3.0.4.1 · OpenCart 3.x · PHP 7.4–8.5</div>
+        <div class="ccp-meta">{{ text_author }} CodeCart PRO · v{{ version }} · {{ text_compatibility }} ocStore 3.0.4.1 · OpenCart 3.x · PHP 7.4–8.5</div>
       </div>
       <div class="ccp-top-actions">
-        <div class="ccp-status {{ module_supplier_sync_parser_pro_status ? 'on' : 'off' }}" id="ccp-module-status-label">{{ module_supplier_sync_parser_pro_status ? text_enabled : text_disabled }}</div>
-        <button type="button" id="ccp-module-status-switch" class="ccp-switch {{ module_supplier_sync_parser_pro_status ? 'is-on' : '' }}" data-value="{{ module_supplier_sync_parser_pro_status ? 1 : 0 }}" data-target="#ccp-module-status-hidden" aria-pressed="{{ module_supplier_sync_parser_pro_status ? 'true' : 'false' }}"><span class="ccp-switch-track"><span class="ccp-switch-thumb"></span></span><span class="ccp-switch-text">{{ module_supplier_sync_parser_pro_status ? text_enabled : text_disabled }}</span></button>
-        <button type="submit" form="form-settings" class="btn btn-primary btn-sm" id="ccp-module-status-save"><i class="fa fa-save"></i> {{ button_save }}</button>
+        <select id="ccp-module-status-control" class="form-control ccp-module-status-control" aria-label="{{ entry_module_status }}"><option value="0" {{ not module_supplier_sync_parser_pro_status ? 'selected' : '' }}>{{ text_disabled }}</option><option value="1" {{ module_supplier_sync_parser_pro_status ? 'selected' : '' }}>{{ text_enabled }}</option></select>
+        <button type="submit" form="form-settings" class="btn btn-primary btn-sm" id="ccp-module-status-save"><i class="fa fa-save"></i> {{ button_save_module }}</button>
       </div>
     </div>
 
@@ -64,7 +61,7 @@
     <div class="ccp-supplier-context {{ supplier.supplier_id ? 'is-selected' : 'is-missing' }}">
       <div class="ccp-supplier-context-info">
         <div class="ccp-card-title"><i class="fa fa-user-circle"></i> {{ text_supplier_context_title }}</div>
-        <div class="ccp-muted">{{ text_supplier_context_help }}</div>
+        <details class="ccp-inline-help"><summary aria-label="{{ text_supplier_context_help }}"><i class="fa fa-question-circle" aria-hidden="true"></i></summary><div>{{ text_supplier_context_help }}</div></details>
       </div>
       <div class="ccp-supplier-context-control">
         <select id="ccp-active-supplier" class="form-control">
@@ -75,9 +72,6 @@
         </select>
       </div>
     </div>
-    {% if not supplier.supplier_id %}
-    <div class="alert alert-info ccp-alert"><i class="fa fa-info-circle"></i> {{ text_supplier_context_required }}</div>
-    {% endif %}
 
     <div class="panel panel-default">
       <div class="panel-body">
@@ -97,7 +91,7 @@
         </ul>
 
         <div class="tab-content ccp-tab-content">
-          <div class="ccp-note ccp-note-info ccp-admin-note"><i class="fa fa-info-circle"></i> {{ text_ui_admin_ready }}</div>
+
           <div class="tab-pane {{ active_tab == 'master' ? 'active' : '' }}" id="tab-master">
             <div class="ccp-card ccp-commercial-master">
               <div class="ccp-card-title"><i class="fa fa-map-signs"></i> {{ text_master_title|default('Коммерческий мастер запуска') }}</div>
@@ -133,8 +127,9 @@
           <div class="tab-pane {{ active_tab == 'suppliers' ? 'active' : '' }}" id="tab-suppliers">
             <div class="row">
               <div class="col-sm-4">
-                <div class="ccp-card">
-                  <div class="ccp-card-title"><i class="fa fa-truck"></i> {{ tab_suppliers }}</div>
+                <details class="ccp-disclosure ccp-supplier-list">
+                  <summary><i class="fa fa-truck"></i> {{ tab_suppliers }}</summary>
+                  <div class="ccp-disclosure-body">
                   <div class="ccp-scroll ccp-list-scroll">
                     <table class="table table-condensed table-hover ccp-supplier-table">
                       <thead><tr><th>{{ column_supplier }}</th><th class="text-center">{{ text_status }}</th><th class="text-right"></th></tr></thead>
@@ -155,7 +150,8 @@
                   </div>
                   <a class="btn btn-default btn-block" href="{{ route_url }}"><i class="fa fa-plus"></i> {{ button_add_supplier }}</a>
                   {% for preset in preset_urls %}<a class="btn btn-default btn-block" href="{{ preset.url }}"><i class="fa fa-file-text-o"></i> {{ preset.name }}</a>{% endfor %}
-                </div>
+                  </div>
+                </details>
               </div>
               <div class="col-sm-8">
                 <form action="{{ action }}" method="post" enctype="multipart/form-data" id="form-supplier" class="form-horizontal">
@@ -165,7 +161,7 @@
                   <input type="hidden" name="supplier_id" id="supplier-id" value="{{ supplier.supplier_id }}" />
                   <div class="ccp-card">
                     <div class="ccp-card-title"><i class="fa fa-pencil"></i> {{ entry_supplier }}</div>
-                    <div class="ccp-note ccp-note-info"><i class="fa fa-route"></i> <b>{{ text_supplier_next_steps_title }}</b> {{ text_supplier_next_steps_desc }}</div>
+                    <details class="ccp-disclosure"><summary>{{ text_supplier_next_steps_title }}</summary><div class="ccp-disclosure-body">{{ text_supplier_next_steps_desc }}</div></details>
                     <div class="ccp-readiness-grid">
                       <div class="ccp-readiness {{ supplier.supplier_id ? 'is-ready' : 'is-missing' }}"><i class="fa fa-save"></i><b>{{ text_check_supplier_saved }}</b><span>{{ supplier.supplier_id ? text_ready : text_not_ready }}</span></div>
                       <div class="ccp-readiness {{ supplier.base_url ? 'is-ready' : 'is-missing' }}"><i class="fa fa-globe"></i><b>{{ text_check_base_url }}</b><span>{{ supplier.base_url ? text_ready : text_not_ready }}</span></div>
@@ -177,14 +173,15 @@
                       <input type="hidden" name="status" id="ccp-supplier-status-hidden" value="{{ supplier.supplier_id ? (supplier.status ? 1 : 0) : 1 }}" />
                       <div class="col-sm-8"><label>{{ entry_supplier_name }}</label><input type="text" name="name" value="{{ supplier.name }}" class="form-control" maxlength="255" /></div>
                       <div class="col-sm-4"><label>{{ entry_currency }}</label><select name="currency_code" class="form-control">{% for cur in currencies %}<option value="{{ cur.code }}" {{ supplier.currency_code == cur.code ? 'selected' : '' }}>{{ cur.code }}{% if cur.title %} - {{ cur.title }}{% endif %}{% if cur.code == base_currency %} ({{ text_base_currency }}){% endif %}</option>{% endfor %}</select></div>
-                      <div class="col-sm-12"><label>{{ entry_base_url }}</label><input type="text" name="base_url" value="{{ supplier.base_url }}" class="form-control" placeholder="https://supplier.com/" /></div>
+                      <div class="col-sm-12"><label>{{ entry_base_url }}</label><input type="text" name="base_url" value="{{ supplier.base_url }}" class="form-control" /></div>
                       <div class="col-sm-4"><label>{{ entry_domain_policy }}</label><select name="domain_policy" class="form-control"><option value="strict_host" {{ supplier.domain_policy == 'strict_host' ? 'selected' : '' }}>{{ text_domain_policy_strict }}</option><option value="allow_subdomains" {{ supplier.domain_policy == 'allow_subdomains' ? 'selected' : '' }}>{{ text_domain_policy_subdomains }}</option><option value="allow_extra_hosts" {{ supplier.domain_policy == 'allow_extra_hosts' ? 'selected' : '' }}>{{ text_domain_policy_extra }}</option></select></div>
-                      <div class="col-sm-8"><label>{{ entry_allowed_hosts }}</label><textarea name="allowed_hosts_text" rows="2" class="form-control" placeholder="images.supplier.com">{{ allowed_hosts_text }}</textarea><div class="help-block">{{ help_domain_policy }}</div></div>
-                      <div class="col-sm-12"><label>{{ entry_list_urls }}</label><textarea name="list_urls" rows="5" class="form-control" placeholder="https://supplier.com/category-1">{{ supplier.list_urls }}</textarea><div class="help-block">{{ text_source_list_help|default('Одна ссылка в строке. Для категории используйте кнопку «Найти ссылки», для прямых карточек — режим прямых URL. Не смешивайте разные языки в одном запуске.') }}</div></div>
+                      <div class="col-sm-8"><label>{{ entry_allowed_hosts }}</label><textarea name="allowed_hosts_text" rows="2" class="form-control">{{ allowed_hosts_text }}</textarea><div class="help-block">{{ help_domain_policy }}</div></div>
+                      <div class="col-sm-12"><label>{{ entry_list_urls }}</label><textarea name="list_urls" rows="3" class="form-control">{{ supplier.list_urls }}</textarea><div class="help-block">{{ text_source_list_help|default('Одна ссылка в строке. Для категории используйте кнопку «Найти ссылки», для прямых карточек — режим прямых URL. Не смешивайте разные языки в одном запуске.') }}</div></div>
                       <div class="col-sm-4"><label>{{ entry_source_type }}</label><select name="source_type" class="form-control"><option value="html" {{ supplier.source_type == 'html' ? 'selected' : '' }}>{{ text_source_type_html }}</option><option value="feed" {{ supplier.source_type == 'feed' ? 'selected' : '' }}>{{ text_source_type_feed }}</option></select></div>
+                      <div class="col-sm-12 ccp-feed-fields"><details class="ccp-disclosure"><summary><i class="fa fa-file-code-o"></i> {{ text_section_feed }}</summary><div class="ccp-disclosure-body"><div class="row">
                       <div class="col-sm-4"><label>{{ entry_feed_format }}</label><select name="feed_format" class="form-control"><option value="auto" {{ supplier.feed_format == 'auto' ? 'selected' : '' }}>Auto</option><option value="xml" {{ supplier.feed_format == 'xml' ? 'selected' : '' }}>XML/YML</option><option value="csv" {{ supplier.feed_format == 'csv' ? 'selected' : '' }}>CSV</option></select></div>
                       <div class="col-sm-4"><label>{{ entry_feed_file }}</label><input type="file" name="feed_file_upload" class="form-control" />{% if supplier.feed_file %}<div class="help-block">{{ text_feed_file_current }}: {{ supplier.feed_file }}</div>{% endif %}</div>
-                      <div class="col-sm-12"><label>{{ entry_feed_url }}</label><input type="text" name="feed_url" value="{{ supplier.feed_url }}" class="form-control" placeholder="https://supplier.com/feed.xml" /><div class="help-block">{{ text_feed_help }}</div></div>
+                      <div class="col-sm-12"><label>{{ entry_feed_url }}</label><input type="text" name="feed_url" value="{{ supplier.feed_url }}" class="form-control" /><div class="help-block">{{ text_feed_help }}</div></div>
                       <div class="col-sm-12"><div class="ccp-note ccp-note-info"><i class="fa fa-file-code-o"></i> {{ text_feed_mapping_help }}</div></div>
                       <div class="col-sm-12 ccp-feed-map-box">
                         <div class="ccp-note ccp-note-info"><b>{{ text_feed_mapping_title }}</b><br>{{ text_feed_mapping_intro }}</div>
@@ -207,25 +204,44 @@
                       <div class="col-sm-3"><label>{{ entry_feed_ean_path }}</label><input type="text" name="feed_ean_path" value="{{ supplier.feed_ean_path }}" class="form-control" placeholder="ean" /></div>
                       <div class="col-sm-3"><label>{{ entry_feed_upc_path }}</label><input type="text" name="feed_upc_path" value="{{ supplier.feed_upc_path }}" class="form-control" placeholder="upc" /></div>
                       <div class="col-sm-3"><label>{{ entry_feed_mpn_path }}</label><input type="text" name="feed_mpn_path" value="{{ supplier.feed_mpn_path }}" class="form-control" placeholder="mpn" /></div>
+                      </div></div></details></div>
                       <div class="col-sm-6"><label>{{ entry_source_language }}</label><select name="source_language_code" class="form-control"><option value="">{{ text_none }}</option>{% for lang in languages %}<option value="{{ lang.code }}" {{ supplier.source_language_code == lang.code ? 'selected' : '' }}>{{ lang.name }} ({{ lang.code }})</option>{% endfor %}</select></div>
                       <div class="col-sm-6"><label>{{ entry_target_language }}</label><select name="target_language_id" class="form-control">{% for lang in languages %}<option value="{{ lang.language_id }}" {{ supplier.target_language_id == lang.language_id ? 'selected' : '' }}>{{ lang.name }} ({{ lang.code }})</option>{% endfor %}</select></div>
                     </div>
                   </div>
 
-                  <div class="ccp-card">
-                    <div class="ccp-card-title"><i class="fa fa-percent"></i> {{ tab_settings }}</div>
-                    <div class="ccp-note ccp-note-warning"><i class="fa fa-lock"></i> {{ text_commercial_safe_apply_note|default('Коммерческий режим безопасности: сканирование и проверка только готовят предпросмотр. Цены, наличие и новые товары применяются вручную из вкладок «Предпросмотр» и «Новые товары».') }}</div>
-                    <div class="row ccp-form-grid">
+                  <details class="ccp-disclosure" data-ccp-section="text_section_price">
+                    <summary><i class="fa fa-calculator"></i> {{ text_section_price }}</summary>
+                    <div class="ccp-disclosure-body"><div class="row ccp-form-grid">
                       <div class="col-sm-3"><label>{{ entry_price_formula_mode }}</label><select name="price_formula_mode" class="form-control"><option value="retail_discount_markup" {{ supplier.price_formula_mode == 'retail_discount_markup' ? 'selected' : '' }}>{{ text_formula_retail_discount_markup }}</option><option value="same_as_supplier" {{ supplier.price_formula_mode == 'same_as_supplier' ? 'selected' : '' }}>{{ text_formula_same }}</option><option value="purchase_markup" {{ supplier.price_formula_mode == 'purchase_markup' ? 'selected' : '' }}>{{ text_formula_purchase_markup }}</option></select></div>
                       <div class="col-sm-3"><label>{{ entry_discount }}</label><input type="number" step="0.01" name="discount_percent" value="{{ supplier.discount_percent }}" class="form-control" /></div>
                       <div class="col-sm-3"><label>{{ entry_markup }}</label><input type="number" step="0.01" name="markup_percent" value="{{ supplier.markup_percent }}" class="form-control" /></div>
                       <div class="col-sm-3"><label>{{ entry_min_margin }}</label><input type="number" step="0.01" name="min_margin_percent" value="{{ supplier.min_margin_percent }}" class="form-control" /></div>
                       <div class="col-sm-3"><label>{{ entry_max_price_change }}</label><input type="number" step="0.01" name="max_price_change_percent" value="{{ supplier.max_price_change_percent }}" class="form-control" /></div>
                       <div class="col-sm-3"><label>{{ entry_rounding }}</label><select name="rounding_mode" class="form-control"><option value="two" {{ supplier.rounding_mode == 'two' ? 'selected' : '' }}>{{ text_rounding_two }}</option><option value="integer" {{ supplier.rounding_mode == 'integer' ? 'selected' : '' }}>{{ text_rounding_integer }}</option><option value="up_integer" {{ supplier.rounding_mode == 'up_integer' ? 'selected' : '' }}>{{ text_rounding_up_integer }}</option><option value="none" {{ supplier.rounding_mode == 'none' ? 'selected' : '' }}>{{ text_rounding_none }}</option></select></div>
-                      <div class="col-sm-3"><label>{{ entry_delay }}</label><input type="number" name="request_delay_ms" value="{{ supplier.request_delay_ms }}" class="form-control" /></div>
+                      <div class="col-sm-3"><label>{{ entry_update_price }}</label><select name="update_price" class="form-control"><option value="1" {{ supplier.update_price ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.update_price ? 'selected' : '' }}>{{ text_no }}</option></select></div>
+                    </div></div>
+                  </details>
+                  <details class="ccp-disclosure" data-ccp-section="text_section_matching">
+                    <summary><i class="fa fa-link"></i> {{ text_section_matching }}</summary>
+                    <div class="ccp-disclosure-body"><div class="row ccp-form-grid">
+                      <div class="col-sm-3"><label>{{ entry_match_source }}</label><select name="match_source" class="form-control"><option value="auto" {{ supplier.match_source == 'auto' ? 'selected' : '' }}>{{ text_match_auto }}</option>{% for field in ['sku','model','upc','ean','jan','mpn','isbn'] %}<option value="{{ field }}" {{ supplier.match_source == field ? 'selected' : '' }}>{{ field|upper }}</option>{% endfor %}</select><div class="help-block">{{ help_match_mapping }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_match_target }}</label><select name="match_target" class="form-control">{% for field in ['sku','model','upc','ean','jan','mpn','isbn'] %}<option value="{{ field }}" {{ supplier.match_target == field ? 'selected' : '' }}>{{ field|upper }}</option>{% endfor %}</select><div class="help-block">{{ help_match_mapping }}</div></div>
+                    </div></div>
+                  </details>
+                  <details class="ccp-disclosure" data-ccp-section="text_section_stock">
+                    <summary><i class="fa fa-cubes"></i> {{ text_section_stock }}</summary>
+                    <div class="ccp-disclosure-body"><div class="row ccp-form-grid">
+                      <div class="col-sm-4"><label>{{ entry_stock_status }}</label><select name="default_stock_status_id" class="form-control"><option value="0">{{ text_none }}</option>{% for st in stock_statuses %}<option value="{{ st.stock_status_id }}" {{ supplier.default_stock_status_id == st.stock_status_id ? 'selected' : '' }}>{{ st.name }}</option>{% endfor %}</select></div>
+                      <div class="col-sm-3"><label>{{ entry_update_stock }}</label><select name="update_stock" class="form-control"><option value="1" {{ supplier.update_stock ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.update_stock ? 'selected' : '' }}>{{ text_no }}</option></select></div>
+                      <div class="col-sm-3"><label>{{ entry_missing_policy }}</label><select name="missing_policy" class="form-control"><option value="report" {{ supplier.missing_policy == 'report' ? 'selected' : '' }}>{{ text_missing_policy_report }}</option><option value="out_of_stock" {{ supplier.missing_policy == 'out_of_stock' ? 'selected' : '' }}>{{ text_missing_policy_out }}</option><option value="zero_qty" {{ supplier.missing_policy == 'zero_qty' ? 'selected' : '' }}>{{ text_missing_policy_zero }}</option><option value="disable" {{ supplier.missing_policy == 'disable' ? 'selected' : '' }}>{{ text_missing_policy_disable }}</option></select></div>
+                    </div></div>
+                  </details>
+                  <details class="ccp-disclosure" data-ccp-section="text_section_new_products">
+                    <summary><i class="fa fa-plus-circle"></i> {{ text_section_new_products }}</summary>
+                    <div class="ccp-disclosure-body"><div class="row ccp-form-grid">
                       <div class="col-sm-4"><label>{{ entry_category }}</label><select name="default_category_id" class="form-control"><option value="0">{{ text_none }}</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {{ supplier.default_category_id == cat.category_id ? 'selected' : '' }}>{{ cat.name }}</option>{% endfor %}</select></div>
                       <div class="col-sm-4"><label>{{ entry_force_new_category }}</label><select name="force_new_category_id" class="form-control"><option value="0">{{ text_none }}</option>{% for cat in categories %}<option value="{{ cat.category_id }}" {{ supplier.force_new_category_id == cat.category_id ? 'selected' : '' }}>{{ cat.name }}</option>{% endfor %}</select></div>
-                      <div class="col-sm-4"><label>{{ entry_stock_status }}</label><select name="default_stock_status_id" class="form-control"><option value="0">{{ text_none }}</option>{% for st in stock_statuses %}<option value="{{ st.stock_status_id }}" {{ supplier.default_stock_status_id == st.stock_status_id ? 'selected' : '' }}>{{ st.name }}</option>{% endfor %}</select></div>
                       <div class="col-sm-3"><label>{{ entry_create_new }}</label><select name="create_new" class="form-control ccp-new-flag"><option value="0" {{ not supplier.create_new ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.create_new ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
                       <div class="col-sm-3"><label>{{ entry_create_new_status }}</label><select name="create_new_status" class="form-control ccp-new-flag"><option value="0" {{ not supplier.create_new_status ? 'selected' : '' }}>{{ text_disabled }}</option><option value="1" {{ supplier.create_new_status ? 'selected' : '' }}>{{ text_enabled }}</option></select><div class="help-block ccp-new-flags-status"></div></div>
                       <div class="col-sm-2"><label>{{ entry_new_tax_class_id }}</label><input type="number" name="new_tax_class_id" value="{{ supplier.new_tax_class_id }}" class="form-control" /></div>
@@ -237,25 +253,29 @@
                       <div class="col-sm-4"><label>{{ entry_seo_url_mode }}</label><select name="seo_url_mode" class="form-control"><option value="all_languages" {{ supplier.seo_url_mode == 'all_languages' ? 'selected' : '' }}>{{ text_seo_all_languages }}</option><option value="main_language" {{ supplier.seo_url_mode == 'main_language' ? 'selected' : '' }}>{{ text_seo_main_language }}</option><option value="none" {{ supplier.seo_url_mode == 'none' ? 'selected' : '' }}>{{ text_none }}</option></select></div>
                       <div class="col-sm-4"><label>{{ entry_min_new_price }}</label><input type="number" step="0.01" name="min_new_price" value="{{ supplier.min_new_price }}" class="form-control" /></div>
                       <div class="col-sm-4"><label>{{ entry_max_new_price }}</label><input type="number" step="0.01" name="max_new_price" value="{{ supplier.max_new_price }}" class="form-control" /><div class="help-block">{{ help_price_guards }}</div></div>
-                      <div class="col-sm-3"><label>{{ entry_match_source }}</label><select name="match_source" class="form-control"><option value="auto" {{ supplier.match_source == 'auto' ? 'selected' : '' }}>{{ text_match_auto }}</option>{% for field in ['sku','model','upc','ean','jan','mpn','isbn'] %}<option value="{{ field }}" {{ supplier.match_source == field ? 'selected' : '' }}>{{ field|upper }}</option>{% endfor %}</select><div class="help-block">{{ help_match_mapping }}</div></div>
-                      <div class="col-sm-3"><label>{{ entry_match_target }}</label><select name="match_target" class="form-control">{% for field in ['sku','model','upc','ean','jan','mpn','isbn'] %}<option value="{{ field }}" {{ supplier.match_target == field ? 'selected' : '' }}>{{ field|upper }}</option>{% endfor %}</select><div class="help-block">{{ help_match_mapping }}</div></div>
-                      <div class="col-sm-3"><label>{{ entry_cron_enabled }}</label><select name="cron_enabled" class="form-control"><option value="0" {{ not supplier.cron_enabled ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.cron_enabled ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_cron_profile }}</div></div>
-                      <div class="col-sm-3"><label>{{ entry_cron_interval_minutes }}</label><input type="number" min="5" max="10080" name="cron_interval_minutes" value="{{ supplier.cron_interval_minutes }}" class="form-control" /><div class="help-block">{{ help_cron_profile }}</div></div>
-                      <div class="col-sm-3"><label>{{ entry_auto_apply_existing }}</label><select name="auto_apply_existing" class="form-control"><option value="0" {{ not supplier.auto_apply_existing ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.auto_apply_existing ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_cron_profile }}</div></div>
-                      <div class="col-sm-3"><label>{{ entry_update_price }}</label><select name="update_price" class="form-control"><option value="1" {{ supplier.update_price ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.update_price ? 'selected' : '' }}>{{ text_no }}</option></select></div>
-                      <div class="col-sm-3"><label>{{ entry_update_stock }}</label><select name="update_stock" class="form-control"><option value="1" {{ supplier.update_stock ? 'selected' : '' }}>{{ text_yes }}</option><option value="0" {{ not supplier.update_stock ? 'selected' : '' }}>{{ text_no }}</option></select></div>
-                      <div class="col-sm-3"><label>{{ entry_missing_policy }}</label><select name="missing_policy" class="form-control"><option value="report" {{ supplier.missing_policy == 'report' ? 'selected' : '' }}>{{ text_missing_policy_report }}</option><option value="out_of_stock" {{ supplier.missing_policy == 'out_of_stock' ? 'selected' : '' }}>{{ text_missing_policy_out }}</option><option value="zero_qty" {{ supplier.missing_policy == 'zero_qty' ? 'selected' : '' }}>{{ text_missing_policy_zero }}</option><option value="disable" {{ supplier.missing_policy == 'disable' ? 'selected' : '' }}>{{ text_missing_policy_disable }}</option></select></div>
+                    </div></div>
+                  </details>
+                  <details class="ccp-disclosure" data-ccp-section="text_section_content">
+                    <summary><i class="fa fa-file-text-o"></i> {{ text_section_content }}</summary>
+                    <div class="ccp-disclosure-body"><div class="row ccp-form-grid">
                       <div class="col-sm-3"><label>{{ entry_existing_description_mode }}</label><select name="existing_description_mode" class="form-control"><option value="keep" {{ supplier.existing_description_mode == 'keep' ? 'selected' : '' }}>{{ text_mode_keep }}</option><option value="update_empty" {{ supplier.existing_description_mode == 'update_empty' ? 'selected' : '' }}>{{ text_mode_update_empty }}</option><option value="overwrite" {{ supplier.existing_description_mode == 'overwrite' ? 'selected' : '' }}>{{ text_mode_overwrite }}</option></select></div>
                       <div class="col-sm-2"><label>{{ entry_import_attributes }}</label><select name="import_attributes" class="form-control"><option value="0" {{ not supplier.import_attributes ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.import_attributes ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
                       <div class="col-sm-2"><label>{{ entry_import_options }}</label><select name="import_options" class="form-control"><option value="0" {{ not supplier.import_options ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.import_options ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
                       <div class="col-sm-3"><label>{{ entry_import_additional_images }}</label><select name="import_additional_images" class="form-control"><option value="0" {{ not supplier.import_additional_images ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.import_additional_images ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_import_additional_images }}</div></div>
                       <div class="col-sm-2"><label>{{ entry_fill_all_languages }}</label><select name="fill_all_languages" class="form-control"><option value="0" {{ not supplier.fill_all_languages ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.fill_all_languages ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
+                    </div></div>
+                  </details>
+                  <details class="ccp-disclosure" data-ccp-section="text_section_automation">
+                    <summary><i class="fa fa-clock-o"></i> {{ text_section_automation }}</summary>
+                    <div class="ccp-disclosure-body"><div class="row ccp-form-grid">
+                      <div class="col-sm-3"><label>{{ entry_delay }}</label><input type="number" name="request_delay_ms" value="{{ supplier.request_delay_ms }}" class="form-control" /></div>
+                      <div class="col-sm-3"><label>{{ entry_cron_enabled }}</label><select name="cron_enabled" class="form-control"><option value="0" {{ not supplier.cron_enabled ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.cron_enabled ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_cron_profile }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_cron_interval_minutes }}</label><input type="number" min="5" max="10080" name="cron_interval_minutes" value="{{ supplier.cron_interval_minutes }}" class="form-control" /><div class="help-block">{{ help_cron_profile }}</div></div>
+                      <div class="col-sm-3"><label>{{ entry_auto_apply_existing }}</label><select name="auto_apply_existing" class="form-control"><option value="0" {{ not supplier.auto_apply_existing ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.auto_apply_existing ? 'selected' : '' }}>{{ text_yes }}</option></select><div class="help-block">{{ help_cron_profile }}</div></div>
                       <div class="col-sm-2"><label>{{ entry_require_test_success }}</label><select name="require_test_success" class="form-control"><option value="0" {{ not supplier.require_test_success ? 'selected' : '' }}>{{ text_no }}</option><option value="1" {{ supplier.require_test_success ? 'selected' : '' }}>{{ text_yes }}</option></select></div>
-                      <div class="col-sm-12"><div class="help-block">{{ help_missing_policy }}{% if supplier.last_test_date %} · test: {{ supplier.last_test_ok ? 'OK' : 'ERROR' }} {{ supplier.last_test_date }}{% endif %}</div></div>
                       <div class="col-sm-6"><label>{{ entry_user_agent }}</label><input type="text" name="user_agent" value="{{ supplier.user_agent }}" class="form-control" /></div>
-                    </div>
-                    <div class="help-block">{{ text_manual_mode }}</div>
-                  </div>
+                    </div></div>
+                  </details>
                   <div class="text-right"><button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button></div>
                 </form>
               </div>
@@ -278,9 +298,9 @@
                   <span><b>4</b> {{ text_rules_step_test }}</span>
                 </div>
                 <div class="row ccp-form-grid ccp-simple-scan-grid">
-                  <div class="col-sm-8"><label>{{ text_rules_product_scan_label }}</label><input type="text" id="rules-auto-detect-url" value="{{ supplier_first_product_url }}" class="form-control" placeholder="https://supplier.com/product" /><div class="help-block">{{ help_rules_product_scan }}</div></div>
+                  <div class="col-sm-8"><label>{{ text_rules_product_scan_label }}</label><input type="text" id="rules-auto-detect-url" value="{{ supplier_first_product_url }}" class="form-control" /><div class="help-block">{{ help_rules_product_scan }}</div></div>
                   <div class="col-sm-4 ccp-wizard-buttons"><label>&nbsp;</label><button type="button" class="btn btn-info btn-block" id="btn-rules-auto-detect"><i class="fa fa-search"></i> {{ button_scan_product_page }}</button></div>
-                  <div class="col-sm-8"><label>{{ text_rules_list_scan_label }}</label><input type="text" id="rules-list-detect-url" value="{{ supplier_first_list_url }}" class="form-control" placeholder="https://supplier.com/category" /><div class="help-block">{{ help_rules_list_scan }}</div></div>
+                  <div class="col-sm-8"><label>{{ text_rules_list_scan_label }}</label><input type="text" id="rules-list-detect-url" value="{{ supplier_first_list_url }}" class="form-control" /><div class="help-block">{{ help_rules_list_scan }}</div></div>
                   <div class="col-sm-4 ccp-wizard-buttons"><label>&nbsp;</label><button type="button" class="btn btn-primary btn-block" id="btn-rules-detect-list-links"><i class="fa fa-sitemap"></i> {{ button_detect_list_links }}</button></div>
                 </div>
                 <div class="ccp-note ccp-note-warning"><i class="fa fa-check-circle"></i> {{ text_auto_detect_best_hint }}</div>
@@ -288,8 +308,8 @@
                 <div class="ccp-actions ccp-rules-wizard-actions"><button type="button" class="btn btn-default btn-sm" id="btn-rules-apply-detected-to-form"><i class="fa fa-level-down"></i> {{ button_apply_detected_to_form }}</button><button type="button" class="btn btn-success btn-sm" id="btn-rules-save-detected-rules"><i class="fa fa-save"></i> {{ button_save_detected_rules }}</button></div>
                 <div id="rules-auto-detect-save-result" class="ccp-result-line"></div>
               </div>
-              <div class="ccp-card">
-                <div class="ccp-card-title ccp-title-row"><span><i class="fa fa-code"></i> {{ text_rules_manual_title }}</span><span class="ccp-muted">{{ text_rules_manual_intro }}</span></div>
+              <details class="ccp-disclosure ccp-manual-rules">
+                <summary><i class="fa fa-code"></i> {{ text_rules_manual_title }}</summary><div class="ccp-disclosure-body">
                 <div class="alert alert-info ccp-alert"><i class="fa fa-info-circle"></i> {{ help_xpath }}</div>
                 <button type="button" class="btn btn-default btn-sm ccp-manual-toggle" data-toggle="collapse" data-target="#ccp-manual-rules"><i class="fa fa-sliders"></i> {{ button_rules_manual_toggle }}</button>
                 <div id="ccp-manual-rules" class="collapse">
@@ -332,7 +352,7 @@
                   <div class="col-sm-4"><label>{{ entry_excluded_categories }}</label><textarea name="excluded_categories_text" rows="4" class="form-control">{{ excluded_categories_text }}</textarea><div class="help-block">{{ help_exclusions }}</div></div>
                 </div>
                 </div>
-              </div>
+              </div></details>
               <div class="text-right"><button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> {{ button_save }}</button></div>
             </form>
           </div>
@@ -611,7 +631,7 @@
               <div class="alert alert-info ccp-alert"><i class="fa fa-info-circle"></i> {{ diagnostics_text }}</div>
               <div class="row ccp-form-grid">
                 <div class="col-sm-3"><label>{{ entry_supplier }}</label><select id="test-supplier-id" class="form-control ccp-supplier-scope-select"><option value="0">{{ text_supplier_context_required }}</option>{% for item in suppliers %}<option value="{{ item.supplier_id }}" {{ supplier.supplier_id == item.supplier_id ? 'selected' : '' }}>{{ item.name }}</option>{% endfor %}</select></div>
-                <div class="col-sm-7"><label>{{ entry_test_url }}</label><input type="text" id="test-url" value="" class="form-control" placeholder="https://supplier.com/product" /></div>
+                <div class="col-sm-7"><label>{{ entry_test_url }}</label><input type="text" id="test-url" value="" class="form-control" /></div>
                 <div class="col-sm-2"><label>&nbsp;</label><button type="button" class="btn btn-primary btn-block" id="btn-test-product"><i class="fa fa-flask"></i> {{ button_test }}</button></div>
               </div>
               <pre id="test-result" class="ccp-pre"></pre>
@@ -620,7 +640,7 @@
               <div class="ccp-card-title"><i class="fa fa-magic"></i> {{ text_auto_detect_title }}</div>
               <div class="alert alert-warning ccp-alert"><i class="fa fa-exclamation-triangle"></i> {{ text_auto_detect_intro }}</div>
               <div class="row ccp-form-grid">
-                <div class="col-sm-10"><label>{{ text_auto_detect_url }}</label><input type="text" id="auto-detect-url" value="" class="form-control" placeholder="https://supplier.com/product" /></div>
+                <div class="col-sm-10"><label>{{ text_auto_detect_url }}</label><input type="text" id="auto-detect-url" value="" class="form-control" /></div>
                 <div class="col-sm-2"><label>&nbsp;</label><button type="button" class="btn btn-info btn-block" id="btn-auto-detect"><i class="fa fa-magic"></i> {{ button_auto_detect }}</button></div>
               </div>
               <div class="help-block">{{ help_auto_detect }}</div>
@@ -641,7 +661,6 @@
               <div class="ccp-card">
                 <div class="ccp-card-title"><i class="fa fa-cog"></i> {{ tab_settings }}</div>
                 <div class="row ccp-form-grid">
-                  <div class="col-sm-3"><label>{{ entry_module_status }}</label><button type="button" id="ccp-module-status-settings" class="ccp-switch ccp-switch-form {{ module_supplier_sync_parser_pro_status ? 'is-on' : '' }}" data-value="{{ module_supplier_sync_parser_pro_status ? 1 : 0 }}" data-target="#ccp-module-status-hidden" aria-pressed="{{ module_supplier_sync_parser_pro_status ? 'true' : 'false' }}"><span class="ccp-switch-track"><span class="ccp-switch-thumb"></span></span><span class="ccp-switch-text">{{ module_supplier_sync_parser_pro_status ? text_enabled : text_disabled }}</span></button></div>
                   <div class="col-sm-3"><label>{{ entry_batch_limit }}</label><input type="number" name="module_supplier_sync_parser_pro_batch_limit" value="{{ module_supplier_sync_parser_pro_batch_limit }}" class="form-control" /></div>
                   <div class="col-sm-3"><label>{{ entry_stop_queue }}</label><input type="hidden" name="module_supplier_sync_parser_pro_stop_queue" id="ccp-stop-queue-hidden" value="{{ module_supplier_sync_parser_pro_stop_queue ? 1 : 0 }}" /><button type="button" id="ccp-stop-queue-switch" class="ccp-switch ccp-switch-form {{ module_supplier_sync_parser_pro_stop_queue ? 'is-on' : '' }}" data-value="{{ module_supplier_sync_parser_pro_stop_queue ? 1 : 0 }}" data-target="#ccp-stop-queue-hidden" aria-pressed="{{ module_supplier_sync_parser_pro_stop_queue ? 'true' : 'false' }}"><span class="ccp-switch-track"><span class="ccp-switch-thumb"></span></span><span class="ccp-switch-text">{{ module_supplier_sync_parser_pro_stop_queue ? text_enabled : text_disabled }}</span></button><div class="help-block">{{ help_queue_pause }}</div></div>
                   <div class="col-sm-3"><label>{{ entry_review_retention }}</label><input type="number" name="module_supplier_sync_parser_pro_review_retention_days" value="{{ module_supplier_sync_parser_pro_review_retention_days }}" class="form-control" /></div>
@@ -734,6 +753,23 @@
 
 .ccp-ssp .ccp-url-wrap{display:inline-flex;align-items:center;gap:4px;max-width:310px;vertical-align:middle}.ccp-ssp .ccp-url-wrap .ccp-url{max-width:250px}.ccp-ssp .ccp-copy-url{padding:1px 5px;line-height:1.2;color:#0057b7}.ccp-ssp .ccp-copy-url.copied{background:#e8f7ee;border-color:#28a745;color:#1e7e34}.ccp-ssp .ccp-compact-table .btn-warning,.ccp-ssp .ccp-compact-table .btn-danger,.ccp-ssp .ccp-compact-table .btn-info,.ccp-ssp .ccp-compact-table .btn-success,.ccp-ssp .ccp-compact-table .btn-primary{font-weight:600}
 .ccp-ssp #table-mapping{min-width:1050px}.ccp-ssp #table-mapping th:nth-child(2),.ccp-ssp #table-mapping td:nth-child(2){min-width:260px;max-width:380px}.ccp-ssp #table-mapping th:nth-child(3),.ccp-ssp #table-mapping td:nth-child(3){min-width:130px}.ccp-ssp #table-mapping td:nth-child(4),.ccp-ssp #table-mapping td:nth-child(7){white-space:nowrap}
+
+.ccp-ssp-page .btn,.ccp-ssp .ccp-switch{border-radius:4px;box-shadow:none}
+.ccp-ssp .btn:not(.btn-xs){min-height:30px}.ccp-ssp .ccp-switch{border:1px solid #cbd5e1;background:#f8fafc;color:#475569;padding:5px 9px;font-size:12px;line-height:18px;min-height:30px;font-weight:600}
+.ccp-ssp .ccp-switch.is-on{background:#edf7ee;border-color:#9bc9a4;color:#25643a}.ccp-ssp .ccp-switch-track{display:none}.ccp-ssp .ccp-switch-text{min-width:0}
+.ccp-ssp .ccp-topbar{padding:10px 12px;margin-bottom:10px}.ccp-ssp .ccp-supplier-context{padding:8px 12px;margin-bottom:10px}.ccp-ssp .ccp-supplier-context .ccp-card-title{margin:0}
+.ccp-ssp .ccp-inline-help{font-size:12px;color:#64748b;max-width:600px}.ccp-ssp .ccp-inline-help summary{cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:420px}
+.ccp-ssp .ccp-disclosure{border:1px solid #dfe5ef;border-radius:4px;background:#fff;margin-bottom:8px;clear:both}
+.ccp-ssp .ccp-disclosure>summary{cursor:pointer;padding:10px 12px;font-weight:600;color:#1e4267;background:#f8fafc;border-radius:4px;list-style:disclosure-closed}
+.ccp-ssp .ccp-disclosure[open]>summary{list-style:disclosure-open;border-bottom:1px solid #e2e8f0;border-radius:4px 4px 0 0}.ccp-ssp .ccp-disclosure>summary i{margin:0 6px}
+.ccp-ssp .ccp-disclosure>summary{list-style:none}.ccp-ssp .ccp-disclosure>summary::-webkit-details-marker{display:none}.ccp-ssp .ccp-disclosure>summary:after{content:"";float:right;width:7px;height:7px;border-right:2px solid #0057b7;border-bottom:2px solid #0057b7;transform:rotate(45deg);margin:3px 4px 0 10px}.ccp-ssp .ccp-disclosure[open]>summary:after{transform:rotate(225deg);margin-top:7px}
+.ccp-ssp .ccp-disclosure-body{padding:12px}.ccp-ssp .ccp-disclosure .ccp-form-grid{margin-bottom:0}.ccp-ssp .ccp-feed-fields{display:none}
+.ccp-ssp .ccp-readiness-grid{display:none}.ccp-ssp .ccp-workflow-card{margin-bottom:10px}.ccp-ssp .ccp-alert{padding:8px 12px;margin-bottom:10px}
+@media(min-width:768px){.ccp-ssp .ccp-disclosure .col-sm-2,.ccp-ssp .ccp-disclosure .col-sm-3,.ccp-ssp .ccp-disclosure .col-sm-4{width:50%}}
+@media(max-width:767px){.ccp-ssp .ccp-supplier-context{display:block}.ccp-ssp .ccp-supplier-context-control{min-width:0;margin-top:6px}.ccp-ssp .ccp-top-actions{justify-content:flex-start}.ccp-ssp .ccp-inline-help summary{max-width:100%;white-space:normal}}
+
+
+.ccp-ssp .ccp-module-status-control{width:150px;height:30px;padding:4px 8px;border-radius:4px}.ccp-ssp .ccp-top-actions{align-items:center;gap:8px}.ccp-ssp .ccp-inline-help summary{font-size:14px;list-style:none}.ccp-ssp .ccp-inline-help{margin-top:4px}
 </style>
 <script>
 (function($){
@@ -746,6 +782,9 @@
   function ccpGetStoredSupplier(){try{return parseInt(window.localStorage.getItem(ccpSupplierStorageKey)||0,10)||0;}catch(e){return 0;}}
   function ccpMarkStopRequested(on){try{if(on){window.localStorage.setItem(ccpStopStorageKey,String(Date.now()));}else{window.localStorage.removeItem(ccpStopStorageKey);}}catch(e){}}
   function ccpIsStopRequested(){try{return !!window.localStorage.getItem(ccpStopStorageKey);}catch(e){return false;}}
+  function syncSourcePanels(){ $('.ccp-feed-fields').toggle($('#form-supplier [name=source_type]').val()==='feed'); }
+  $(document).on('change','#form-supplier [name=source_type]',syncSourcePanels);
+  syncSourcePanels();
   function setSwitchState($switch, value){
     value = String(value) === '1' ? '1' : '0';
     var on = value === '1';
@@ -758,18 +797,14 @@
     value = String(value) === '1' ? '1' : '0';
     ccpModuleEnabled = value === '1';
     $('#ccp-module-status-hidden').val(value);
-    setSwitchState($('#ccp-module-status-switch'), value);
-    setSwitchState($('#ccp-module-status-settings'), value);
-    $('#ccp-module-status-label').toggleClass('on', ccpModuleEnabled).toggleClass('off', !ccpModuleEnabled).text(ccpModuleEnabled ? '{{ text_enabled|e('js') }}' : '{{ text_disabled|e('js') }}');
+    $('#ccp-module-status-control').val(value);
   }
+  $(document).on('change','#ccp-module-status-control',function(){syncModuleStatus($(this).val());});
   $(document).on('click','.ccp-switch',function(){
     var $switch = $(this);
     if ($switch.hasClass('ccp-supplier-row-switch')) { return; }
     var next = String($switch.attr('data-value') || '0') === '1' ? '0' : '1';
     setSwitchState($switch, next);
-    if ($switch.attr('id') === 'ccp-module-status-switch' || $switch.attr('id') === 'ccp-module-status-settings') {
-      syncModuleStatus(next);
-    }
   });
   if (!ccpModuleEnabled) {
     $('#btn-auto-detect,#btn-rules-auto-detect,#btn-rules-detect-list-links,#btn-rules-scan-save,#btn-rules-apply-detected-to-form,#btn-rules-save-detected-rules,#btn-save-detected-rules,#btn-apply-detected-to-form,#btn-test-product,#btn-scan-site-all,#btn-build-scan,#btn-build-sitemap,#btn-build-product-urls,#btn-build-linked,#btn-build-new-only,#btn-build-feed-file,#btn-run-queue,#btn-run-until-done,#btn-run-scan-batch,#btn-run-products-batch,#btn-run-products-until-done,#btn-run-feed-until-done,#btn-run-selected-scan,#btn-run-selected-products,#btn-clear-queue,#btn-reset-processing,#btn-recover-errors,#btn-stop-queue,#btn-resume-queue,#btn-clear-history,#btn-clear-logs,#btn-cleanup-old-data,#btn-clear-reviews,#btn-create-new-tab,#btn-queue-retry-selected,#btn-queue-delete-selected,#btn-new-skip-selected,#btn-new-restore-selected,#btn-delete-new-selected,#btn-delete-review-selected,.ccp-apply,.ccp-row-apply,.ccp-search-product,.ccp-match-product-btn,#btn-exclude-selected').prop('disabled', true).addClass('ccp-operation-disabled');

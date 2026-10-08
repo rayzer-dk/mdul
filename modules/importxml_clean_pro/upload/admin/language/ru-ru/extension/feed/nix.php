@@ -2,12 +2,12 @@
 
 /**
  * @category   OpenCart
- * @package    ImportXML Clean PRO v1.4.2
+ * @package    ImportXML Clean PRO v1.4.3
  * @copyright  CodeCart PRO, https://codecartpro.com
  */
 
 // Heading
-$_['heading_title'] = '<span style="color:#0057b7;font-weight:700;">ImportXML Clean</span> <span style="display:inline-block;background:#ffd700;color:#0057b7;border-radius:12px;padding:2px 10px;font-size:12px;line-height:1.2;vertical-align:middle;font-weight:700;margin-left:6px;">PRO</span> <span style="display:inline-block;background:#eef3f8;color:#445;border-radius:10px;padding:2px 8px;font-size:11px;line-height:1.2;vertical-align:middle;margin-left:5px;">v1.4.2</span>';
+$_['heading_title'] = '<span style="color:#0057b7;font-weight:700;">ImportXML Clean</span> <span style="display:inline-block;background:#ffd700;color:#0057b7;border-radius:12px;padding:2px 10px;font-size:12px;line-height:1.2;vertical-align:middle;font-weight:700;margin-left:6px;">PRO</span> <span style="display:inline-block;background:#eef3f8;color:#445;border-radius:10px;padding:2px 8px;font-size:11px;line-height:1.2;vertical-align:middle;margin-left:5px;">v1.4.3</span>';
 
 // Text
 $_['text_success']	 = 'Настройки модуля обновлены!';
@@ -206,12 +206,12 @@ $_['error_cron_disabled'] = 'Cron отключен или модуль выкл�
 $_['error_cron_empty_link'] = 'У выбранного поставщика не заполнена ссылка на XML для cron.';
 $_['error_cron_download'] = 'Не удалось скачать XML: %s';
 $_['error_cron_write_file'] = 'Не удалось записать временный XML-файл: %s';
-$_['text_cron_multilang_hint'] = 'Для нескольких XML можно указать ссылки в профиле поставщика построчно в формате: language_id=https://example.com/file.xml. Если указана одна ссылка, она используется для основного языка.';
+$_['text_cron_multilang_hint'] = 'Для нескольких XML укажите ссылки построчно: language_id=URL_XML. Одна ссылка используется для основного языка.';
 $_['text_cron_performance_warning'] = 'Внимание: cron может быть тяжелой операцией. Безопасный режим по умолчанию обновляет цены, наличие, остатки, статус наличия и статус существующих товаров. Полный cron-импорт может скачивать XML, создавать категории, обновлять изображения, описания и SEO, поэтому не запускайте его в часы пик.';
 
-$_['placeholder_supplier_link_price'] = 'Пример: https://example.com/feed.xml или 3=https://example.com/ua.xml';
+$_['placeholder_supplier_link_price'] = 'URL XML или language_id=URL_XML';
 
-$_['help_supplier_link_price'] = 'Используется для cron. Можно указать одну XML-ссылку или ссылки по языкам построчно, например: 3=https://example.com/ua.xml.';
+$_['help_supplier_link_price'] = 'Для cron: одна XML-ссылка или отдельная строка language_id=URL_XML для каждого языка.';
 
 $_['text_quick_xml_tags'] = 'Быстрые примеры XML-тегов';
 
@@ -228,7 +228,7 @@ $_['text_copied'] = 'Скопировано.';
 $_['placeholder_cron_token'] = 'Пример: 48 случайных HEX-символов';
 
 $_['error_ajax_failed_detail'] = 'AJAX-запрос не выполнен. HTTP-статус: %s. Ответ сервера: %s';
-// CodeCart PRO production additions v1.4.2
+// CodeCart PRO production additions v1.4.3
 $_['btn_export_settings'] = 'Экспорт настроек';
 $_['btn_reset_settings'] = 'Сбросить настройки';
 $_['help_service_actions'] = 'Экспорт сохраняет настройки и профили поставщиков в JSON. Сброс возвращает системные настройки модуля к безопасным значениям, но не удаляет профили поставщиков.';
@@ -251,7 +251,7 @@ $_['entry_mirohost_days'] = 'Mirohost: дни месяца';
 $_['entry_mirohost_months'] = 'Mirohost: месяцы';
 $_['entry_mirohost_weekdays'] = 'Mirohost: дни недели';
 $_['help_mirohost_schedule'] = 'Рекомендуемый безопасный пример для Mirohost: минуты */30, часы *, дни месяца *, месяцы *, дни недели *. Не ставьте чаще 1 раза в 5 минут.';
-// CodeCart PRO import/export additions v1.4.2
+// CodeCart PRO import/export additions v1.4.3
 $_['btn_import_settings'] = 'Импорт настроек';
 $_['help_import_settings'] = 'Выберите JSON-файл, ранее созданный кнопкой “Экспорт настроек”. Импорт заменит системные настройки и профили поставщиков. Перед импортом сделайте резервную копию.';
 $_['error_import_settings_failed'] = 'Не удалось импортировать настройки. Проверьте формат файла и права доступа.';
@@ -264,11 +264,11 @@ $_['diag_field_product_supplier_id'] = 'Поле product.nix_supplier_id для 
 $_['diag_field_product_supplier_product_id'] = 'Поле product.nix_supplier_product_id для внешнего ID товара поставщика.';
 $_['diag_google_category'] = 'Google Product Category ID через category.google_product_category_id или googleshopping_category.';
 
-// CodeCart PRO v1.4.2 UI and warning additions
+// CodeCart PRO v1.4.3 UI and warning additions
 $_['warning_offer_without_id'] = 'Предупреждение: в XML найден offer без атрибута id. Позиция пропущена.';
 $_['warning_offer_missing_tag'] = 'Предупреждение: offer ID %s пропущен, потому что отсутствует обязательный тег %s.';
 $_['warning_offer_missing_required_tags'] = 'Предупреждение: offer ID %s пропущен, потому что отсутствуют обязательные теги для полноценного импорта.';
-// CodeCart PRO service UI additions v1.4.2
+// CodeCart PRO service UI additions v1.4.3
 $_['text_service_tools'] = 'Сервисные инструменты';
 $_['btn_apply_import_settings'] = 'Применить импорт';
 
@@ -286,7 +286,7 @@ $_['help_cron_mode'] = 'Рекомендуемый режим для cron обн
 
 $_['help_cron_secondary_function'] = 'Cron не заменяет обычный импорт. Сначала выполните ручной импорт XML, проверьте товары, категории и поля, а cron используйте позже для регулярного обновления цен и наличия.';
 
-// CodeCart PRO v1.4.2 supplier UI corrections
+// CodeCart PRO v1.4.3 supplier UI corrections
 $_['text_settings_main'] = 'Основные настройки';
 $_['text_supplier_settings'] = 'Профили поставщиков';
 $_['text_cron_settings_short'] = 'Cron-обновление';
@@ -296,7 +296,7 @@ $_['btn_manage_suppliers'] = 'Настроить поставщиков';
 $_['help_import_supplier_select'] = 'Если нужного поставщика нет в списке, сначала создайте профиль поставщика в настройках. В профиле задаются XML-теги товара, цены, наличия, категории, SEO и ссылка для cron.';
 
 
-// CodeCart PRO v1.4.2 safe supplier import additions
+// CodeCart PRO v1.4.3 safe supplier import additions
 $_['btn_preview_import'] = 'Проверить изменения без записи';
 $_['btn_apply_safe_import'] = 'Применить импорт после проверки';
 $_['help_safe_import_buttons'] = 'Сначала запустите проверку. Модуль покажет, что будет обновлено, создано, пропущено и какие товары пропали у поставщика. Только после просмотра отчета запускайте применение.';
@@ -323,7 +323,7 @@ $_['text_run_preview_first'] = 'Сначала выполните проверк
 
 $_['error_preview_token'] = 'Ошибка безопасного импорта: сначала выполните проверку изменений без записи и не меняйте файл или настройки перед применением.';
 
-// CodeCart PRO production fixes v1.4.2
+// CodeCart PRO production fixes v1.4.3
 $_['error_file'] = 'Выберите файл импорта XML, YML/YAML, CSV/TXT или XLSX.';
 $_['error_file_upload_code'] = 'Файл не загружен. Код ошибки PHP upload: %s. Проверьте размер файла и настройки upload_max_filesize/post_max_size.';
 $_['error_file_extension'] = 'Недопустимый формат файла. Разрешены только: %s.';

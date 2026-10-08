@@ -123,7 +123,7 @@ class ModelExtensionModuleImportPro extends Model {
             'module_import_pro_download_images' => 1,
             'module_import_pro_image_limit' => 10,
             'module_import_pro_uninstall_delete_data' => 0,
-            'module_import_pro_version' => '3.6.9'
+            'module_import_pro_version' => '3.7.0'
         );
 
         $settings = $current;
@@ -134,7 +134,7 @@ class ModelExtensionModuleImportPro extends Model {
             }
         }
 
-        if ($previous_version !== '3.6.9') {
+        if ($previous_version !== '3.7.0') {
             $settings['module_import_pro_status'] = 0;
         }
 

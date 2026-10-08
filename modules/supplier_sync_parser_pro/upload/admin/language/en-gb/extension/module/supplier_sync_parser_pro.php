@@ -810,3 +810,15 @@ $_['help_cron_profile'] = 'Cron checks linked products and applies allowed price
 
 $_['text_stock_available'] = 'In stock';
 $_['text_stock_unavailable'] = 'Out of stock';
+
+$_['button_save_module'] = 'Save module settings';
+$_['text_section_price'] = 'Price and formula';
+$_['text_section_matching'] = 'Product matching';
+$_['text_section_stock'] = 'Stock';
+$_['text_section_new_products'] = 'New products and categories';
+$_['text_section_content'] = 'Description, images and languages';
+$_['text_section_automation'] = 'Cron and automation';
+$_['text_section_feed'] = 'File and field mapping';
+$_['text_preset_prom_classic'] = 'HTML: classic template';
+$_['text_preset_prom_modern'] = 'HTML: modern template';
+$_['text_preset_opencart'] = 'HTML: OpenCart structure';
